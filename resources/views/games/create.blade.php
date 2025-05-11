@@ -9,7 +9,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 p-6 shadow sm:rounded-lg">
                 <div class="py-12 max-w-4xl mx-auto">
-                    @livewire('game-form')
+                    <livewire:game-form />
                 </div>
             </div>
         </div>

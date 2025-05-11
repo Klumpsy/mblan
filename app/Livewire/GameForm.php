@@ -21,11 +21,11 @@ class GameForm extends Component
     {
         $validated = $this->validate([
             'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'year_of_release' => 'nullable|integer|min:1970|max:' . date('Y'),
-            'linkToWebsite' => 'nullable|url|max:255',
-            'linkToYoutube' => 'nullable|url|max:255',
-            'image' => 'nullable|image|max:2048',
+            'description' => 'required|string',
+            'year_of_release' => 'required|integer|min:1970|max:' . date('Y'),
+            'linkToWebsite' => 'required|url|max:255',
+            'linkToYoutube' => 'required|url|max:255',
+            'image' => 'required|image|max:2048|dimensions:min_width=600,min_height=400',
         ]);
 
         if ($this->image) {

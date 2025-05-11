@@ -32,6 +32,7 @@ Route::middleware([
     Route::get('/games/create', [GameController::class, 'create'])
         ->name('games.create')
         ->middleware('role:admin');
+    Route::get('/games/{id}', [GameController::class, 'show'])->name('games.show');
     Route::post('/games', [GameController::class, 'store'])
         ->name('games.store')
         ->middleware('role:admin');

@@ -5,7 +5,6 @@
         <x-protected-button role="admin" route="games.create" class="btn btn-success">
             Add new game
         </x-protected-button>
-
     </div>
 
     <h1 class="mt-8 text-2xl font-medium text-gray-900 dark:text-white">
@@ -15,8 +14,10 @@
     <p class="mt-6 text-gray-500 dark:text-gray-400 leading-relaxed">
         De games met de meeste likes zullen in het speelschema worden opgenomen.
     </p>
-</div>
 
-<div class="bg-gray-200 dark:bg-gray-800 bg-opacity-25 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 p-6 lg:p-8">
-
+    <div class="space-y-4 mt-6">
+        @foreach ($games as $game)
+            <x-game-card :game="$game" />
+        @endforeach
+    </div>
 </div>
