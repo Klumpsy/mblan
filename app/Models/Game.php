@@ -13,8 +13,11 @@ class Game extends Model
 
     protected $fillable = [
         'name',
-        'description',
-        'year_of_release',
+        'yearOfRelease',
+        'textBlockOne',
+        'textBlockTwo',
+        'textBlockThree',
+        'shortDescription',
         'image',
         'linkToWebsite',
         'linkToYoutube',
@@ -29,13 +32,6 @@ class Game extends Model
     public function likedByUsers()
     {
         return $this->belongsToMany(User::class, 'game_user_likes');
-    }
-
-    protected function shortDescription(): Attribute
-    {
-        return Attribute::make(
-            get: fn () => Str::limit(strip_tags($this->description), 300)
-        );
     }
 
     public function getLikesCountAttribute()
