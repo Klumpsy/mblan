@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TournamentController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,6 @@ Route::middleware([
     Route::post('/games', [GameController::class, 'store'])
         ->name('games.store')
         ->middleware('role:admin');
+    Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules');
     Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments');
-}); 
-
+});

@@ -18,6 +18,9 @@
                     <x-nav-link href="{{ route('games') }}" :active="request()->routeIs('games')">
                         {{ __('Games') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('schedules') }}" :active="request()->routeIs('schedules')">
+                        {{ __('Schedules') }}
+                    </x-nav-link>
                     <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
                         {{ __('Tournaments') }}
                     </x-nav-link>

@@ -8,24 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tournament_user', function (Blueprint $table) {
+        Schema::create('schedules', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tournament_id')
+            $table->string('name');
+            $table->foreignId('edition_id')
                 ->constrained()
                 ->onDelete('cascade');
-            $table->foreignId('user_id')
-                ->constrained()
-                ->onDelete('cascade');
-            $table->primary(['tournament_id', 'user_id']);
+            $table->date('start_date');
+            $table->date('end_date')
+                ->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('tournament_user');
+        Schema::dropIfExists('schedules');
     }
 };

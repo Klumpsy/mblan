@@ -50,38 +50,29 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-                <div class="md:col-span-2 space-y-6">
+                <div class="md:col-span-2 space-y-6" x-data="{ openSection: 1 }">
                     @if ($game->textBlockOne)
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                            <h3
-                                class="text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-                                About the Game</h3>
-                            <div class="prose dark:prose-invert max-w-none">
-                                {!! $game->textBlockOne !!}
-                            </div>
-                        </div>
+                        <x-text-block 
+                            :text="$game->textBlockOne" 
+                            :title="'About the Game'" 
+                            :index="1" 
+                        />
                     @endif
 
                     @if ($game->textBlockTwo)
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                            <h3
-                                class="text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-                                Features</h3>
-                            <div class="prose dark:prose-invert max-w-none">
-                                {!! $game->textBlockTwo !!}
-                            </div>
-                        </div>
+                        <x-text-block 
+                            :text="$game->textBlockTwo" 
+                            :title="'Features'"
+                            :index="2" 
+                         />
                     @endif
 
                     @if ($game->textBlockThree)
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                            <h3
-                                class="text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-                                Community & Updates</h3>
-                            <div class="prose dark:prose-invert max-w-none">
-                                {!! $game->textBlockThree !!}
-                            </div>
-                        </div>
+                        <x-text-block 
+                            :text="$game->textBlockThree"
+                            :title="'Community & Updates'"
+                            :index="3" 
+                         />
                     @endif
                 </div>
 

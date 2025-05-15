@@ -24,14 +24,19 @@ class Game extends Model
         'likes'
     ];
 
-    public function tournament()
+    public function tournaments()
     {
-        return $this->hasOne(Tournament::class);
+        return $this->hasMany(Tournament::class);
     }
 
     public function likedByUsers()
     {
         return $this->belongsToMany(User::class, 'game_user_likes');
+    }
+
+    public function schedules()
+    {
+        return $this->belongsToMany(Schedule::class, 'game_schedule');
     }
 
     public function getLikesCountAttribute()

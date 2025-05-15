@@ -16,6 +16,7 @@ class Tournament extends Model
         'time_end',
         'day',
         'game_id',
+        'schedule_id',
     ];
 
     public function game()
@@ -23,8 +24,13 @@ class Tournament extends Model
         return $this->belongsTo(Game::class);
     }
 
+    public function schedule()
+    {
+        return $this->belongsTo(Schedule::class);
+    }
+
     public function participants()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'tournament_user');
     }
 }

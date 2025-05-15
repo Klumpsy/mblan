@@ -21,37 +21,37 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255),
-                
-            TextInput::make('email')
-                ->email()
-                ->required()
-                ->unique(ignoreRecord: true)
-                ->maxLength(255),
-                
-            TextInput::make('password')
-                ->password()
-                ->required(fn ($livewire) => ! $livewire->record)
-                ->minLength(8)
-                ->dehydrated(fn ($state) => filled($state))
-                ->dehydrateStateUsing(fn ($state) => Hash::make($state)),
-                
-            Select::make('role')
-                ->options([
-                    'user' => 'User',
-                    'participant' => "Participant",
-                    'admin' => 'Admin',
-                ])
-                ->default('user')
-                ->required(),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+
+                TextInput::make('email')
+                    ->email()
+                    ->required()
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255),
+
+                TextInput::make('password')
+                    ->password()
+                    ->required(fn($livewire) => ! $livewire->record)
+                    ->minLength(8)
+                    ->dehydrated(fn($state) => filled($state))
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state)),
+
+                Select::make('role')
+                    ->options([
+                        'user' => 'User',
+                        'participant' => "Participant",
+                        'admin' => 'Admin',
+                    ])
+                    ->default('user')
+                    ->required(),
             ]);
     }
 
