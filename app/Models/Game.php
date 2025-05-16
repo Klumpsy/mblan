@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Game extends Model
 {
@@ -34,9 +35,11 @@ class Game extends Model
         return $this->belongsToMany(User::class, 'game_user_likes');
     }
 
-    public function schedules()
+    public function schedules(): BelongsToMany
     {
-        return $this->belongsToMany(Schedule::class, 'game_schedule');
+        return $this->belongsToMany(Schedule::class, 'game_schedule')
+            ->withPivot('start_date', 'end_date')
+            ->withTimestamps();
     }
 
     public function getLikesCountAttribute()

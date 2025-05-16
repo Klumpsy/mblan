@@ -28,15 +28,16 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
-
-    Route::get('/games', [GameController::class, 'index'])->name('games');
-    Route::get('/games/create', [GameController::class, 'create'])
-        ->name('games.create')
-        ->middleware('role:admin');
-    Route::get('/games/{id}', [GameController::class, 'show'])->name('games.show');
-    Route::post('/games', [GameController::class, 'store'])
-        ->name('games.store')
-        ->middleware('role:admin');
-    Route::get('/schedules', [ScheduleController::class, 'index'])->name('schedules');
-    Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments');
+    Route::controller(GameController::class)->group(function () {
+        Route::get('/games', 'index')->name('games');
+        Route::get('/games/{id}', 'show')->name('games.show');
+    });
+    Route::controller(ScheduleController::class)->group(function () {
+        Route::get('/schedules', 'index')->name('schedules');
+        Route::get('/schedules/{id}', 'show')->name('schedules.show');
+    });
+    Route::controller(TournamentController::class)->group(function () {
+        Route::get('/tournaments', 'index')->name('tournaments');
+        Route::get('/tournament/{id}', 'show')->name('tournaments.show');
+    });
 });

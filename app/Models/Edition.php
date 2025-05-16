@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Edition extends Model
 {
@@ -12,6 +13,7 @@ class Edition extends Model
     protected $fillable = [
         'name',
         'logo',
+        'description',
         'year',
     ];
 
@@ -27,6 +29,8 @@ class Edition extends Model
 
     public function games()
     {
-        return $this->hasManyThrough(Game::class, Schedule::class);
+        return Game::whereHas('schedules', function ($query) {
+            $query->where('schedules.edition_id', $this->id);
+        });
     }
 }

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ScheduleResource\Pages;
 use App\Filament\Resources\ScheduleResource\RelationManagers;
+use App\Filament\Resources\ScheduleResource\RelationManagers\GamesRelationManager;
 use App\Models\Schedule;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -23,7 +24,19 @@ class ScheduleResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\Select::make('edition_id')
+                    ->relationship('edition', 'name')
+                    ->required()
+                    ->searchable()
+                    ->preload(),
+                Forms\Components\DatePicker::make('date')
+                    ->required()
+                    ->native(false)
+                    ->displayFormat('d-m-Y')
+                    ->format('Y-m-d')
             ]);
     }
 
@@ -31,7 +44,20 @@ class ScheduleResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('edition.name')
+                    ->label('Edition')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('games_count')
+                    ->label('Games Count')
+                    ->counts('games')
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -49,7 +75,7 @@ class ScheduleResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            GamesRelationManager::class,
         ];
     }
 

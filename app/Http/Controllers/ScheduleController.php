@@ -2,14 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Schedule;
+use App\Models\Edition;
 use Illuminate\View\View;
 
 class ScheduleController extends Controller
 {
     public function index(): View
     {
-        $schedules = Schedule::all();
-        return view('schedule.index', compact('schedules'));
+        $editions = Edition::all();
+        return view('schedule.index', compact('editions'));
+    }
+
+    public function show(string $id): View
+    {
+        return view('schedule.detail', [
+            'edition' => Edition::findOrFail($id)
+        ]);
     }
 }
