@@ -15,7 +15,7 @@ class GameController extends Controller
 
     public function show(string $id): View
     {
-        return view('games.detail', [
+        return view('games.show', [
             'game' => Game::findOrFail($id)
         ]);
     }

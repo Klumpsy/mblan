@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>MBLAN</title>
-
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -25,6 +25,7 @@
 </style>
 
 <body class="antialiased">
+    <x-flash-message />
     <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-center bg-dark-800">
         @if (Route::has('login'))
             <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EditionController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TournamentController;
@@ -32,9 +33,9 @@ Route::middleware([
         Route::get('/games', 'index')->name('games');
         Route::get('/games/{id}', 'show')->name('games.show');
     });
-    Route::controller(ScheduleController::class)->group(function () {
-        Route::get('/schedules', 'index')->name('schedules');
-        Route::get('/schedules/{id}', 'show')->name('schedules.show');
+    Route::controller(EditionController::class)->group(function () {
+        Route::get('/editions', 'index')->name('editions');
+        Route::get('/editions/{id}', 'show')->name('editions.show');
     });
     Route::controller(TournamentController::class)->group(function () {
         Route::get('/tournaments', 'index')->name('tournaments');

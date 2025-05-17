@@ -65,7 +65,7 @@ class User extends Authenticatable
         return $this->belongsToMany(Tournament::class);
     }
 
-       public function likedGames()
+    public function likedGames()
     {
         return $this->belongsToMany(Game::class, 'game_user_likes');
     }
