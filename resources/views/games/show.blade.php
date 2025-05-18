@@ -6,7 +6,7 @@
             </h1>
             <span
                 class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full">
-                Released: {{ $game->yearOfRelease }}
+                Released: {{ $game->year_of_release }}
             </span>
         </div>
     </x-slot>
@@ -38,7 +38,7 @@
                             style="background-color: rgba(0, 0, 0, 0.7);">
                             <h2 class="text-4xl font-bold text-primary-400 mb-2">{{ $game->name }}</h2>
                             <span class="text-gray-200 dark:text-white text-lg max-w-3xl">
-                                {!! $game->shortDescription !!}
+                                {!! $game->short_description !!}
                             </span>
                         </div>
                     @else
@@ -51,39 +51,27 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="md:col-span-2 space-y-6" x-data="{ openSection: 1 }">
-                    @if ($game->textBlockOne)
-                        <x-text-block 
-                            :text="$game->textBlockOne" 
-                            :title="'About the Game'" 
-                            :index="1" 
-                        />
+                    @if ($game->text_block_one)
+                        <x-text-block :text="$game->text_block_one" :title="'About the Game'" :index="1" />
                     @endif
 
-                    @if ($game->textBlockTwo)
-                        <x-text-block 
-                            :text="$game->textBlockTwo" 
-                            :title="'Features'"
-                            :index="2" 
-                         />
+                    @if ($game->text_block_two)
+                        <x-text-block :text="$game->text_block_two" :title="'Features'" :index="2" />
                     @endif
 
-                    @if ($game->textBlockThree)
-                        <x-text-block 
-                            :text="$game->textBlockThree"
-                            :title="'Community & Updates'"
-                            :index="3" 
-                         />
+                    @if ($game->text_block_three)
+                        <x-text-block :text="$game->text_block_three" :title="'Community & Updates'" :index="3" />
                     @endif
                 </div>
 
                 <div class="space-y-6">
-                    @if ($game->linkToYoutube)
+                    @if ($game->link_to_youtube)
                         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
                             <h3
                                 class="text-lg font-bold text-gray-900 dark:text-white p-4 border-b border-gray-200 dark:border-gray-700">
                                 Game Trailer</h3>
                             <div class="aspect-w-16 aspect-h-9">
-                                <x-video :link="$game->linkToYoutube" width="100%" height="100%" ratio="16:9"
+                                <x-video :link="$game->link_to_youtube" width="100%" height="100%" ratio="16:9"
                                     class="w-full" />
                             </div>
                         </div>
@@ -97,16 +85,16 @@
                             <li class="flex justify-between">
                                 <span class="text-gray-500 dark:text-gray-400">Release Year:</span>
                                 <span
-                                    class="font-medium text-gray-900 dark:text-white">{{ $game->yearOfRelease }}</span>
+                                    class="font-medium text-gray-900 dark:text-white">{{ $game->year_of_release }}</span>
                             </li>
                             <li class="flex justify-between">
                                 <span class="text-gray-500 dark:text-gray-400">Likes:</span>
                                 <span
-                                    class="font-medium text-gray-900 dark:text-white">{{ $game->getLikesCountAttribute() }}</span>
+                                    class="font-medium text-gray-900 dark:text-white">{{ $game->getLikesCount() }}</span>
                             </li>
-                            @if ($game->linkToWebsite)
+                            @if ($game->link_to_website)
                                 <li class="pt-2 border-t border-gray-200 dark:border-gray-700">
-                                    <a href="{{ $game->linkToWebsite }}" target="_blank"
+                                    <a href="{{ $game->link_to_website }}" target="_blank"
                                         class="inline-flex items-center w-full px-4 py-2 bg-primary-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600 active:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150 justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none"
                                             viewBox="0 0 24 24" stroke="currentColor">

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -60,12 +61,12 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function tournaments()
+    public function tournaments(): BelongsToMany
     {
         return $this->belongsToMany(Tournament::class);
     }
 
-    public function likedGames()
+    public function likedGames(): BelongsToMany
     {
         return $this->belongsToMany(Game::class, 'game_user_likes');
     }

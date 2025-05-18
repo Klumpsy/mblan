@@ -4,9 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Game extends Model
 {
@@ -14,23 +13,23 @@ class Game extends Model
 
     protected $fillable = [
         'name',
-        'yearOfRelease',
-        'textBlockOne',
-        'textBlockTwo',
-        'textBlockThree',
-        'shortDescription',
+        'year_of_release',
+        'text_block_one',
+        'text_block_two',
+        'text_block_three',
+        'short_description',
         'image',
-        'linkToWebsite',
-        'linkToYoutube',
+        'link_to_website',
+        'link_to_youtube',
         'likes'
     ];
 
-    public function tournaments()
+    public function tournaments(): HasMany
     {
         return $this->hasMany(Tournament::class);
     }
 
-    public function likedByUsers()
+    public function likedByUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'game_user_likes');
     }
@@ -42,7 +41,7 @@ class Game extends Model
             ->withTimestamps();
     }
 
-    public function getLikesCountAttribute()
+    public function getLikesCount(): int
     {
         return $this->likedByUsers()->count();
     }

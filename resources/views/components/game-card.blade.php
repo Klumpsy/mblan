@@ -19,11 +19,11 @@
                 {{ $game->name }}
             </h5>
             <span class="font-normal text-white dark:text-white">
-                {!! $game->shortDescription !!}
+                {!! $game->short_description !!}
             </span>
             <div class="mt-4 flex justify-between">
                 <span class="text-sm text-gray-500">
-                    Released: {{ $game->yearOfRelease ?? 'Unknown' }}
+                    Released: {{ $game->year_of_release ?? 'Unknown' }}
                 </span>
                 <div onclick="event.preventDefault(); event.stopPropagation();">
                     <livewire:game-like :game="$game" :wire:key="'game-like-'.$game->id" />

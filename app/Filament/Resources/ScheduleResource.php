@@ -3,16 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ScheduleResource\Pages;
-use App\Filament\Resources\ScheduleResource\RelationManagers;
-use App\Filament\Resources\ScheduleResource\RelationManagers\GamesRelationManager;
+use App\Filament\Resources\ScheduleResource\RelationManager\GamesRelationManager;
 use App\Models\Schedule;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ScheduleResource extends Resource
 {

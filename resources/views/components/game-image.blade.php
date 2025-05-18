@@ -2,10 +2,12 @@
 
 @php
     $sizes = [
-        'sm' => 'w-16 h-16',
-        'md' => 'w-24 h-24',
-        'lg' => 'w-32 h-32',
-        'xl' => 'w-40 h-40',
+        'sm' => 'w-16 h-20',
+        'md' => 'w-24 h-32',
+        'lg' => 'w-32 h-48',
+        'xl' => 'w-40 h-30',
+        'cover' => 'w-40 h-56',
+        'thumb' => 'w-20 h-12',
     ];
 
     $sizeClass = $sizes[$size] ?? $sizes['md'];
@@ -14,10 +16,8 @@
 <div
     class="{{ $sizeClass }} {{ $class }} overflow-hidden rounded-lg flex-shrink-0 bg-gray-200 dark:bg-gray-700">
     @if ($game->image)
-        <div class="w-full h-full relative overflow-hidden">
-            <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}"
-                class="absolute inset-0 w-full h-full object-cover" loading="lazy">
-        </div>
+        <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}" class="w-full h-full object-cover"
+            loading="lazy">
     @else
         <div class="w-full h-full flex items-center justify-center bg-gray-300 dark:bg-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400 dark:text-gray-500" fill="none"

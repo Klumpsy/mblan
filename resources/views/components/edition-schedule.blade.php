@@ -119,49 +119,14 @@
                                             </div>
                                         </div>
 
-                                        @if ($game->shortDescription)
+                                        @if ($game->short_description)
                                             <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 line-clamp-2">
-                                                {{ Str::limit(strip_tags($game->shortDescription), 100) }}
+                                                {{ Str::limit(strip_tags($game->short_description), 100) }}
                                             </p>
                                         @endif
                                     </div>
                                 </div>
                             @endforeach
-                        </div>
-                    @endif
-
-                    @if ($schedule->tournaments->isNotEmpty())
-                        <div class="mt-6">
-                            <h4 class="text-md font-semibold text-gray-800 dark:text-white mb-3 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-yellow-500"
-                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                                </svg>
-                                Tournaments
-                            </h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                @foreach ($schedule->tournaments as $tournament)
-                                    <div
-                                        class="border border-yellow-200 dark:border-yellow-900 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3">
-                                        <h5 class="font-medium text-gray-900 dark:text-white">{{ $tournament->name }}
-                                        </h5>
-                                        <div class="flex items-center mt-2 text-sm text-gray-600 dark:text-gray-400">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            {{ \Carbon\Carbon::parse($tournament->start_time)->format('H:i') }}
-                                        </div>
-                                        @if ($tournament->game)
-                                            <div class="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                                                Game: {{ $tournament->game->name }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
                         </div>
                     @endif
                 </div>

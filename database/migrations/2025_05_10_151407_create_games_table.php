@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->text('description')->nullable();
-            $table->year('year_of_release')->nullable();
+            $table->string('year_of_release', 4)->nullable();
             $table->string('image', 255)->nullable();
-            $table->string('linkToWebsite', 255)->nullable();
-            $table->string('linkToYoutube', 255)->nullable();
+            $table->string('link_to_website', 255)->nullable();
+            $table->string('link_to_youtube', 255)->nullable();
             $table->timestamps();
         });
     }

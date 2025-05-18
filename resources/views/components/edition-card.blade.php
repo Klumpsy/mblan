@@ -1,4 +1,4 @@
-<a href="{{ route('editions.show', $edition->id) }}"
+<a href="{{ route('editions.show', $edition->slug) }}"
     class="mb-4 block w-full bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
     <div class="flex flex-col md:flex-row">
         <div class="md:w-1/3 flex-shrink-0">

@@ -52,6 +52,10 @@ class EditionResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255),
+                    TextInput::make('slug')
+                        ->required()
+                        ->unique()
+                        ->maxLength(50),
                     Select::make('year')
                         ->label('Event Jaar')
                         ->options(
@@ -91,6 +95,10 @@ class EditionResource extends Resource
                     ->extraImgAttributes(['loading' => 'lazy'])
                     ->toggleable(),
                 TextColumn::make('name')
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
+                TextColumn::make('slug')
                     ->sortable()
                     ->searchable()
                     ->toggleable(),

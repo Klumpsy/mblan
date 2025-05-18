@@ -13,10 +13,10 @@ class EditionController extends Controller
         return view('edition.index', compact('editions'));
     }
 
-    public function show(string $id): View
+    public function show(string $slug): View
     {
         return view('edition.show', [
-            'edition' => Edition::findOrFail($id)
+            'edition' => Edition::where('slug', $slug)->firstOrFail()
         ]);
     }
 }

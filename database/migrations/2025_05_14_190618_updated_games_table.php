@@ -9,18 +9,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('games', function (Blueprint $table) {
-            $table->text('textBlockOne')->nullable();
-            $table->text('textBlockTwo')->nullable();
-            $table->text('textBlockThree')->nullable();
-            $table->text('shortDescription')->nullable();
+            $table->text('text_block_one')->nullable();
+            $table->text('text_block_two')->nullable();
+            $table->text('text_block_three')->nullable();
+            $table->text('short_description')->nullable();
         });
-        
+
         Schema::table('games', function (Blueprint $table) {
             if (Schema::hasColumn('games', 'year_of_release')) {
-                $table->renameColumn('year_of_release', 'yearOfRelease');
+                $table->renameColumn('year_of_release', 'year_of_release');
             }
         });
-        
+
         Schema::table('games', function (Blueprint $table) {
             if (Schema::hasColumn('games', 'description')) {
                 $table->dropColumn('description');
@@ -33,19 +33,19 @@ return new class extends Migration
         Schema::table('games', function (Blueprint $table) {
             $table->text('description')->nullable();
         });
-        
+
         Schema::table('games', function (Blueprint $table) {
-            if (Schema::hasColumn('games', 'yearOfRelease')) {
-                $table->renameColumn('yearOfRelease', 'year_of_release');
+            if (Schema::hasColumn('games', 'year_of_release')) {
+                $table->renameColumn('year_of_release', 'year_of_release');
             }
         });
-        
+
         Schema::table('games', function (Blueprint $table) {
             $table->dropColumn([
-                'textBlockOne',
-                'textBlockTwo',
-                'textBlockThree',
-                'shortDescription'
+                'text_block_one',
+                'text_block_two',
+                'text_block_three',
+                'short_description'
             ]);
         });
     }

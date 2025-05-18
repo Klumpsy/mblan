@@ -2,21 +2,49 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Models\Edition;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        User::factory()->create([
+            'name' => 'Bart Klumpers',
+            'email' => 'bart_klumperman@live.nl',
+            'password' => Hash::make('12345678'),
+            'role' => 'admin'
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $users = User::factory()->count(3)->create([
+            'role' => 'user',
+        ]);
+
+        $participants = User::factory()->count(3)->create([
+            'role' => 'participant',
+        ]);
+
+        $this->call([
+            GameSeeder::class,
+            EditionSeeder::class,
+            ScheduleSeeder::class,
+        ]);
+
+        $mblan24 = Edition::where('slug', 'mblan24')->first();
+        $mblan25 = Edition::where('slug', 'mblan25')->first();
+
+        $participants->each(function ($participant) use ($mblan24, $mblan25) {
+            $random = rand(1, 3);
+
+            if ($random == 1 || $random == 3) {
+                $mblan24->participants()->attach($participant->id);
+            }
+
+            if ($random == 2 || $random == 3) {
+                $mblan25->participants()->attach($participant->id);
+            }
+        });
     }
 }

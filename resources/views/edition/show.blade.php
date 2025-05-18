@@ -1,6 +1,4 @@
 <x-app-layout>
-
-
     <x-slot name="header">
         <div class="flex flex-col items-center sm:items-center md:flex-row md:justify-between w-full">
             <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight mb-4 md:mb-0">
@@ -11,10 +9,13 @@
                     class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full md:mr-2">
                     {{ $edition->year }}
                 </span>
-                <a href="#"
-                    class="whitespace-nowrap mt-2 md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors">
-                    Sign up for {{ $edition->name }}
-                </a>
+
+                @if ($edition->year >= idate('Y'))
+                    <a href="#"
+                        class="whitespace-nowrap mt-2 md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors">
+                        Sign up for {{ $edition->name }}
+                    </a>
+                @endif
             </div>
         </div>
     </x-slot>
@@ -58,7 +59,7 @@
 
             <x-edition-schedule :edition="$edition" />
 
-            @if ($edition->games()->count() > 0)
+            @if ($edition->hasGames())
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mt-6">
                     <h3
                         class="text-lg font-bold text-gray-900 dark:text-white p-4 border-b border-gray-200 dark:border-gray-700">
@@ -69,19 +70,10 @@
                             <a href="{{ route('games.show', $game) }}" class="group">
                                 <div
                                     class="aspect-w-1 aspect-h-1 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
-                                    @if ($game->image)
-                                        <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}"
-                                            class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg"
-                                                class="h-10 w-10 text-gray-400 dark:text-gray-500" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                    @endif
+
+                                    <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}"
+                                        class="w-full h-full object-cover group-hover:opacity-90 transition-opacity">
+
                                 </div>
                                 <div class="mt-2 text-sm text-center">
                                     <span class="font-medium text-gray-900 dark:text-white">{{ $game->name }}</span>

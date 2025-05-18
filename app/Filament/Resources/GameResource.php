@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\GameResource\Pages;
-use App\Filament\Resources\GameResource\RelationManagers;
 use App\Models\Game;
-use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -17,8 +15,6 @@ use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class GameResource extends Resource
 {
@@ -51,18 +47,18 @@ class GameResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255),
-                    DatePicker::make('yearOfRelease')
+                    DatePicker::make('year_of_release')
                         ->label('Release date')
                         ->displayFormat('d-m-Y')
                         ->format('Y-m-d')
                         ->closeOnDateSelection()
                         ->required(),
-                    TextInput::make('linkToWebsite')
+                    TextInput::make('link_to_website')
                         ->url()
                         ->required()
                         ->label('Website URL')
                         ->maxLength(255),
-                    TextInput::make('linkToYoutube')
+                    TextInput::make('link_to_youtube')
                         ->url()
                         ->required()
                         ->label('YouTube URL')
@@ -76,19 +72,19 @@ class GameResource extends Resource
                         ->required()
                         ->imageResizeMode('cover')
                         ->imageCropAspectRatio('16:9'),
-                    RichEditor::make('shortDescription')
+                    RichEditor::make('short_description')
                         ->required()
                         ->toolbarButtons(self::$textEditorSettings),
                 ])->columns(2),
                 Section::make([
-                    RichEditor::make('textBlockOne')
+                    RichEditor::make('text_block_one')
                         ->toolbarButtons(self::$textEditorSettings)
                         ->minLength(50)
                         ->required(),
-                    RichEditor::make('textBlockTwo')
+                    RichEditor::make('text_block_two')
                         ->toolbarButtons(self::$textEditorSettings)
                         ->minLength(50),
-                    RichEditor::make('textBlockThree')
+                    RichEditor::make('text_block_three')
                         ->toolbarButtons(self::$textEditorSettings)
                         ->minLength(50),
                 ])
@@ -110,23 +106,23 @@ class GameResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                TextColumn::make('yearOfRelease')
+                TextColumn::make('year_of_release')
                     ->sortable()
                     ->label('Year of Release')
                     ->toggleable(),
                 TextColumn::make('likes_count')
                     ->label('Likes')
                     ->toggleable()
-                    ->getStateUsing(fn(Game $record): int => $record->getLikesCountAttribute()),
-                TextColumn::make('linkToWebsite')
+                    ->getStateUsing(fn(Game $record): int => $record->getLikesCount()),
+                TextColumn::make('link_to_website')
                     ->label('Website URL')
                     ->toggleable()
-                    ->url(fn(Game $record): ?string => $record->linkToWebsite)
+                    ->url(fn(Game $record): ?string => $record->link_to_website)
                     ->openUrlInNewTab(),
-                TextColumn::make('linkToYoutube')
+                TextColumn::make('link_to_youtube')
                     ->label('YouTube URL')
                     ->toggleable()
-                    ->url(fn(Game $record): ?string => $record->linkToYoutube)
+                    ->url(fn(Game $record): ?string => $record->link_to_youtube)
                     ->openUrlInNewTab(),
             ])
             ->filters([
