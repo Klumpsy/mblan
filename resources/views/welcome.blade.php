@@ -11,6 +11,38 @@
 </head>
 
 <style>
+    @keyframes gradientAnimation {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    @keyframes glow {
+        0% {
+            filter: drop-shadow(0 0 5px rgba(255, 120, 0, 0.6));
+        }
+
+        33% {
+            filter: drop-shadow(0 0 15px rgba(255, 51, 102, 0.7));
+        }
+
+        66% {
+            filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.7));
+        }
+
+        100% {
+            filter: drop-shadow(0 0 5px rgba(255, 120, 0, 0.6));
+        }
+    }
+
     @keyframes fadeIn {
         0% {
             opacity: 0;
@@ -22,34 +54,51 @@
             transform: scale(1);
         }
     }
+
+    .animate-gradient {
+        background: linear-gradient(-45deg, #ff8500, #ff6b00, #ff3366, #9333ea, #ff6b00);
+        background-size: 400% 400%;
+        animation: gradientAnimation 15s ease infinite;
+    }
+
+    .animate-glow {
+        animation: glow 4s infinite;
+    }
 </style>
 
 <body class="antialiased">
     <x-flash-message />
-    <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-center bg-dark-800">
-        @if (Route::has('login'))
-            <div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
-                @auth
-                    <a href="{{ url('/dashboard') }}"
-                        class="font-semibold text-white hover:text-primary-300 focus:outline focus:outline-2 focus:rounded-sm">Dashboard</a>
-                @else
-                    <a href="{{ route('login') }}"
-                        class="font-semibold text-white hover:text-primary-300 focus:outline focus:outline-2 focus:rounded-sm">
-                        Login
-                    </a>
+    <div class="relative flex justify-center items-center min-h-screen bg-cover bg-center animate-gradient">
 
-                    @if (Route::has('register'))
-                        <a href="{{ route('register') }}"
-                            class="ml-4 font-semibold text-white hover:text-primary-300 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
-                    @endif
-                @endauth
+        <div class="max-w-7xl mx-auto p-6 lg:p-8 flex justify-center items-center relative z-10">
+            <div class="flex flex-col items-center">
+                <img src="{{ asset('images/logo.svg') }}" alt="MBLAN Logo"
+                    class="w-80 md:w-auto md:max-w-xl h-auto mb-8 transition-all duration-700 ease-in-out transform hover:scale-105 animate-glow">
+
+                @if (Route::has('login'))
+                    <div class="flex flex-wrap justify-center mt-6 gap-4">
+                        @auth
+                            <a href="{{ url('/dashboard') }}"
+                                class="button-shine px-8 py-4 bg-black/70 rounded-xl font-bold text-white text-lg hover:shadow-lg hover:shadow-purple-500/30 transition duration-300 ease-in-out transform hover:-translate-y-1 border-2 border-white/20 backdrop-blur-sm">
+                                Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('login') }}"
+                                class="button-shine px-8 py-4 bg-black/70 rounded-xl font-bold text-white text-lg hover:shadow-lg hover:shadow-orange-500/30 transition duration-300 ease-in-out transform hover:-translate-y-1 border-2 border-white/20 backdrop-blur-sm">
+                                Login
+                            </a>
+
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}"
+                                    class="button-081458
+                                    shine px-8 py-4 bg-black/70 rounded-xl font-bold text-white text-lg hover:shadow-lg hover:shadow-purple-500/30 transition duration-300 ease-in-out transform hover:-translate-y-1 border-2 border-white/20 backdrop-blur-sm">
+                                    Register
+                                </a>
+                            @endif
+                        @endauth
+                    </div>
+                @endif
             </div>
-        @endif
-
-        <div class="max-w-7xl mx-auto p-6 lg:p-8 flex justify-center items-center">
-            <img src="{{ asset('images/logo.svg') }}" alt="MBLAN Logo"
-                class="w-64 md:w-96 h-auto transition-all duration-700 ease-in-out transform hover:scale-105"
-                style="animation: fadeIn 1.2s ease-in-out;">
         </div>
     </div>
 </body>

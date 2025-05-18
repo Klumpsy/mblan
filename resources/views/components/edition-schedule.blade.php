@@ -2,7 +2,6 @@
     activeDate: null,
     activeSchedule: null,
     init() {
-        // Set first date as active by default if schedules exist
         if (this.$refs.dates.children.length > 0) {
             this.activeDate = this.$refs.dates.children[0].getAttribute('data-date');
             this.activeSchedule = this.$refs.schedules.querySelector(`[data-date='${this.activeDate}']`);
@@ -114,12 +113,7 @@
                                             <div class="mt-2 sm:mt-0">
                                                 <a href="{{ route('games.show', $game) }}"
                                                     class="inline-flex items-center px-3 py-1 bg-primary-100 dark:bg-primary-800 text-primary-800 dark:text-primary-200 text-sm rounded-md hover:bg-primary-200 dark:hover:bg-primary-700 transition-colors">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
+
                                                     Details
                                                 </a>
                                             </div>

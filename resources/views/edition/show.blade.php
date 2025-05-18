@@ -1,13 +1,21 @@
 <x-app-layout>
+
+
     <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight">
+        <div class="flex flex-col items-center sm:items-center md:flex-row md:justify-between w-full">
+            <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight mb-4 md:mb-0">
                 {{ $edition->name }}
             </h1>
-            <span
-                class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full">
-                {{ $edition->year }}
-            </span>
+            <div class="flex flex-col items-center md:flex-row">
+                <span
+                    class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full md:mr-2">
+                    {{ $edition->year }}
+                </span>
+                <a href="#"
+                    class="whitespace-nowrap mt-2 md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors">
+                    Sign up for {{ $edition->name }}
+                </a>
+            </div>
         </div>
     </x-slot>
 
