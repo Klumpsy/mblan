@@ -36,12 +36,6 @@
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="flex flex-col md:flex-row md:items-center p-4 md:p-6">
-                    @if ($edition->logo)
-                        <div class="flex-shrink-0 mb-4 md:mb-0 md:mr-6">
-                            <img src="{{ asset('storage/' . $edition->logo) }}" alt="{{ $edition->name }}"
-                                class="w-20 h-20 object-contain">
-                        </div>
-                    @endif
                     <div class="flex-grow">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ $edition->name }}</h2>
                         <span class="text-gray-600 dark:text-gray-400">{!! $edition->description !!}</span>
@@ -57,7 +51,7 @@
                 </div>
             </div>
 
-            <x-edition-schedule :edition="$edition" />
+            <livewire:edition-schedule :edition="$edition" />
 
             @if ($edition->hasGames())
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mt-6">

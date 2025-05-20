@@ -30,6 +30,7 @@
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg mb-8">
                 <div class="relative">
+
                     @if ($game->image)
                         <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}"
                             class="w-full h-96 object-cover">
