@@ -2,8 +2,9 @@
 
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
     <h3 class="flex justify-between text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 cursor-pointer"
-        @click="openSection = openSection === {{ $index }} ? null : {{ $index }}" {{ $title }} <span
-        x-text="openSection === {{ $index }} ? '-' : '+'"></span>
+        @click="openSection = openSection === {{ $index }} ? null : {{ $index }}">
+        <span>{{ $title }}</span>
+        <span x-text="openSection === {{ $index }} ? '-' : '+'"></span>
     </h3>
     <div class="prose dark:prose-invert max-w-none dark:text-gray-400" x-show="openSection === {{ $index }}"
         x-transition:enter="transition ease-out duration-300"
