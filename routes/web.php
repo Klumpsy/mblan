@@ -36,6 +36,7 @@ Route::middleware([
     Route::controller(EditionController::class)->group(function () {
         Route::get('/editions', 'index')->name('editions');
         Route::get('/editions/{id}', 'show')->name('editions.show');
+        Route::get('/editions/{id}/signup', 'signup')->name('editions.signup');
     });
     Route::controller(TournamentController::class)->group(function () {
         Route::get('/tournaments', 'index')->name('tournaments');

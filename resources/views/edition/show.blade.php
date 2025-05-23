@@ -11,7 +11,7 @@
                 </span>
 
                 @if ($edition->year >= idate('Y'))
-                    <a href="#"
+                    <a href="{{ route('editions.signup', $edition->slug) }}"
                         class="whitespace-nowrap mt-2 md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors">
                         Sign up for {{ $edition->name }}
                     </a>

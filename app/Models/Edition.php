@@ -30,6 +30,11 @@ class Edition extends Model
         return $this->belongsToMany(User::class, 'edition_user');
     }
 
+    public function signups(): HasMany
+    {
+        return $this->hasMany(Signup::class);
+    }
+
     public function games(): Builder
     {
         return Game::whereHas('schedules', function ($query) {
