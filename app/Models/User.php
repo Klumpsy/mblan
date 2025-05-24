@@ -76,4 +76,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Signup::class);
     }
+
+    public function hasSignedUpFor(Edition $edition): bool
+    {
+        return $this->signups()->where('edition_id', $edition->id)->exists();
+    }
 }
