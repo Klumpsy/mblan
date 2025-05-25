@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -69,5 +70,15 @@ class User extends Authenticatable
     public function likedGames(): BelongsToMany
     {
         return $this->belongsToMany(Game::class, 'game_user_likes');
+    }
+
+    public function signups(): HasMany
+    {
+        return $this->hasMany(Signup::class);
+    }
+
+    public function hasSignedUpFor(Edition $edition): bool
+    {
+        return $this->signups()->where('edition_id', $edition->id)->exists();
     }
 }

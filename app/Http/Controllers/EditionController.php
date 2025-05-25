@@ -19,4 +19,11 @@ class EditionController extends Controller
             'edition' => Edition::where('slug', $slug)->firstOrFail()
         ]);
     }
+
+    public function signup(string $slug): View
+    {
+        return view('edition.signup', [
+            'edition' => Edition::where('slug', $slug)->firstOrFail()
+        ]);
+    }
 }

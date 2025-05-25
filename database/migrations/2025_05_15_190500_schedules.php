@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('schedules', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('date')->nullable()->after('edition_id');
+            $table->date('date')->nullable();
             $table->foreignId('edition_id')
                 ->constrained()
                 ->onDelete('cascade');

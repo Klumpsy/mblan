@@ -34,4 +34,9 @@ class Schedule extends Model
     {
         return $this->hasMany(Tournament::class);
     }
+
+    public function signups(): BelongsToMany
+    {
+        return $this->belongsToMany(Signup::class, "signup_schedules");
+    }
 }

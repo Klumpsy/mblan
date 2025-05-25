@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Edition extends Model
@@ -25,9 +24,9 @@ class Edition extends Model
         return $this->hasMany(Schedule::class);
     }
 
-    public function participants(): BelongsToMany
+    public function signups(): HasMany
     {
-        return $this->belongsToMany(User::class, 'edition_user');
+        return $this->hasMany(Signup::class);
     }
 
     public function games(): Builder
@@ -40,5 +39,17 @@ class Edition extends Model
     public function hasGames(): bool
     {
         return $this->games()->count() > 0;
+    }
+
+
+    public function confirmedSignups(): HasMany
+    {
+        return $this->hasMany(Signup::class)->where('confirmed', true);
+    }
+
+    public function loggedInUserHasConfirmedSignup($userId = null): bool
+    {
+        $userId = $userId ?? auth()->id();
+        return $this->confirmedSignups()->where('user_id', $userId)->exists();
     }
 }
