@@ -42,8 +42,14 @@ class Edition extends Model
     }
 
 
-    public function confirmedSignups()
+    public function confirmedSignups(): HasMany
     {
-        return $this->signups()->where('confirmed', true);
+        return $this->hasMany(Signup::class)->where('confirmed', true);
+    }
+
+    public function loggedInUserHasConfirmedSignup($userId = null): bool
+    {
+        $userId = $userId ?? auth()->id();
+        return $this->confirmedSignups()->where('user_id', $userId)->exists();
     }
 }

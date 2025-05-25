@@ -1,9 +1,9 @@
 <div class="max-w-2xl mx-auto p-6">
     <div class="text-center mb-8">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">
+        <h2 class="text-2xl font-bold text-primary-400 mb-2">
             Sign up for {{ $edition->name }}
         </h2>
-        <p class="text-gray-600">
+        <p class="text-gray-600 dark:text-white">
             Hello {{ $user->name }}, let's get you registered!
         </p>
     </div>
@@ -31,7 +31,7 @@
                             @endif
                         </div>
                         <div
-                            class="absolute top-12 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-600 whitespace-nowrap">
+                            class="absolute top-12 left-1/2 transform -translate-x-1/2 text-xs font-medium text-gray-600 dark:text-white whitespace-nowrap">
                             {{ $this->getStepTitle($i) }}
                         </div>
                     </div>
@@ -151,7 +151,7 @@
                             <div class="flex-1">
                                 <div class="font-medium text-gray-900">{{ $beverage->name }}</div>
                                 @if ($beverage->description)
-                                    <div class="text-sm text-gray-500">{{ $beverage->description }}</div>
+                                    <div class="text-sm text-gray-500">{!! $beverage->description !!}</div>
                                 @endif
                                 @if ($beverage->contains_alcohol)
                                     <span
@@ -182,20 +182,16 @@
         </div>
 
         @if ($currentStep < $totalSteps)
-            <button wire:click="nextStep"
+            <button wire:key="next-step-{{ $currentStep }}" wire:click="nextStep"
                 class="px-4 py-2 bg-primary-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
                 Next Step
             </button>
         @else
-            <button wire:click="signup"
+            <button wire:key="complete-signup-{{ $currentStep }}" wire:click="signup"
                 class="px-6 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
                 Complete Signup
             </button>
         @endif
-        <button wire:click="signup"
-            class="px-6 py-2 bg-green-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200">
-            Complete Signup
-        </button>
     </div>
 
     <div class="mt-6 p-4 bg-gray-50 rounded-lg">

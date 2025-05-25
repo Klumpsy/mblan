@@ -150,7 +150,7 @@ class EditionSignup extends Component
             );
 
             session()->flash('success', 'Successfully signed up for ' . $this->edition->name . '!');
-            $this->dispatch('signup-completed');
+            $this->redirect('/dashboard');
             $this->reset(['currentStep', 'selectedSchedules', 'selectedBeverages', 'staysOnCampsite', 'joinsBarbecue']);
         } catch (\Exception $e) {
             session()->flash('error', 'Something went wrong. Please try again.');
