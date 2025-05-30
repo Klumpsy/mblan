@@ -10,6 +10,6 @@ class TournamentController extends Controller
     public function index()
     {
         $tournaments = Tournament::all();
-        return view('tournaments', compact('tournaments'));
+        return view('tournaments.index', compact('tournaments'));
     }
 }

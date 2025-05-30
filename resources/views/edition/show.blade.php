@@ -66,7 +66,7 @@
                             <div class="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
                                 @foreach ($edition->confirmedSignups as $signup)
                                     <span
-                                        class="inline-block bg-primary-200 text-primary-800 py-2 px-2 rounded-full me-2">
+                                        class="inline-block bg-gray-600 text-primary-200 py-2 px-2 rounded-full me-2">
                                         {{ $signup->user->name }}
                                     </span>
                                 @endforeach

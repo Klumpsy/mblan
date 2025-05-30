@@ -58,15 +58,10 @@
 
                         <div class="space-y-3 mb-4">
                             <div class="flex items-center text-sm">
-                                <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
-                                    </path>
-                                </svg>
+                                <x-heroicon-o-calendar class="w-5 h-15 text-gray-400 mr-3"/>
                                 @foreach ($signup->schedules as $schedule)
                                     <span
-                                        class="inline-flex flex-col items-center bg-primary-200 text-primary-700 px-4 py-2 rounded-full me-2">
+                                        class="inline-flex flex-col items-center  text-primary-400 me-2 border-r-2 pr-2 last:border-r-0 border-gray-100 dark:border-gray-700">
                                         <span class="text-xs font-medium uppercase">
                                             {{ \Carbon\Carbon::parse($schedule->date)->format('D') }}
                                         </span>
@@ -78,22 +73,17 @@
                             </div>
 
                             <div class="flex items-center text-sm">
-                                <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                    </path>
-                                </svg>
+                                <x-heroicon-o-fire class="w-5 h-15 text-gray-400 mr-1"/>
                                 <div class="text-gray-600 dark:text-gray-300">
                                     @if ($signup->stays_on_campsite)
                                         <span
-                                            class="inline-block bg-violet-200 text-violet-700 py-2 px-2 rounded-full me-2">
+                                            class="inline-block text-violet-400 py-2 px-2 rounded-full me-2">
                                             🏕️ CAMPSITE
                                         </span>
                                     @endif
                                     @if ($signup->joins_barbecue)
                                         <span
-                                            class="inline-block bg-violet-200 text-violet-700 py-2 px-2 rounded-full me-2">
+                                            class="inline-block  text-violet-400 py-2 px-2 rounded-full me-2">
                                             🍖 BBQ
                                         </span>
                                     @endif
@@ -101,23 +91,24 @@
                             </div>
 
                             <div class="flex items-center text-sm">
-                                <svg class="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
-                                    </path>
-                                </svg>
-                                @foreach ($signup->beverages as $beverage)
-                                    <span
-                                        class="inline-block bg-primary-700 text-xs text-primary-200 px-2 py-2 rounded-full me-2 uppercase font-semibold tracking-wide">
-                                        {{ $beverage->name }}
+                            <x-heroicon-o-shopping-cart class="w-5 h-15 text-gray-400 mr-3"/>
+                                @if($signup->beverages->isEmpty())
+                                    <span class="text-gray-600 dark:text-gray-300">
+                                        You have no prevered beverages.
                                     </span>
-                                @endforeach
+                                @else
+                                    @foreach ($signup->beverages as $beverage)
+                                        <span
+                                            class="inline-block bg-primary-700 text-xs text-primary-200 px-2 py-2 rounded-full me-2 uppercase font-semibold tracking-wide">
+                                            {{ $beverage->name }}
+                                        </span>
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
 
                         <a href="/editions/{{ $signup->edition->slug }}"
-                            class="block w-full text-center bg-primary-50 hover:bg-primary-100 text-primary-600 font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
+                            class="block w-full text-center dark:bg-gray-700 dark:hover:bg-gray-600 hover:bg-primary-100 text-primary-400 font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
                             View Details
                         </a>
                     </div>

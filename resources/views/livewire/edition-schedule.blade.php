@@ -1,6 +1,6 @@
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
     <h2
-        class="text-xl font-bold text-gray-900 dark:text-white p-4 border-b border-gray-200 dark:border-gray-700 bg-primary-100 dark:bg-primary-900">
+        class="text-xl font-bold text-gray-900 dark:text-white p-4 border-b border-gray-200 dark:border-gray-700 bg-primary-100 dark:bg-gray-700">
         <div class="flex justify-between items-center">
             <span>Schedule</span>
             @if ($dates->isNotEmpty())

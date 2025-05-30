@@ -9,8 +9,17 @@ class GameController extends Controller
 {
     public function index(): View
     {
-        $games = Game::all();
-        return view('games.index', compact('games'));
+        $query = Game::query();
+
+        if (request('search')) {
+            $query->where('name', 'like', '%' . request('search') . '%');
+        }
+
+        $games = $query->paginate(5)->withQueryString();
+
+        return view('games.index', [
+            'games' => $games
+        ]);
     }
 
     public function show(string $id): View
