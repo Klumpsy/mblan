@@ -22,8 +22,8 @@ class EditionController extends Controller
 
     public function signup(string $slug): View
     {
-        return view('edition.signup', [
-            'edition' => Edition::where('slug', $slug)->firstOrFail()
-        ]);
+        $edition = Edition::where('slug', $slug)->firstOrFail();    
+        $this->authorize('signup', $edition);   
+        return view('edition.signup', ['edition' => $edition]);
     }
 }

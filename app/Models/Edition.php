@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Edition extends Model
 {
@@ -49,7 +50,7 @@ class Edition extends Model
 
     public function loggedInUserHasConfirmedSignup($userId = null): bool
     {
-        $userId = $userId ?? auth()->id();
+        $userId = $userId ?? Auth::id();
         return $this->confirmedSignups()->where('user_id', $userId)->exists();
     }
 }

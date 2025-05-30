@@ -4,7 +4,9 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
+use App\Models\Edition;
 use App\Models\User;
+use App\Policies\EditionPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -27,5 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('access-admin-panel', function (User $user) {
             return $user->hasRole('admin');
         });
+
+        Gate::policy(Edition::class, EditionPolicy::class);
     }
 }

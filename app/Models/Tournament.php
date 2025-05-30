@@ -30,9 +30,4 @@ class Tournament extends Model
     {
         return $this->belongsTo(Schedule::class);
     }
-
-    public function participants(): BelongsToMany
-    {
-        return $this->belongsToMany(User::class, 'tournament_user');
-    }
 }

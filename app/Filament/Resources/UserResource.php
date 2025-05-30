@@ -47,7 +47,6 @@ class UserResource extends Resource
                 Select::make('role')
                     ->options([
                         'user' => 'User',
-                        'participant' => "Participant",
                         'admin' => 'Admin',
                     ])
                     ->default('user')

@@ -22,10 +22,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'user',
         ]);
 
-        $participants = User::factory()->count(3)->create([
-            'role' => 'participant',
-        ]);
-
         $this->call([
             GameSeeder::class,
             EditionSeeder::class,
@@ -34,17 +30,5 @@ class DatabaseSeeder extends Seeder
 
         $mblan24 = Edition::where('slug', 'mblan24')->first();
         $mblan25 = Edition::where('slug', 'mblan25')->first();
-
-        $participants->each(function ($participant) use ($mblan24, $mblan25) {
-            $random = rand(1, 3);
-
-            if ($random == 1 || $random == 3) {
-                $mblan24->participants()->attach($participant->id);
-            }
-
-            if ($random == 2 || $random == 3) {
-                $mblan25->participants()->attach($participant->id);
-            }
-        });
     }
 }
