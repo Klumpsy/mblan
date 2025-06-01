@@ -10,66 +10,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<style>
-    @keyframes gradientAnimation {
-        0% {
-            background-position: 0% 50%;
-        }
-
-        50% {
-            background-position: 100% 50%;
-        }
-
-        100% {
-            background-position: 0% 50%;
-        }
-    }
-
-    @keyframes glow {
-        0% {
-            filter: drop-shadow(0 0 5px rgba(255, 120, 0, 0.6));
-        }
-
-        33% {
-            filter: drop-shadow(0 0 15px rgba(255, 51, 102, 0.7));
-        }
-
-        66% {
-            filter: drop-shadow(0 0 15px rgba(147, 51, 234, 0.7));
-        }
-
-        100% {
-            filter: drop-shadow(0 0 5px rgba(255, 120, 0, 0.6));
-        }
-    }
-
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-            transform: scale(0.95);
-        }
-
-        100% {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-
-    .animate-gradient {
-        background: linear-gradient(-45deg, #ff8500, #ff6b00, #ff3366, #9333ea, #ff6b00);
-        background-size: 400% 400%;
-        animation: gradientAnimation 15s ease infinite;
-    }
-
-    .animate-glow {
-        animation: glow 4s infinite;
-    }
-</style>
-
 <body class="antialiased">
     <x-flash-message />
-    <div class="relative flex justify-center items-center min-h-screen bg-cover bg-center animate-gradient">
-
+    <div class="relative flex justify-center items-center min-h-screen bg-cover bg-center bg-gradient-to-r from-purple-500 to-pink-500">
         <div class="max-w-7xl mx-auto p-6 lg:p-8 flex justify-center items-center relative z-10">
             <div class="flex flex-col items-center">
                 <img src="{{ asset('images/logo.svg') }}" alt="MBLAN Logo"

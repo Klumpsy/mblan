@@ -81,4 +81,12 @@ class User extends Authenticatable
     {
         return $this->signups()->where('edition_id', $edition->id)->exists();
     }
+
+    public function tournamentsWithScores(): BelongsToMany
+    {
+        return $this->belongsToMany(Tournament::class, 'tournament_user_pivot')
+                    ->withPivot('score', 'ranking')
+                    ->withTimestamps();
+    }
+
 }
