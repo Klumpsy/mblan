@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::table('tournaments', function (Blueprint $table) {
             if (!Schema::hasColumn('tournaments', 'schedule')) {
                 $table->foreignId('schedule_id')->constrained('schedules')->onDelete('cascade');
+                $table->boolean(('is_active'))->default(false);
             }
         });
     }
@@ -19,6 +20,7 @@ return new class extends Migration
     {
         Schema::table('tournaments', function (Blueprint $table) {
             $table->dropColumn('schedule_id');
+            $table->dropColumn('is_active');
         });
     }
 };

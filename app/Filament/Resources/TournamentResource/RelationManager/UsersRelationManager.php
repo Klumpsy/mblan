@@ -39,13 +39,13 @@ class UsersWithScoresRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('name')->label('User'),
-                TextColumn::make('pivot.score')->label('Score')->sortable(query: fn ($query, $direction) => $query->orderBy('tournament_user_pivot.score', $direction)),
-                TextColumn::make('pivot.ranking')->label('Ranking')->sortable(query: fn ($query, $direction) => $query->orderBy('tournament_user_pivot.ranking', $direction)),
+                TextColumn::make('pivot.score')->label('Score')->sortable(query: fn($query, $direction) => $query->orderBy('tournament_user_pivot.score', $direction)),
+                TextColumn::make('pivot.ranking')->label('Ranking')->sortable(query: fn($query, $direction) => $query->orderBy('tournament_user_pivot.ranking', $direction)),
             ])
             ->defaultSort('tournament_user_pivot.ranking', 'asc')
             ->headerActions([
                 AttachAction::make()
-                    ->form(fn () => [
+                    ->form(fn() => [
                         Select::make('recordId')
                             ->label('User')
                             ->options(function () {
@@ -62,18 +62,19 @@ class UsersWithScoresRelationManager extends RelationManager
                             ->placeholder('Select a user'),
                         TextInput::make('score')
                             ->numeric()
+                            ->default(0)
                             ->required(),
                     ])
-                    ->mutateFormDataUsing(fn (array $data) => [
+                    ->mutateFormDataUsing(fn(array $data) => [
                         'recordId' => $data['recordId'],
                         'score' => $data['score'],
                     ])
-                    ->after(fn () => $this->recalculateRanking())
+                    ->after(fn() => $this->recalculateRanking())
                     ->preloadRecordSelect(),
             ])
             ->actions([
                 EditAction::make()
-                    ->after(fn () => $this->recalculateRanking()),
+                    ->after(fn() => $this->recalculateRanking()),
                 DetachAction::make(),
             ])
             ->bulkActions([
@@ -84,7 +85,9 @@ class UsersWithScoresRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('score')->numeric()->required(),
+            TextInput::make('score')->numeric()->required()
+                ->label('Score')
+                ->helperText('Enter the score for the user in this tournament.'),
         ]);
     }
 }

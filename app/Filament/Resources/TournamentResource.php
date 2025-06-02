@@ -9,13 +9,16 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\TextArea;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+
 class TournamentResource extends Resource
 {
     protected static ?string $model = Tournament::class;
@@ -29,6 +32,11 @@ class TournamentResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
+
+                Toggle::make('is_active')
+                    ->label('Active')
+                    ->onIcon('heroicon-o-check')
+                    ->default(false),
 
                 TextArea::make('description')
                     ->rows(3),
@@ -49,7 +57,7 @@ class TournamentResource extends Resource
 
                 Select::make('schedule_id')
                     ->relationship('schedule', 'name')
-                    ->nullable(),
+                    ->required(),
             ]);
     }
 
@@ -58,6 +66,8 @@ class TournamentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->sortable()->searchable(),
+                ToggleColumn::make('is_active')
+                    ->label('Active'),
                 TextColumn::make('game.name')->label('Game'),
                 TextColumn::make('day')->sortable(),
                 TextColumn::make('time_start')->dateTime(),
