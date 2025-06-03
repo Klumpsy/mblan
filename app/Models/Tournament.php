@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,8 +36,8 @@ class Tournament extends Model
     public function usersWithScores(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'tournament_user_pivot')
-                    ->withPivot('score', 'ranking')
-                    ->withTimestamps();
+            ->withPivot('score', 'ranking')
+            ->withTimestamps();
     }
 
     public function updateRankings(): void
@@ -70,6 +71,16 @@ class Tournament extends Model
     {
         $this->usersWithScores()->updateExistingPivot($userId, ['score' => $score]);
         $this->updateRankings();
+    }
+
+    public function hasYetToStart(): bool
+    {
+        $start = Carbon::parse("{$this->schedule->date} {$this->time_start}");
+
+        return (
+            (int)$this->schedule->edition->year === now()->year &&
+            now()->lt($start)
+        );
     }
 
     public function getLeaderboard(): Collection

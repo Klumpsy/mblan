@@ -2,17 +2,25 @@
 
 namespace App\Livewire;
 
+use App\Models\Edition;
 use App\Models\Tournament;
 use Livewire\Component;
 
 class TournamentEditionFilter extends Component
 {
     public $year;
+    public $selectOptions = [];
     public $tournaments;
 
     public function mount()
     {
         $this->year = now()->year;
+        $this->selectOptions = Edition::whereHas('schedules.tournaments')
+            ->pluck('year')
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
         $this->loadTournaments();
     }
 
@@ -24,9 +32,7 @@ class TournamentEditionFilter extends Component
     public function loadTournaments()
     {
         $this->tournaments = Tournament::whereHas('schedule.edition', function ($query) {
-            if ($this->year) {
-                $query->where('year', $this->year);
-            }
+            $query->where('year', $this->year);
         })->with('schedule.edition')->get();
     }
 

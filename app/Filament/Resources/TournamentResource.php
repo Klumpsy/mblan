@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TournamentResource\Pages;
-use App\Filament\Resources\TournamentResource\RelationManagers\UsersWithScoresRelationManager;
+use App\Filament\Resources\TournamentResource\RelationManager\UsersRelationManager;
 use App\Models\Tournament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -69,7 +69,8 @@ class TournamentResource extends Resource
                 ToggleColumn::make('is_active')
                     ->label('Active'),
                 TextColumn::make('game.name')->label('Game'),
-                TextColumn::make('day')->sortable(),
+                TextColumn::make('schedule.name')->sortable(),
+                TextColumn::make('schedule.edition.year')->sortable(),
                 TextColumn::make('time_start')->dateTime(),
                 TextColumn::make('time_end')->dateTime(),
             ])
@@ -86,7 +87,7 @@ class TournamentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            UsersWithScoresRelationManager::class,
+            UsersRelationManager::class,
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\TournamentResource\RelationManagers;
+namespace App\Filament\Resources\TournamentResource\RelationManager;
 
 use App\Models\User;
 use Filament\Forms\Form;
@@ -14,7 +14,7 @@ use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Actions\DetachBulkAction;
 use Filament\Tables\Columns\TextColumn;
 
-class UsersWithScoresRelationManager extends RelationManager
+class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'usersWithScores';
 
