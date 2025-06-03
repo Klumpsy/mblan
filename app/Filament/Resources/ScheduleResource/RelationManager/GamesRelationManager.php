@@ -3,11 +3,17 @@
 namespace App\Filament\Resources\ScheduleResource\RelationManager;
 
 use App\Models\Game;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TimePicker;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Actions\AttachAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\DetachAction;
+use Filament\Tables\Actions\DetachBulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
 use Carbon\Carbon;
 
 class GamesRelationManager extends RelationManager
@@ -18,14 +24,14 @@ class GamesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('game_id')
+                Select::make('game_id')
                     ->label('Game')
                     ->options(fn() => Game::orderBy('name')->pluck('name', 'id'))
                     ->required()
                     ->searchable()
                     ->preload()
                     ->placeholder('Select a game'),
-                Forms\Components\TimePicker::make('start_time')
+                TimePicker::make('start_time')
                     ->label('Start Time')
                     ->native(false)
                     ->required()
@@ -34,7 +40,7 @@ class GamesRelationManager extends RelationManager
                     ->seconds(false)
                     ->hoursStep(1)
                     ->minutesStep(15),
-                Forms\Components\TimePicker::make('end_time')
+                TimePicker::make('end_time')
                     ->label('End Time')
                     ->native(false)
                     ->required()
@@ -51,17 +57,17 @@ class GamesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label('Game')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('pivot.start_date')
+                TextColumn::make('pivot.start_date')
                     ->label('Start Time')
                     ->dateTime('H:i')
                     ->sortable(query: function ($query, $direction) {
                         return $query->orderBy('game_schedule.start_date', $direction);
                     }),
-                Tables\Columns\TextColumn::make('pivot.end_date')
+                TextColumn::make('pivot.end_date')
                     ->label('End Time')
                     ->dateTime('H:i')
                     ->sortable(query: function ($query, $direction) {
@@ -72,16 +78,16 @@ class GamesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
-                    ->form(fn(Tables\Actions\AttachAction $action) => [
-                        Forms\Components\Select::make('recordId')
+                AttachAction::make()
+                    ->form(fn() => [
+                        Select::make('recordId')
                             ->label('Game')
                             ->options(fn() => \App\Models\Game::orderBy('name')->pluck('name', 'id'))
                             ->required()
                             ->searchable()
                             ->preload()
                             ->placeholder('Select a game'),
-                        Forms\Components\TimePicker::make('start_time')
+                        TimePicker::make('start_time')
                             ->label('Start Time')
                             ->native(false)
                             ->required()
@@ -90,7 +96,7 @@ class GamesRelationManager extends RelationManager
                             ->seconds(false)
                             ->hoursStep(1)
                             ->minutesStep(15),
-                        Forms\Components\TimePicker::make('end_time')
+                        TimePicker::make('end_time')
                             ->label('End Time')
                             ->native(false)
                             ->required()
@@ -118,12 +124,12 @@ class GamesRelationManager extends RelationManager
                     ->preloadRecordSelect(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
+                EditAction::make(),
+                DetachAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DetachBulkAction::make(),
+                BulkActionGroup::make([
+                    DetachBulkAction::make(),
                 ]),
             ]);
     }

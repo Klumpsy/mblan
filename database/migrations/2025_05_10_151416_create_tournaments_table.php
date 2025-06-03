@@ -15,9 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name', 100);
             $table->text('description')->nullable();
-            $table->timestamp('time_start')->nullable();
-            $table->timestamp('time_end')->nullable();
-            $table->date('day')->nullable();
+            $table->time('time_start')->nullable();
+            $table->time('time_end')->nullable();
             $table->foreignId('game_id')->constrained('games')->onDelete('cascade');
             $table->timestamps();
         });
