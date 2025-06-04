@@ -5,8 +5,11 @@ namespace App\Providers;
 // use Illuminate\Support\Facades\Gate;
 
 use App\Models\Edition;
+use App\Models\Tournament;
 use App\Models\User;
 use App\Policies\EditionPolicy;
+use App\Policies\TournamentPolicy;
+use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
@@ -31,5 +34,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::policy(Edition::class, EditionPolicy::class);
+        Gate::policy(Tournament::class, TournamentPolicy::class);
+        Gate::policy(User::class, UserPolicy::class);
     }
 }
