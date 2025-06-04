@@ -5,7 +5,7 @@ namespace Tests\Feature\Livewire\Edition;
 use App\Livewire\Edition\Schedule;
 use App\Models\Edition;
 use App\Models\Game;
-use App\Models\Schedule;
+use App\Models\Schedule as ScheduleModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -21,11 +21,11 @@ class ScheduleTest extends TestCase
             'year' => date('Y'),
         ]);
 
-        $schedule1 = Schedule::factory()
+        $schedule1 = ScheduleModel::factory()
             ->forEdition($edition)
             ->create(['name' => 'Day 1']);
 
-        $schedule2 = Schedule::factory()
+        $schedule2 = ScheduleModel::factory()
             ->forEdition($edition)
             ->create(['name' => 'Day 2']);
 
@@ -59,11 +59,11 @@ class ScheduleTest extends TestCase
             'year' => date('Y'),
         ]);
 
-        $schedule1 = Schedule::factory()
+        $schedule1 = ScheduleModel::factory()
             ->forEdition($edition)
             ->create(['name' => 'Day 1']);
 
-        $schedule2 = Schedule::factory()
+        $schedule2 = ScheduleModel::factory()
             ->forEdition($edition)
             ->create(['name' => 'Day 2']);
 
