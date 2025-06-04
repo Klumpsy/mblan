@@ -1,11 +1,11 @@
 <div
     class="p-6 lg:p-8 bg-white dark:bg-gray-800 dark:bg-gradient-to-bl dark:from-gray-700/50 dark:via-transparent border-b border-gray-200 dark:border-gray-700">
-    <h2 class="mt-8 text-2xl font-medium text-primary-40 text-primary-400">
+    <h2 class="mt-2 text-2xl font-medium text-primary-40 text-primary-400">
         Your events
     </h2>
 
     <p class="mt-6 mb-6 text-gray-500 dark:text-white leading-relaxed">
-        Bekijk de events waar je je voor hebt ingeschreven.
+        Your upcoming eventss are listed below. Click on an event to view more details or manage your signup.
     </p>
 
     @foreach ($user->signups as $signup)
@@ -58,7 +58,7 @@
 
                         <div class="space-y-3 mb-4">
                             <div class="flex items-center text-sm">
-                                <x-heroicon-o-calendar class="w-5 h-15 text-gray-400 mr-3"/>
+                                <x-heroicon-o-calendar class="w-5 h-15 text-gray-400 mr-3" />
                                 @foreach ($signup->schedules as $schedule)
                                     <span
                                         class="inline-flex flex-col items-center  text-primary-400 me-2 border-r-2 pr-2 last:border-r-0 border-gray-100 dark:border-gray-700">
@@ -73,17 +73,15 @@
                             </div>
 
                             <div class="flex items-center text-sm">
-                                <x-heroicon-o-fire class="w-5 h-15 text-gray-400 mr-1"/>
+                                <x-heroicon-o-fire class="w-5 h-15 text-gray-400 mr-1" />
                                 <div class="text-gray-600 dark:text-gray-300">
                                     @if ($signup->stays_on_campsite)
-                                        <span
-                                            class="inline-block text-violet-400 py-2 px-2 rounded-full me-2">
+                                        <span class="inline-block text-violet-400 py-2 px-2 rounded-full me-2">
                                             🏕️ CAMPSITE
                                         </span>
                                     @endif
                                     @if ($signup->joins_barbecue)
-                                        <span
-                                            class="inline-block  text-violet-400 py-2 px-2 rounded-full me-2">
+                                        <span class="inline-block  text-violet-400 py-2 px-2 rounded-full me-2">
                                             🍖 BBQ
                                         </span>
                                     @endif
@@ -91,8 +89,8 @@
                             </div>
 
                             <div class="flex items-center text-sm">
-                            <x-heroicon-o-shopping-cart class="w-5 h-15 text-gray-400 mr-3"/>
-                                @if($signup->beverages->isEmpty())
+                                <x-heroicon-o-shopping-cart class="w-5 h-15 text-gray-400 mr-3" />
+                                @if ($signup->beverages->isEmpty())
                                     <span class="text-gray-600 dark:text-gray-300">
                                         You have no prevered beverages.
                                     </span>

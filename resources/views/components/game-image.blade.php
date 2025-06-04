@@ -1,20 +1,7 @@
-@props(['game', 'size' => 'md', 'class' => ''])
-
-@php
-    $sizes = [
-        'sm' => 'w-16 h-20',
-        'md' => 'w-24 h-32',
-        'lg' => 'w-32 h-48',
-        'xl' => 'w-40 h-30',
-        'cover' => 'w-40 h-56',
-        'thumb' => 'w-20 h-12',
-    ];
-
-    $sizeClass = $sizes[$size] ?? $sizes['md'];
-@endphp
+@props(['game'])
 
 <div
-    class="{{ $sizeClass }} {{ $class }} overflow-hidden rounded-lg flex-shrink-0 bg-gray-200 dark:bg-gray-700">
+    class="aspect-video w-full md:aspect-[16/9] sm:w-[180px] overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700 flex-shrink-0">
     @if ($game->image)
         <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}" class="w-full h-full object-cover"
             loading="lazy">

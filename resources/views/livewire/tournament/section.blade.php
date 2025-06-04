@@ -92,10 +92,15 @@
                         @endif
                     </div>
                 </div>
-                <img src="{{ asset('storage/' . $tournament->game->image) }}" alt="{{ $tournament->game->name }}"
-                    class="w-full h-96 object-cover my-4">
+
+                <div class="w-full aspect-video my-4 rounded-lg overflow-hidden">
+                    <img src="{{ asset('storage/' . $tournament->game->image) }}" alt="{{ $tournament->game->name }}"
+                        class="w-full h-full object-cover">
+                </div>
+
                 <p class="text-gray-600 dark:text-gray-400">{{ $tournament->description }}</p>
             </div>
+
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 rounded-md">
                     <thead class="bg-gray-50 dark:bg-gray-700">
@@ -114,7 +119,12 @@
                     <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         @foreach ($tournament->getLeaderboard() as $leaderboardRow)
                             <tr class="@if ($leaderboardRow['name'] === auth()->user()->name) bg-gray-300 dark:bg-gray-900 @endif">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                                <td
+                                    class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200 flex items-center">
+                                    <img src="{{ $leaderboardRow['profile_photo_path'] ?? asset('images/default-avatar.png') }}"
+                                        alt="{{ $leaderboardRow['name'] }}'s Avatar"
+                                        class="inline-block w-10 h-10 aspect-square rounded-full mr-2">
+
                                     @switch($leaderboardRow['ranking'])
                                         @case(1)
                                             <span class="text-yellow-500 font-bold">1st</span>
@@ -132,14 +142,17 @@
                                             {{ $leaderboardRow['ranking'] . 'th' }}
                                     @endswitch
                                 </td>
+
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                     {{ $leaderboardRow['name'] }}
                                 </td>
+
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                     {{ $leaderboardRow['score'] }}
                                 </td>
                             </tr>
                         @endforeach
+
                     </tbody>
                 </table>
             </div>

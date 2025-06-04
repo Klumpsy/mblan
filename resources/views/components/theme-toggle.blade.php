@@ -1,5 +1,5 @@
 <button id="theme-toggle"
-    {{ $attributes->merge(['class' => 'flex justify-between px-3 py-2 rounded-lg bg-dark-200 dark:bg-dark-700']) }}>
+    {{ $attributes->merge(['class' => 'flex justify-between block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-800 transition duration-150 ease-in-out']) }}>
     <span class="mr-2 text-sm text-dark-700 dark:text-white"> {{ __('Toggle Theme') }}</span>
     <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
         <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>

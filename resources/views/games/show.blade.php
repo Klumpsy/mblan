@@ -24,31 +24,30 @@
                     Back to Games
                 </a>
                 <div>
-                    <livewire:game-like :game="$game" />
+                    <livewire:game.like :game="$game" />
                 </div>
             </div>
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg mb-8">
-                <div class="relative">
-
+                <div class="relative w-full aspect-video"> <!-- aspect ratio 16:9 -->
                     @if ($game->image)
                         <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}"
-                            class="w-full h-96 object-cover">
+                            class="w-full h-full object-cover">
 
-                        <div class="absolute bottom-0 left-0 right-0 bg-black/70 p-6"
-                            style="background-color: rgba(0, 0, 0, 0.7);">
+                        <div class="absolute bottom-0 left-0 right-0 bg-black/70 p-6">
                             <h2 class="text-4xl font-bold text-primary-400 mb-2">{{ $game->name }}</h2>
                             <span class="text-gray-200 dark:text-white text-lg max-w-3xl">
                                 {!! $game->short_description !!}
                             </span>
                         </div>
                     @else
-                        <div class="w-full h-96 flex items-center justify-center bg-gray-200 dark:bg-gray-700">
+                        <div class="w-full h-full flex items-center justify-center bg-gray-200 dark:bg-gray-700">
                             <span class="text-gray-500 dark:text-gray-400">No image available</span>
                         </div>
                     @endif
                 </div>
             </div>
+
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="md:col-span-2 space-y-6" x-data="{ openSection: 1 }">

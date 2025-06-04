@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Tournament;
 
 use App\Models\Tournament;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class TournamentSection extends Component
+class Section extends Component
 {
     public Tournament $tournament;
     public bool $inactive = false;
@@ -62,6 +62,6 @@ class TournamentSection extends Component
 
     public function render()
     {
-        return view('livewire.tournament-section');
+        return view('livewire.tournament.section');
     }
 }

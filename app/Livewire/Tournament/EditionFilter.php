@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Tournament;
 
 use App\Models\Edition;
 use App\Models\Tournament;
 use Livewire\Component;
 
-class TournamentEditionFilter extends Component
+class EditionFilter extends Component
 {
     public $year;
     public $selectOptions = [];
@@ -38,6 +38,6 @@ class TournamentEditionFilter extends Component
 
     public function render()
     {
-        return view('livewire.tournament-edition-filter');
+        return view('livewire.tournament.edition-filter');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Edition;
 
 use App\Models\Edition;
 use App\Models\Signup;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
 
-class EditionSignup extends Component
+class Signup extends Component
 {
     public Edition $edition;
 
@@ -32,7 +32,7 @@ class EditionSignup extends Component
         $schedules = $this->edition->schedules;
         $beverages = Beverage::all();
 
-        return view('livewire.edition-signup', [
+        return view('livewire.edition.signup', [
             'user' => Auth::user(),
             'schedules' => $schedules,
             'beverages' => $beverages,

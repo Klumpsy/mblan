@@ -94,7 +94,7 @@ class Tournament extends Model
                     'name' => $user->name,
                     'score' => $user->pivot->score,
                     'ranking' => $user->pivot->ranking,
-                    'profile_photo_url' => $user->profile_photo_url ?? null,
+                    'profile_photo_path' => $user->profile_photo_path ?? null,
                 ];
             });
     }

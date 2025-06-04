@@ -75,7 +75,7 @@
                                 <div
                                     class="flex flex-col sm:flex-row border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
                                     <div class="flex justify-center sm:justify-start p-2 sm:p-3">
-                                        <x-game-image :game="$game" size="lg" />
+                                        <x-game-image :game="$game" />
                                     </div>
 
                                     <div class="flex-grow p-4">

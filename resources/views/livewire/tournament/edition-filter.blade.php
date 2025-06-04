@@ -14,7 +14,7 @@
 
             @foreach ($tournaments as $tournament)
                 @if ($tournament->is_active)
-                    <livewire:tournament-section :tournament="$tournament" wire:key="key-{{ $tournament->id }}" />
+                    <livewire:tournament.section :tournament="$tournament" wire:key="key-{{ $tournament->id }}" />
                 @endif
             @endforeach
         </div>
@@ -24,7 +24,7 @@
             <div class="grid w-100 h-100 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($tournaments as $tournament)
                     @if (!$tournament->is_active && $tournament->hasYetToStart())
-                        <livewire:tournament-section :tournament="$tournament" inactive
+                        <livewire:tournament.section :tournament="$tournament" inactive
                             wire:key="upcoming-key-{{ $tournament->id }}" />
                     @endif
                 @endforeach
@@ -36,7 +36,7 @@
             <div class="grid w-100 h-100 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($tournaments as $tournament)
                     @if (!$tournament->is_active && !$tournament->hasYetToStart())
-                        <livewire:tournament-section :tournament="$tournament" inactive
+                        <livewire:tournament.section :tournament="$tournament" inactive
                             wire:key="past-key-{{ $tournament->id }}" />
                     @endif
                 @endforeach

@@ -15,10 +15,15 @@
                         class="whitespace-nowrap mt-2 md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors cursor-pointer">
                         Sign up for {{ $edition->name }}
                     </a>
-                @elseif(auth()->user()->hasSignedUpFor($edition))
+                @elseif(auth()->user()->hasSignedUpFor($edition) && $edition->loggedInUserHasConfirmedSignup())
                     <span
                         class="bg-green-800 text-green-100 dark:text-green-400 dark:bg-green-800 px-3 py-1 rounded-full">
                         Participating
+                    </span>
+                @else
+                    <span
+                        class="bg-primary-300 text-primary-800 dark:text-primary-800 dark:bg-primary-300 px-3 py-1 rounded-full">
+                        Signup pending
                     </span>
                 @endif
             </div>
@@ -65,8 +70,7 @@
                                 edition:</h2>
                             <div class="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
                                 @foreach ($edition->confirmedSignups as $signup)
-                                    <span
-                                        class="inline-block bg-gray-600 text-primary-200 py-2 px-2 rounded-full me-2">
+                                    <span class="inline-block bg-gray-600 text-primary-200 py-2 px-2 rounded-full me-2">
                                         {{ $signup->user->name }}
                                     </span>
                                 @endforeach
@@ -76,7 +80,7 @@
                 </div>
             @endif
 
-            <livewire:edition-schedule :edition="$edition" />
+            <livewire:edition.schedule :edition="$edition" />
 
             @if ($edition->hasGames())
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mt-6">
