@@ -11,6 +11,7 @@
     <div>
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-4 my-2">
             <h2 class="text-2xl text-primary-400 mb-3">Active tournament</h2>
+
             @foreach ($tournaments as $tournament)
                 @if ($tournament->is_active)
                     <livewire:tournament-section :tournament="$tournament" wire:key="key-{{ $tournament->id }}" />

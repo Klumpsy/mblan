@@ -92,6 +92,8 @@
                         @endif
                     </div>
                 </div>
+                <img src="{{ asset('storage/' . $tournament->game->image) }}" alt="{{ $tournament->game->name }}"
+                    class="w-full h-96 object-cover my-4">
                 <p class="text-gray-600 dark:text-gray-400">{{ $tournament->description }}</p>
             </div>
             <div class="overflow-x-auto">
