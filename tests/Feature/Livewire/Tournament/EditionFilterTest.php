@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Tournament;
 
-use App\Livewire\TournamentEditionFilter;
+use App\Livewire\Tournament\EditionFilter;
 use App\Models\Edition;
 use App\Models\Schedule;
 use App\Models\Tournament;
@@ -12,7 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class TournamentEditionFilterTest extends TestCase
+class EditionFilterTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -35,7 +35,7 @@ class TournamentEditionFilterTest extends TestCase
         ]);
 
         Livewire::actingAs($user)
-            ->test(TournamentEditionFilter::class)
+            ->test(EditionFilter::class)
             ->assertStatus(200)
             ->assertSee('2025')
             ->assertSee('Active tournament')

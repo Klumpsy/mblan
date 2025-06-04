@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Edition;
 
 use Livewire\Component;
 use App\Models\Edition;
 use Carbon\Carbon;
 
-class EditionSchedule extends Component
+class Schedule extends Component
 {
     public Edition $edition;
     public $activeDate = null;
@@ -61,7 +61,7 @@ class EditionSchedule extends Component
             }
         }
 
-        return view('livewire.edition-schedule', [
+        return view('livewire.edition.schedule', [
             'dates' => $dates,
             'schedulesForDate' => $schedulesForDate,
         ]);

@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Edition;
 
-use App\Livewire\EditionSchedule;
+use App\Livewire\Edition\Schedule;
 use App\Models\Edition;
 use App\Models\Game;
 use App\Models\Schedule;
@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class EditionScheduleTest extends TestCase
+class ScheduleTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -45,7 +45,7 @@ class EditionScheduleTest extends TestCase
             'end_date' => $tomorrow->copy()->addHours(2),
         ]);
 
-        Livewire::test(EditionSchedule::class, ['edition' => $edition])
+        Livewire::test(Schedule::class, ['edition' => $edition])
             ->assertSee('Day 1')
             ->assertSee('Game One')
             ->assertDontSee('Day 2')
@@ -84,7 +84,7 @@ class EditionScheduleTest extends TestCase
             'end_date' => $tomorrow->copy()->addHours(2),
         ]);
 
-        Livewire::test(EditionSchedule::class, ['edition' => $edition])
+        Livewire::test(Schedule::class, ['edition' => $edition])
             ->assertSee('Day 1')
             ->assertSee('Game One')
             ->assertDontSee('Day 2')

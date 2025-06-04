@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Game;
 
 use App\Models\Game;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-class GameLike extends Component
+class Like extends Component
 {
     public Game $game;
     public bool $isLiked = false;
@@ -20,7 +20,7 @@ class GameLike extends Component
 
     public function render()
     {
-        return view('livewire.game-like');
+        return view('livewire.game.like');
     }
 
     public function toggleLike()

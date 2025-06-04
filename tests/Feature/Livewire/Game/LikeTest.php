@@ -1,15 +1,15 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Game;
 
-use App\Livewire\GameLike;
+use App\Livewire\Game\Like;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
 
-class GameLikeTest extends TestCase
+class LikeTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -21,10 +21,10 @@ class GameLikeTest extends TestCase
         $user->likedGames()->attach($game->id);
 
         Livewire::actingAs($user)
-            ->test(GameLike::class, ['game' => $game])
+            ->test(Like::class, ['game' => $game])
             ->assertSet('likesCount', 1);
 
-        Livewire::test(GameLike::class, ['game' => $game])
+        Livewire::test(Like::class, ['game' => $game])
             ->assertSet('likesCount', 1);
     }
 
@@ -32,7 +32,7 @@ class GameLikeTest extends TestCase
     {
         $game = Game::factory()->create();
 
-        Livewire::test(GameLike::class, ['game' => $game])
+        Livewire::test(Like::class, ['game' => $game])
             ->call('toggleLike')
             ->assertDispatched('login-required');
     }
@@ -43,7 +43,7 @@ class GameLikeTest extends TestCase
         $game = Game::factory()->create();
 
         Livewire::actingAs($user)
-            ->test(GameLike::class, ['game' => $game])
+            ->test(Like::class, ['game' => $game])
             ->assertSet('isLiked', false)
             ->assertSet('likesCount', 0)
             ->call('toggleLike')

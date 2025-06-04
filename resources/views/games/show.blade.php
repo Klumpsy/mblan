@@ -24,7 +24,7 @@
                     Back to Games
                 </a>
                 <div>
-                    <livewire:game-like :game="$game" />
+                    <livewire:game.like :game="$game" />
                 </div>
             </div>
 

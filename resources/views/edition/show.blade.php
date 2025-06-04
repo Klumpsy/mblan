@@ -80,7 +80,7 @@
                 </div>
             @endif
 
-            <livewire:edition-schedule :edition="$edition" />
+            <livewire:edition.schedule :edition="$edition" />
 
             @if ($edition->hasGames())
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden mt-6">
