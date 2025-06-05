@@ -3,7 +3,9 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditionController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\MediaController;
 use App\Http\Controllers\TournamentController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,7 +41,10 @@ Route::middleware([
         Route::get('/editions/{id}/signup', 'signup')->name('editions.signup');
     });
     Route::controller(TournamentController::class)->group(function () {
-        Route::get('/tournaments', 'index')->name('tournaments');
+        Route::get('/tournaments', 'index')->name('tournaments')->middleware('can:hasConfirmedSignup,' . User::class);
         Route::get('/tournament/{id}', 'show')->name('tournaments.show');
+    });
+    Route::controller(MediaController::class)->group(function () {
+        Route::get('/media', 'index')->name('media');
     });
 });

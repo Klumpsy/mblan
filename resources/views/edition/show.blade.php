@@ -20,6 +20,10 @@
                         class="bg-green-800 text-green-100 dark:text-green-400 dark:bg-green-800 px-3 py-1 rounded-full">
                         Participating
                     </span>
+                @elseif($edition->year < idate('Y'))
+                    <span class="bg-gray-700 text-red-500 dark:text-red-500 dark:bg-gray-700 px-3 py-1 rounded-full">
+                        Closed
+                    </span>
                 @else
                     <span
                         class="bg-primary-300 text-primary-800 dark:text-primary-800 dark:bg-primary-300 px-3 py-1 rounded-full">

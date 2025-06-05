@@ -13,17 +13,21 @@
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('games') }}" :active="request()->routeIs('games')">
+                    <x-nav-link href="{{ route('games') }}" :active="str_starts_with(request()->path(), 'games')">
                         {{ __('Games') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('editions') }}" :active="request()->routeIs('editions')">
+                    <x-nav-link href="{{ route('editions') }}" :active="str_starts_with(request()->path(), 'editions')">
                         {{ __('Editions') }}
                     </x-nav-link>
                     @can('hasConfirmedSignup', auth()->user())
                         <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
                             {{ __('Tournaments') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('media') }}" :active="request()->routeIs('media')">
+                            {{ __('Media') }}
+                        </x-nav-link>
                     @endcan
+
                 </div>
             </div>
 
@@ -112,21 +116,22 @@
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('games') }}" :active="request()->routeIs('games')">
+            <x-responsive-nav-link href="{{ route('games') }}" :active="str_starts_with(request()->path(), 'games')">
                 {{ __('Games') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('editions') }}" :active="request()->routeIs('editions')">
-                {{ __('Schedules') }}
+            <x-responsive-nav-link href="{{ route('editions') }}" :active="str_starts_with(request()->path(), 'editions')">
+                {{ __('Editions') }}
             </x-responsive-nav-link>
             @can('hasConfirmedSignup', auth()->user())
                 <x-responsive-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
                     {{ __('Tournaments') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('media') }}" :active="request()->routeIs('media')">
+                    {{ __('Media') }}
+                </x-responsive-nav-link>
             @endcan
-
         </div>
 
-        <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div class="flex items-center px-4">
                 @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
@@ -144,7 +149,6 @@
             </div>
 
             <div class="mt-3 space-y-1">
-                <!-- Account Management -->
                 <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
                     {{ __('Profile') }}
                 </x-responsive-nav-link>

@@ -48,6 +48,11 @@ class Edition extends Model
         return $this->hasMany(Signup::class)->where('confirmed', true);
     }
 
+    public function media()
+    {
+        return $this->hasMany(Media::class);
+    }
+
     public function loggedInUserHasConfirmedSignup($userId = null): bool
     {
         $userId = $userId ?? Auth::id();

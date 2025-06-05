@@ -3,7 +3,7 @@
 namespace App\Livewire\Edition;
 
 use App\Models\Edition;
-use App\Models\Signup;
+use App\Models\Signup as SignupModel;
 use App\Models\Beverage;
 use App\Services\SignupService;
 use Illuminate\Support\Facades\Auth;
@@ -128,7 +128,7 @@ class Signup extends Component
 
     public function signup()
     {
-        $existingSignup = Signup::where('user_id', Auth::id())
+        $existingSignup = SignupModel::where('user_id', Auth::id())
             ->where('edition_id', $this->edition->id)
             ->first();
 

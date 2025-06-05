@@ -119,8 +119,7 @@
         </p>
 
         <p class="mt-4 text-sm">
-            <a href="https://laracasts.com"
-                class="inline-flex items-center font-semibold text-primary-700 dark:text-primary-300">
+            <a href="/media" class="inline-flex items-center font-semibold text-primary-700 dark:text-primary-300">
                 Bekijk de foto's
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -151,7 +150,7 @@
                 </g>
             </svg>
             <h2 class="ms-3 text-xl font-semibold text-gray-900 dark:text-white">
-                <a href="https://tailwindcss.com/">Toernooien</a>
+                Toernooien
             </h2>
         </div>
 
@@ -161,7 +160,7 @@
         </p>
 
         <p class="mt-4 text-sm">
-            <a href="https://laracasts.com"
+            <a href="/tournaments"
                 class="inline-flex items-center font-semibold text-primary-700 dark:text-primary-300">
                 Schrijf je in
 

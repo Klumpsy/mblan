@@ -21,7 +21,9 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Edition::class => EditionPolicy::class,
+        Tournament::class => TournamentPolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -32,9 +34,5 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('access-admin-panel', function (User $user) {
             return $user->hasRole('admin');
         });
-
-        Gate::policy(Edition::class, EditionPolicy::class);
-        Gate::policy(Tournament::class, TournamentPolicy::class);
-        Gate::policy(User::class, UserPolicy::class);
     }
 }
