@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EditionResource\Pages;
-use App\Filament\Resources\EditionResource\RelationManagers\MediaRelationManager;
+use App\Filament\Resources\EditionResource\RelationManager\MediaRelationManager;
 use App\Models\Edition;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;

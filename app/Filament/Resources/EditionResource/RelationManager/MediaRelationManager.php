@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Filament\Resources\EditionResource\RelationManagers;
+namespace App\Filament\Resources\EditionResource\RelationManager;
 
-use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;

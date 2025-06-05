@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::table('editions', function (Blueprint $table) {
             if (!Schema::hasColumn('editions', 'media_id')) {
-                $table->foreignId('media_id')->constrained('media')->onDelete('cascade');
+                $table->foreignId('media_id')->nullable()->constrained('media')->onDelete('cascade');
             }
         });
     }
