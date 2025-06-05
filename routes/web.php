@@ -45,6 +45,6 @@ Route::middleware([
         Route::get('/tournament/{id}', 'show')->name('tournaments.show');
     });
     Route::controller(MediaController::class)->group(function () {
-        Route::get('/media', 'index')->name('media');
+        Route::get('/media', 'index')->name('media')->middleware('can:hasConfirmedSignup,' . User::class);;
     });
 });

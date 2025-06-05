@@ -56,7 +56,7 @@
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="flex flex-col md:flex-row md:items-center p-4 md:p-6">
-                    <livewire:edition-signup :edition="$edition" />
+                    <livewire:edition.signup :edition="$edition" />
                 </div>
             </div>
         </div>
