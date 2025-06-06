@@ -52,8 +52,8 @@
                             </span>
                         </div>
 
-                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
-                            {!! $signup->edition->description !!}
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                            {!! Str::words($signup->edition->description, 10) !!}
                         </p>
 
                         <div class="space-y-3 mb-4">

@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tournament;
+
 class TournamentController extends Controller
 {
     public function index()
     {
-        return view('tournaments.index');
+        $tournaments = Tournament::all();
+        return view('tournaments.index', [
+            'tournaments' => $tournaments,
+        ]);
     }
 }

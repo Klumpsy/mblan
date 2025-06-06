@@ -7,7 +7,7 @@ use App\Models\Signup as SignupModel;
 use App\Models\Beverage;
 use App\Services\SignupService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
+use Livewire\Attributes\Rule;
 use Livewire\Component;
 
 class Signup extends Component
@@ -17,9 +17,16 @@ class Signup extends Component
     public int $currentStep = 1;
     public int $totalSteps = 3;
 
+    #[Rule('required|array|min:1')]
     public array $selectedSchedules = [];
+
+    #[Rule('array|max:5')]
     public array $selectedBeverages = [];
+
+    #[Rule('boolean')]
     public bool $staysOnCampsite = false;
+
+    #[Rule('boolean')]
     public bool $joinsBarbecue = false;
 
     public function mount(Edition $edition): void
@@ -39,80 +46,9 @@ class Signup extends Component
         ]);
     }
 
-    protected function rules()
-    {
-        return [
-            'selectedSchedules' => [
-                'required',
-                'array',
-                'min:1',
-                Rule::exists('schedules', 'id')->where('edition_id', $this->edition->id)
-            ],
-            'selectedBeverages' => [
-                'array',
-                'max:5'
-            ],
-            'selectedBeverages.*' => [
-                Rule::exists('beverages', 'id')
-            ],
-            'staysOnCampsite' => 'boolean',
-            'joinsBarbecue' => 'boolean',
-        ];
-    }
-
-    protected function messages()
-    {
-        return [
-            'selectedSchedules.required' => 'Please select at least one day to participate.',
-            'selectedSchedules.min' => 'Please select at least one day to participate.',
-            'selectedSchedules.*.exists' => 'One or more selected days are invalid.',
-            'selectedBeverages.max' => 'You can select a maximum of 5 beverages.',
-            'selectedBeverages.*.exists' => 'One or more selected beverages are invalid.',
-        ];
-    }
-
-    protected function validationAttributes()
-    {
-        return [
-            'selectedSchedules' => 'participation days',
-            'selectedBeverages' => 'beverage preferences',
-            'staysOnCampsite' => 'campsite accommodation',
-            'joinsBarbecue' => 'barbecue participation',
-        ];
-    }
-
-    protected function getStepRules(int $step): array
-    {
-        $allRules = $this->rules();
-
-        return match ($step) {
-            1 => [
-                'selectedSchedules' => $allRules['selectedSchedules'],
-            ],
-            2 => [
-                'staysOnCampsite' => $allRules['staysOnCampsite'],
-                'joinsBarbecue' => $allRules['joinsBarbecue'],
-            ],
-            3 => [
-                'selectedBeverages' => $allRules['selectedBeverages'],
-                'selectedBeverages.*' => $allRules['selectedBeverages.*'],
-            ],
-            default => []
-        };
-    }
-
-    private function validateCurrentStep()
-    {
-        $this->validate(
-            $this->getStepRules($this->currentStep),
-            $this->messages(),
-            $this->validationAttributes()
-        );
-    }
-
     public function nextStep()
     {
-        $this->validateCurrentStep();
+        $this->validate();
 
         if ($this->currentStep < $this->totalSteps) {
             $this->currentStep++;
@@ -137,7 +73,7 @@ class Signup extends Component
             return;
         }
 
-        $this->validate($this->rules(), $this->messages(), $this->validationAttributes());
+        $this->validate();
 
         try {
             app(SignupService::class)->createSignup(
