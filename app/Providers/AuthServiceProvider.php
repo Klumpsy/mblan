@@ -32,7 +32,7 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('access-admin-panel', function (User $user) {
-            return $user->hasRole('admin');
+            return $user && $user->role === 'admin';
         });
     }
 }
