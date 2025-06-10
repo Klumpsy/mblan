@@ -1,10 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col items-center sm:items-center md:flex-row md:justify-between w-full">
-            <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight mb-4 md:mb-0">
-                {{ $edition->name }}
-            </h1>
-            <div class="flex flex-col items-center md:flex-row">
+            <div class="flex w-full justify-between items-center md:w-auto ">
+                <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight md:mb-0">
+                    {{ $edition->name }}
+                </h1>
+                @if ($edition->year >= idate('Y') && auth()->user()->hasSignedUpFor($edition))
+                    <x-edition-signout-button :edition="$edition" />
+                @endif
+            </div>
+            <div class="flex items-center w-full md:w-auto flex-wrap mt-2 justify-end">
                 <span
                     class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full md:mr-2">
                     {{ $edition->year }}
@@ -12,7 +17,7 @@
 
                 @if ($edition->year >= idate('Y') && !auth()->user()->hasSignedUpFor($edition))
                     <a href="{{ route('editions.signup', $edition->slug) }}"
-                        class="whitespace-nowrap mt-2 md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors cursor-pointer">
+                        class="whitespace-nowrap md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors cursor-pointer">
                         Sign up for {{ $edition->name }}
                     </a>
                 @elseif(auth()->user()->hasSignedUpFor($edition) && $edition->loggedInUserHasConfirmedSignup())

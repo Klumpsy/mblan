@@ -27,7 +27,7 @@
                     Released: {{ $game->year_of_release ?? 'Unknown' }}
                 </span>
                 <div onclick="event.preventDefault(); event.stopPropagation();">
-                    <livewire:game.like :game="$game" :wire:key="'game-like-'.$game->id" />
+                    <livewire:game.like :game="$game" />
                 </div>
             </div>
         </div>

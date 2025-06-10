@@ -109,6 +109,9 @@
                             class="block w-full text-center dark:bg-gray-700 dark:hover:bg-gray-600 hover:bg-primary-100 text-primary-400 font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
                             View Details
                         </a>
+                        <div class="mt-4 flex  justify-center">
+                            <x-edition-signout-button :edition="$signup->edition" />
+                        </div>
                     </div>
                 @endif
             </div>

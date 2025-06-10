@@ -31,7 +31,7 @@
     <x-banner />
 
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-        @livewire('navigation-menu')
+        <livewire:navigation-menu />
 
         @if (isset($header))
             <header class="bg-white dark:bg-gray-800 shadow">

@@ -11,4 +11,9 @@ class EditionPolicy
     {
         return !$edition->signups()->where('user_id', $user->id)->exists();
     }
+
+    public function signout(User $user, Edition $edition): bool
+    {
+        return $edition->signups()->where('user_id', $user->id)->exists();
+    }
 }

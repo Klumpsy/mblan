@@ -39,10 +39,10 @@ class UsersRelationManager extends RelationManager
         return $table
             ->columns([
                 TextColumn::make('name')->label('User'),
-                TextColumn::make('pivot.score')->label('Score')->sortable(query: fn($query, $direction) => $query->orderBy('tournament_user_pivot.score', $direction)),
-                TextColumn::make('pivot.ranking')->label('Ranking')->sortable(query: fn($query, $direction) => $query->orderBy('tournament_user_pivot.ranking', $direction)),
+                TextColumn::make('pivot.score')->label('Score')->sortable(query: fn($query, $direction) => $query->orderBy('tournament_user.score', $direction)),
+                TextColumn::make('pivot.ranking')->label('Ranking')->sortable(query: fn($query, $direction) => $query->orderBy('tournament_user.ranking', $direction)),
             ])
-            ->defaultSort('tournament_user_pivot.ranking', 'asc')
+            ->defaultSort('tournament_user.ranking', 'asc')
             ->headerActions([
                 AttachAction::make()
                     ->form(fn() => [

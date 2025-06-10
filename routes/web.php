@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
 
 Route::middleware([
@@ -38,7 +38,8 @@ Route::middleware([
     Route::controller(EditionController::class)->group(function () {
         Route::get('/editions', 'index')->name('editions');
         Route::get('/editions/{id}', 'show')->name('editions.show');
-        Route::get('/editions/{id}/signup', 'signup')->name('editions.signup');
+        Route::get('/editions/{slug}/signup', 'signup')->name('editions.signup');
+        Route::get('/editions/{slug}/signout', 'signout')->name('editions.signout');
     });
     Route::controller(TournamentController::class)->group(function () {
         Route::get('/tournaments', 'index')->name('tournaments')->middleware('can:hasConfirmedSignup,' . User::class);

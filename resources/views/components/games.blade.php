@@ -1,7 +1,5 @@
 <div
     class="p-6 lg:p-8 bg-white dark:bg-gray-800 dark:bg-gradient-to-bl dark:from-gray-700/50 dark:via-transparent border-b border-gray-200 dark:border-gray-700">
-
-
     <h1 class="mt-8 text-2xl font-medium text-gray-900 dark:text-white">
         Hier ga je de games vinden die tot de mogelijkheid van spelen behoren.
     </h1>
@@ -12,7 +10,7 @@
 
     <div class="space-y-4 mt-6">
         @foreach ($games as $game)
-            <x-game-card :game="$game" />
+            <x-game-card :$game :key="$game->id" />
         @endforeach
     </div>
 </div>

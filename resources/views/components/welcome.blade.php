@@ -1,17 +1,18 @@
 <div
     class="p-6 lg:p-8 bg-white dark:bg-gray-800 dark:bg-gradient-to-bl dark:from-gray-700/50 dark:via-transparent border-b border-gray-200 dark:border-gray-700">
     <h1 class="mt-8 text-2xl font-medium text-gray-900 dark:text-white">
-        Welkom op het officiële MBLAN dashboard.
+        Welcome to the official MBLAN dashboard.
     </h1>
 
     <p class="mt-6 text-gray-500 dark:text-gray-400 leading-relaxed">
-        Welkom op het dashboard van de LAN-party in de schuur van Bart, georganiseerd door Bart en Martin! Hier vind je
-        alle informatie die je nodig hebt: van het speelschema en toernooien tot updates, games en belangrijke
-        mededelingen.
+        Welcome to the dashboard of the LAN party hosted in Bart's barn, organized by Bart and Martin! Here you’ll find
+        all the information you need — from the tournament schedule and games list to important updates, announcements,
+        and fun extras to help you get the most out of your MBLAN experience.
     </p>
     <p class="mt-6 text-gray-500 dark:text-gray-400 leading-relaxed">
-        Hieronder vind je alvast wat blokken om je op weg te helpen, stem op je favoriete games, bekijk foto's van vorig
-        jaar en bereid je alvast optimaal voor!
+        Scroll down to find quick access links to essential sections: vote for your favorite games, browse through photo
+        galleries from previous editions, and prepare yourself for an unforgettable weekend of gaming, fun, and
+        friendship.
     </p>
 </div>
 
@@ -35,8 +36,11 @@
         </div>
 
         <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-            Bekijk welke games er allemaal mogelijk zijn en stop op jouw favoriete games!
+            Explore the full list of games available during MBLAN! Whether you’re into fast-paced shooters, strategic
+            board games, or casual multiplayer experiences, there’s something for everyone. Cast your vote to help shape
+            the game selection for this year.
         </p>
+
 
         <p class="mt-4 text-sm">
             <a href="{{ route('games') }}"
@@ -114,14 +118,14 @@
         </div>
 
         <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-            MBLAN24 was de eerste editie en we hebben volop genoten, bekijk hier de foto's van vorig jaar en verheug je
-            alvast op de editie van 2025
+            MBLAN24 was the very first edition of our LAN party and it was an amazing success! Take a look at our photo
+            collection from last year and relive those great moments. Let it fuel your excitement as we gear up for an
+            even bigger MBLAN25!
         </p>
 
         <p class="mt-4 text-sm">
             <a href="/media" class="inline-flex items-center font-semibold text-primary-700 dark:text-primary-300">
-                Bekijk de foto's
-
+                View Photos
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                     class="ms-1 w-5 h-5 fill-primary-500 dark:fill-primary-200">
                     <path fill-rule="evenodd"
@@ -150,19 +154,20 @@
                 </g>
             </svg>
             <h2 class="ms-3 text-xl font-semibold text-gray-900 dark:text-white">
-                Toernooien
+                Tournaments
             </h2>
         </div>
 
         <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-            Uiteraard worden er ook weer toernooien met felbegeerde prijzen georganiseerd. Schrijf je snel in om jouw
-            plek te bemachtigen.
+            Of course, there will be thrilling tournaments once again this year! Compete against fellow players in
+            intense matches for a chance to win cool prizes and bragging rights. Don’t miss out — register now to secure
+            your place in the competition!
         </p>
 
         <p class="mt-4 text-sm">
             <a href="/tournaments"
                 class="inline-flex items-center font-semibold text-primary-700 dark:text-primary-300">
-                Schrijf je in
+                Sign Up
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                     class="ms-1 w-5 h-5 fill-primary-500 dark:fill-primary-200">
@@ -203,8 +208,9 @@
         </div>
 
         <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-            Uiteraard zal er weer een volledig verzorgde Barbecue aanwezig zijn op de zaterdag avond. Meer informatie
-            volgt.
+            No LAN weekend is complete without great food! On Saturday evening, we’ll host a fully catered barbecue with
+            delicious options for everyone. Stay tuned for the full menu and make sure to come hungry — it’s going to be
+            one of the highlights of the event.
         </p>
     </div>
 </div>

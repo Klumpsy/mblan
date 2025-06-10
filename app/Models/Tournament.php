@@ -35,7 +35,7 @@ class Tournament extends Model
 
     public function usersWithScores(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'tournament_user_pivot')
+        return $this->belongsToMany(User::class, 'tournament_user')
             ->withPivot('score', 'ranking')
             ->withTimestamps();
     }

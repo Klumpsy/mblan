@@ -11,7 +11,7 @@
                 </button>
             </form>
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                <x-games :games="$games" />
+                <x-games :$games />
             </div>
             @if (count($games) === 0)
                 <div class="bg-white dark:bg-gray-800 p-4 shadow">

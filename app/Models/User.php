@@ -84,7 +84,7 @@ class User extends Authenticatable
 
     public function tournamentsWithScores(): BelongsToMany
     {
-        return $this->belongsToMany(Tournament::class, 'tournament_user_pivot')
+        return $this->belongsToMany(Tournament::class, 'tournament_user')
             ->withPivot('score', 'ranking')
             ->withTimestamps();
     }
