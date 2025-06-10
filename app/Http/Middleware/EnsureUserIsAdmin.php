@@ -11,12 +11,15 @@ class EnsureUserIsAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $userName = Auth::user()->name;
+        if (!Auth::check()) {
+            return redirect('/login');
+        }
 
-        if (Auth::check() && Auth::user()->role !== 'admin') {
+        $user = Auth::user();
 
+        if ($user->role !== 'admin') {
             return redirect('/')
-                ->with('error', "Sorry {$userName}, you don't have admin privileges. Please contact the system administrator if you need access.");
+                ->with('error', "Sorry {$user->name}, you don't have admin privileges. Please contact the system administrator if you need access.");
         }
 
         return $next($request);
