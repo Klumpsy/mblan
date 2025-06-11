@@ -37,9 +37,7 @@ class EditionController extends Controller
         $user = Auth::user();
         $user->signups()->where('edition_id', $edition->id)->delete();
 
-        $tournamentIds = Tournament::whereHas('schedule', function ($query) use ($edition) {
-            $query->where('edition_id', $edition->id);
-        })->pluck('id');
+        $tournamentIds = Tournament::whereHas('schedule', fn($query) => $query->where('edition_id', $edition->id))->pluck('id');
 
         $user->tournaments()->detach($tournamentIds);
 
