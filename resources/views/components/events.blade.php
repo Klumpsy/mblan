@@ -52,10 +52,6 @@
                             </span>
                         </div>
 
-                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                            {!! Str::words($signup->edition->description, 10) !!}
-                        </p>
-
                         <div class="space-y-3 mb-4">
                             <div class="flex items-center text-sm">
                                 <x-heroicon-o-calendar class="w-5 h-15 text-gray-400 mr-3" />
