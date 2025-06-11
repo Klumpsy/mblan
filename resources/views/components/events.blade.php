@@ -74,22 +74,23 @@
 
                             <div class="flex items-center text-sm">
                                 <x-heroicon-o-fire class="w-5 h-15 text-gray-400 mr-1" />
-                                <div class="text-gray-600 dark:text-gray-300">
+                                <div class="text-gray-600 dark:text-gray-300 text-xs">
                                     @if ($signup->stays_on_campsite)
-                                        <span class="inline-block text-violet-400 py-2 px-2 rounded-full me-2">
-                                            🏕️ CAMPSITE
+                                        <span
+                                            class="inline-block text-violet-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
+                                            CAMPSITE
                                         </span>
                                     @endif
                                     @if ($signup->joins_barbecue)
-                                        <span class="inline-block  text-violet-400 py-2 px-2 rounded-full me-2">
-                                            🍖 BBQ
+                                        <span class="inline-block  text-violet-400 py-2 px-2">
+                                            BBQ
                                         </span>
                                     @endif
                                 </div>
                             </div>
 
                             <div class="flex items-center text-sm">
-                                <x-heroicon-o-shopping-cart class="w-5 h-15 text-gray-400 mr-3" />
+                                <x-heroicon-o-shopping-cart class="w-5 h-15 text-gray-400 mr-1" />
                                 @if ($signup->beverages->isEmpty())
                                     <span class="text-gray-600 dark:text-gray-300">
                                         You have no prevered beverages.
@@ -97,7 +98,7 @@
                                 @else
                                     @foreach ($signup->beverages as $beverage)
                                         <span
-                                            class="inline-block bg-primary-700 text-xs text-primary-200 px-2 py-2 rounded-full me-2 uppercase font-semibold tracking-wide">
+                                            class="inline-block text-xs text-primary-200 px-2 py-2 rounded-full me-2 uppercase font-semibold tracking-wide border-r-2 pr-2 last:border-r-0 border-gray-100 dark:border-gray-700">
                                             {{ $beverage->name }}
                                         </span>
                                     @endforeach
@@ -109,7 +110,8 @@
                             class="block w-full text-center dark:bg-gray-700 dark:hover:bg-gray-600 hover:bg-primary-100 text-primary-400 font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
                             View Details
                         </a>
-                        <div class="mt-4 flex  justify-center">
+                        <div
+                            class="mt-4 flex  justify-center w-full dark:hover:bg-gray-600 hover:bg-primary-100 text-primary-400 font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
                             <x-edition-signout-button :edition="$signup->edition" />
                         </div>
                     </div>

@@ -9,6 +9,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -47,11 +48,13 @@ class GameResource extends Resource
                     TextInput::make('name')
                         ->required()
                         ->maxLength(255),
-                    DatePicker::make('year_of_release')
-                        ->label('Release date')
-                        ->displayFormat('d-m-Y')
-                        ->format('Y-m-d')
-                        ->closeOnDateSelection()
+                    Select::make('year_of_release')
+                        ->label('Release Year')
+                        ->options(array_combine(
+                            range(date('Y'), 1970),
+                            range(date('Y'), 1970)
+                        ))
+                        ->searchable()
                         ->required(),
                     TextInput::make('link_to_website')
                         ->url()
