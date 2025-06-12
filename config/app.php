@@ -123,6 +123,7 @@ return [
     */
 
     'key' => env('APP_KEY'),
+    'discord_server' => env('DISCORD_SERVER', 'https://discord.gg/KFUCKm9N'),
 
     'cipher' => 'AES-256-CBC',
 
