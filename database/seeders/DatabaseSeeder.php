@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin'
         ]);
 
-        $users = User::factory()->count(3)->create([
+        User::factory()->count(3)->create([
             'role' => 'user',
         ]);
 
@@ -26,9 +26,10 @@ class DatabaseSeeder extends Seeder
             GameSeeder::class,
             EditionSeeder::class,
             ScheduleSeeder::class,
+            TournamentSeeder::class,
         ]);
 
-        $mblan24 = Edition::where('slug', 'mblan24')->first();
-        $mblan25 = Edition::where('slug', 'mblan25')->first();
+        Edition::where('slug', 'mblan24')->first();
+        Edition::where('slug', 'mblan25')->first();
     }
 }

@@ -15,7 +15,7 @@ class TournamentFactory extends Factory
     {
         $startTime = $this->faker->time('H:i:s');
         $startDateTime = \Carbon\Carbon::createFromFormat('H:i:s', $startTime);
-        $endDateTime = $startDateTime->copy()->addMinutes($this->faker->numberBetween(30, 300)); // Ensure time_end > time_start
+        $endDateTime = $startDateTime->copy()->addMinutes($this->faker->numberBetween(30, 300));
 
         return [
             'name' => $this->faker->words(3, true),

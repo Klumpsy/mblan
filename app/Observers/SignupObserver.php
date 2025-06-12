@@ -2,8 +2,10 @@
 
 namespace App\Observers;
 
+use App\Enums\AchievementType;
 use App\Mail\Approved;
 use App\Models\Signup;
+use App\Services\AchievementService;
 use Illuminate\Support\Facades\Mail;
 
 class SignupObserver
@@ -13,7 +15,8 @@ class SignupObserver
      */
     public function created(Signup $signup): void
     {
-        //
+        $user = $signup->user;
+        AchievementService::check($user, AchievementType::FIRST_SIGNUP->value);
     }
 
     /**
