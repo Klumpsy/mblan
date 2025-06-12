@@ -48,7 +48,7 @@ class AchievementResource extends Resource
                     ->required()
                     ->unique(ignoreRecord: true),
                 Textarea::make('description'),
-                FileUpload::make('icon_path')->directory('achievements')->image(),
+                FileUpload::make('icon_path')->directory('achievements')->image()->label("Use svg's from: https://www.svgrepo.com"),
                 ColorPicker::make('color')->default('#10b981'),
                 ColorPicker::make('grayed_color')->default('#6b7280'),
                 Select::make('type')
