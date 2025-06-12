@@ -1,17 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col items-center sm:items-center md:flex-row md:justify-between w-full">
-            <div class="flex w-full justify-between items-center md:w-auto ">
-                <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight md:mb-0">
-                    {{ $edition->name }}
-                </h1>
-                @if ($edition->year >= idate('Y') && auth()->user()->hasSignedUpFor($edition))
-                    <x-edition-signout-button :edition="$edition" />
-                @endif
-            </div>
+        <div class="flex items-center md:flex-row md:justify-between w-full">
+
+            <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight md:mb-0">
+                {{ $edition->name }}
+            </h1>
+
             <div class="flex items-center w-full md:w-auto flex-wrap mt-2 justify-end">
                 <span
-                    class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full md:mr-2">
+                    class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full mr-2">
                     {{ $edition->year }}
                 </span>
 
@@ -58,13 +55,18 @@
                     <div class="flex-grow">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ $edition->name }}</h2>
                         <span class="text-gray-600 dark:text-gray-400">{!! $edition->description !!}</span>
-                        <div class="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                            Participants: {{ $edition->confirmedSignups->count() }}
+                        <div class="mt-3 flex items-center justify-between">
+                            <div class="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                Participants: {{ $edition->confirmedSignups->count() }}
+                            </div>
+                            @if ($edition->year >= idate('Y') && auth()->user()->hasSignedUpFor($edition))
+                                <x-edition-signout-button :edition="$edition" />
+                            @endif
                         </div>
                     </div>
                 </div>

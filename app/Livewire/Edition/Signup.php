@@ -2,13 +2,16 @@
 
 namespace App\Livewire\Edition;
 
+use App\Mail\Welcome;
 use App\Models\Edition;
 use App\Models\Signup as SignupModel;
 use App\Models\Beverage;
 use App\Services\SignupService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
+use Illuminate\Support\Facades\Mail;
 
 class Signup extends Component
 {
@@ -86,9 +89,14 @@ class Signup extends Component
             );
 
             session()->flash('success', 'Successfully signed up for ' . $this->edition->name . '!');
+
+            $signup = Auth::user()->signups()->where('edition_id', $this->edition->id)->first();
+            Mail::to(Auth::user()->email)->send(new Welcome($signup));
+
             $this->redirect('/dashboard');
             $this->reset(['currentStep', 'selectedSchedules', 'selectedBeverages', 'staysOnCampsite', 'joinsBarbecue']);
         } catch (\Exception $e) {
+            Log::error('Signup error: ' . $e->getMessage(), ['exception' => $e]);
             session()->flash('error', 'Something went wrong. Please try again.');
         }
     }
