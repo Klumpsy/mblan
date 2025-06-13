@@ -45,10 +45,10 @@ class Like extends Component
 
     private function loadLikeStatus()
     {
-        $this->likesCount = $this->game->likedByUsers()->count();
+        $this->likesCount = $this->game->liked_by_users_count ?? $this->game->likedByUsers()->count();
 
-        if (Auth::check()) {
-            $this->isLiked = $this->game->likedByUsers()->where('user_id', Auth::id())->exists();
-        }
+        $this->isLiked = $this->game->likedByUsers
+            ->pluck('id')
+            ->contains(Auth::id());
     }
 }
