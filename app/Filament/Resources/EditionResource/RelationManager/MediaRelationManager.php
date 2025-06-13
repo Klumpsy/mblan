@@ -4,6 +4,7 @@ namespace App\Filament\Resources\EditionResource\RelationManager;
 
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -11,6 +12,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Actions;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Columns\ImageColumn;
+use Illuminate\Container\Attributes\Tag;
 
 class MediaRelationManager extends RelationManager
 {
@@ -27,6 +29,11 @@ class MediaRelationManager extends RelationManager
                     ->directory('editions/media')
                     ->preserveFilenames()
                     ->required(),
+
+                TagsInput::make('tags')
+                    ->label('Tags')
+                    ->placeholder('Add tags (optional)')
+                    ->columnSpanFull(),
 
                 Select::make('type')
                     ->label('Type')
@@ -65,6 +72,11 @@ class MediaRelationManager extends RelationManager
                             ->preserveFilenames()
                             ->required(),
 
+                        TagsInput::make('tags')
+                            ->label('Tags')
+                            ->placeholder('Add tags (optional)')
+                            ->columnSpanFull(),
+
                         Select::make('type')
                             ->label('Type')
                             ->options([
@@ -79,6 +91,7 @@ class MediaRelationManager extends RelationManager
                             $livewire->getRelationship()->create([
                                 'file_path' => $filePath,
                                 'type' => $data['type'],
+                                'tags' => $data['tags'] ?? null,
                             ]);
                         }
                     }),
