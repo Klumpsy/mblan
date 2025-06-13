@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class GameController extends Controller
@@ -15,7 +16,9 @@ class GameController extends Controller
             $query->where('name', 'like', '%' . request('search') . '%');
         }
 
-        $games = $query->paginate(5)->withQueryString();
+        $games = Game::withCount('likedByUsers')
+            ->with(['likedByUsers' => fn($query) => $query->where('user_id', Auth::id())])
+            ->paginate(5);
 
         return view('games.index', [
             'games' => $games
