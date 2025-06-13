@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditionController;
 use App\Http\Controllers\GameController;
@@ -47,5 +48,8 @@ Route::middleware([
     });
     Route::controller(MediaController::class)->group(function () {
         Route::get('/media', 'index')->name('media')->middleware('can:hasConfirmedSignup,' . User::class);;
+    });
+    Route::controller(AchievementController::class)->group(function () {
+        Route::get('/achievements', 'index')->name('achievements');
     });
 });

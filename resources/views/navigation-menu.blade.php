@@ -77,6 +77,11 @@
                                 {{ __('Profile') }}
                             </x-dropdown-link>
 
+
+                            <x-dropdown-link href="{{ route('achievements') }}">
+                                {{ __('Achievements') }}
+                            </x-dropdown-link>
+
                             @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
                                 <x-dropdown-link href="{{ route('api-tokens.index') }}">
                                     {{ __('API Tokens') }}
@@ -164,6 +169,10 @@
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link href="{{ route('profile.show') }}" :active="request()->routeIs('profile.show')">
                     {{ __('Profile') }}
+                </x-responsive-nav-link>
+
+                <x-responsive-nav-link href="{{ route('achievements') }}" :active="request()->routeIs('achievements')">
+                    {{ __('Achievements') }}
                 </x-responsive-nav-link>
 
                 @if (Laravel\Jetstream\Jetstream::hasApiFeatures())

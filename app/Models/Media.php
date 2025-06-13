@@ -13,7 +13,12 @@ class Media extends Model
     protected $fillable = [
         'type',
         'file_path',
-        'edition_id'
+        'edition_id',
+        'tags',
+    ];
+
+    protected $casts = [
+        'tags' => 'array',
     ];
 
     public function edition()

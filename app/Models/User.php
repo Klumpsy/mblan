@@ -72,7 +72,9 @@ class User extends Authenticatable implements FilamentUser
 
     public function likedGames(): BelongsToMany
     {
-        return $this->belongsToMany(Game::class, 'game_user_likes');
+        return $this->belongsToMany(Game::class, 'game_user_likes')
+            ->using(UserGame::class)
+            ->withTimestamps();
     }
 
     public function signups(): HasMany
@@ -88,7 +90,15 @@ class User extends Authenticatable implements FilamentUser
     public function tournamentsWithScores(): BelongsToMany
     {
         return $this->belongsToMany(Tournament::class, 'tournament_user')
-            ->withPivot('score', 'ranking')
+            ->using(UserTournament::class)
+            ->withTimestamps();
+    }
+
+    public function achievements()
+    {
+        return $this->belongsToMany(Achievement::class)
+            ->using(UserAchievement::class)
+            ->withPivot(['progress', 'achieved_at'])
             ->withTimestamps();
     }
 

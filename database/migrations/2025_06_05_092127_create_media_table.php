@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('edition_id')->constrained()->onDelete('cascade');
             $table->string('file_path');
+            $table->json('tags')->nullable();
             $table->string('type')->default('image');
             $table->timestamps();
         });

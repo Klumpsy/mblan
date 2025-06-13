@@ -31,7 +31,9 @@ class Game extends Model
 
     public function likedByUsers(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'game_user_likes');
+        return $this->belongsToMany(User::class, 'game_user_likes')
+            ->using(UserGame::class)
+            ->withTimestamps();
     }
 
     public function schedules(): BelongsToMany
