@@ -2,10 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\AchievementType;
 use App\Enums\AchievementType as EnumsAchievementType;
 use App\Filament\Resources\AchievementResource\Pages;
-use App\Filament\Resources\AchievementResource\RelationManagers;
 use App\Models\User;
 use App\Models\Tournament;
 use App\Models\Game;
@@ -13,19 +11,17 @@ use App\Models\Schedule;
 use App\Models\Edition;
 use App\Models\Signup;
 use App\Models\Achievement;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Get;
 
 class AchievementResource extends Resource
 {
@@ -53,7 +49,8 @@ class AchievementResource extends Resource
                 ColorPicker::make('grayed_color')->default('#6b7280'),
                 Select::make('type')
                     ->options(['automatic' => 'Automatic', 'manual' => 'Manual'])
-                    ->required(),
+                    ->required()
+                    ->live(), // Make it reactive
                 Select::make('model_type')
                     ->label('Related Model')
                     ->options([
@@ -68,6 +65,15 @@ class AchievementResource extends Resource
                     ->nullable()
                     ->helperText('Select the model this achievement is linked to'),
                 TextInput::make('threshold')->numeric(),
+
+                Select::make('user_ids')
+                    ->label('Award to Users')
+                    ->multiple()
+                    ->searchable()
+                    ->options(fn() => User::all()->pluck('name', 'id'))
+                    ->helperText('Select users to award this achievement to')
+                    ->visible(fn(Get $get): bool => $get('type') === 'manual')
+                    ->reactive(),
             ]);
     }
 
@@ -79,12 +85,60 @@ class AchievementResource extends Resource
                 TextColumn::make('slug'),
                 TextColumn::make('type'),
                 TextColumn::make('threshold'),
+                TextColumn::make('users_count')
+                    ->label('Awarded Users')
+                    ->counts('users')
+                    ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('type')
+                    ->options([
+                        'automatic' => 'Automatic',
+                        'manual' => 'Manual',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('manage_users')
+                    ->label('Manage Users')
+                    ->icon('heroicon-o-user-group')
+                    ->visible(fn(Achievement $record): bool => $record->isManual())
+                    ->form([
+                        Select::make('user_ids')
+                            ->label('Select Users')
+                            ->multiple()
+                            ->searchable()
+                            ->options(User::all()->pluck('name', 'id'))
+                            ->default(function (Achievement $record): array {
+                                $record->refresh();
+                                $record->load('users');
+                                return $record->users->pluck('id')->toArray();
+                            }),
+                    ])
+                    ->action(function (Achievement $record, array $data): void {
+                        $record->refresh();
+                        $record->load('users');
+                        $currentUserIds = $record->users->pluck('id')->toArray();
+                        $newUserIds = $data['user_ids'] ?? [];
+
+                        $usersToAdd = array_diff($newUserIds, $currentUserIds);
+                        $usersToRemove = array_diff($currentUserIds, $newUserIds);
+
+                        foreach ($usersToAdd as $userId) {
+                            $record->users()->attach($userId, [
+                                'achieved_at' => now(),
+                                'progress' => $record->threshold ?? 100,
+                            ]);
+                        }
+
+                        if (!empty($usersToRemove)) {
+                            $record->users()->detach($usersToRemove);
+                        }
+                        $record->refresh();
+                        $record->load('users');
+                    })
+                    ->successNotificationTitle('Achievement users updated successfully')
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

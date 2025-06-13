@@ -19,6 +19,8 @@ class AchievementStrategyResolver
             AchievementType::FIRST_SIGNUP->value => new FirstSignupAchievement(),
             AchievementType::GAME_LIKE_5->value => new GameLikes5Achievement(),
             AchievementType::GAME_LIKE_10->value => new GameLikes10Achievement(),
+            AchievementType::JOIN_BARBECUE->value => new JoinBarbecueAchievement(),
+            AchievementType::JOIN_CAMPING->value => new JoinCampingAchievement(),
             default => null,
         };
     }

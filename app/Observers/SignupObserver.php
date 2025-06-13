@@ -17,6 +17,8 @@ class SignupObserver
     {
         $user = $signup->user;
         AchievementService::check($user, AchievementType::FIRST_SIGNUP->value);
+        AchievementService::check($user, AchievementType::JOIN_BARBECUE->value);
+        AchievementService::check($user, AchievementType::JOIN_CAMPING->value);
     }
 
     /**

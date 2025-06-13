@@ -9,6 +9,10 @@ enum AchievementType: string
     case FIRST_SIGNUP = 'first-signup';
     case FIRST_TOURNAMENT = 'first-tournament';
     case TOURNAMENT_SIGNUPS_3 = '3-tournament-signups';
+    case JOIN_BARBECUE = 'join-barbecue';
+    case JOIN_CAMPING = 'join-camping';
+    case JOIN_EDITION_24 = 'join-edition_24';
+    case JOIN_EDITION_25 = 'join-edition_25';
 
     public static function availableSlugs(): array
     {
