@@ -16,8 +16,8 @@ class GameController extends Controller
             $query->where('name', 'like', '%' . request('search') . '%');
         }
 
-        $games = Game::withCount('likedByUsers')
-            ->with(['likedByUsers' => fn($query) => $query->where('user_id', Auth::id())])
+        $games = $query->withCount('likedByUsers')
+            ->with(['likedByUsers' => fn($q) => $q->where('user_id', Auth::id())])
             ->paginate(5);
 
         return view('games.index', [
