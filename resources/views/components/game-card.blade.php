@@ -16,9 +16,14 @@
 
 
         <div class="md:w-2/3 p-4">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                {{ $game->name }}
-            </h5>
+            <div class="flex items-center justify-between mb-2">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                    {{ $game->name }}
+                </h5>
+                <div class="flex items-center space-x-2">
+                    @each('components.tag', $game->tags, 'tag')
+                </div>
+            </div>
             <span class="font-normal text-gray-700 dark:text-white">
                 {!! $game->short_description !!}
             </span>

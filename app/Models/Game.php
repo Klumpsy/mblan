@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Game extends Model
 {
-    use HasFactory;
+    use HasFactory, Taggable;
 
     protected $fillable = [
         'name',
@@ -19,9 +20,17 @@ class Game extends Model
         'text_block_three',
         'short_description',
         'image',
+        'tags',
         'link_to_website',
         'link_to_youtube',
         'likes'
+    ];
+
+    protected $casts = [
+        'year_of_release' => 'integer',
+        'likes' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function tournaments(): HasMany
