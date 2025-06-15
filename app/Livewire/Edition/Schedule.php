@@ -13,7 +13,7 @@ class Schedule extends Component
 
     public function mount(Edition $edition)
     {
-        $this->edition = $edition;
+        $this->edition = $edition->load(['schedules.games.tags']);
 
         if ($this->edition->schedules->isNotEmpty()) {
             $firstSchedule = $this->edition->schedules->sortBy('date')->first();
@@ -35,6 +35,7 @@ class Schedule extends Component
 
     public function render()
     {
+
         $dates = collect();
         foreach ($this->edition->schedules as $schedule) {
             foreach ($schedule->games as $game) {
@@ -55,8 +56,10 @@ class Schedule extends Component
                 });
 
                 if ($gamesForDate->isNotEmpty()) {
-                    $schedule->gamesForDate = $gamesForDate;
-                    $schedulesForDate->push($schedule);
+                    // Clone the schedule to avoid modifying the original
+                    $scheduleClone = clone $schedule;
+                    $scheduleClone->gamesForDate = $gamesForDate;
+                    $schedulesForDate->push($scheduleClone);
                 }
             }
         }

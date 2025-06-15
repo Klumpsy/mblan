@@ -85,6 +85,9 @@
                                                     class="text-base sm:text-lg font-medium text-gray-900 dark:text-white">
                                                     {{ $game->name }}
                                                 </h4>
+                                                <div class="flex items-center space-x-2 my-4 ">
+                                                    @each('components.tag', $game->tags, 'tag')
+                                                </div>
                                                 <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                                     {{ $startTime->format('H:i') }} - {{ $endTime->format('H:i') }}
                                                     <span
