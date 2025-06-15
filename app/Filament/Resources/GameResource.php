@@ -4,10 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\GameResource\Pages;
 use App\Models\Game;
+use App\Models\Tag;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -78,6 +78,12 @@ class GameResource extends Resource
                     RichEditor::make('short_description')
                         ->required()
                         ->toolbarButtons(self::$textEditorSettings),
+                    Select::make('tags')
+                        ->label('Tags')
+                        ->multiple()
+                        ->relationship('tags', 'name')
+                        ->options(Tag::forModel(modelClass: Game::class)->pluck('name', 'id'))
+                        ->searchable()
                 ])->columns(2),
                 Section::make([
                     RichEditor::make('text_block_one')

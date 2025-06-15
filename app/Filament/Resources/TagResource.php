@@ -3,6 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
+use App\Filament\Resources\TagResource\Pages\CreateTag;
+use App\Filament\Resources\TagResource\Pages\EditTag;
+use App\Filament\Resources\TagResource\Pages\ListTags;
 use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -10,6 +13,16 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Textarea;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Forms\Components\Select;
+use Filament\Tables\Columns\TextColumn;
 
 class TagResource extends Resource
 {
@@ -21,9 +34,9 @@ class TagResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Tag Information')
+                Section::make('Tag Information')
                     ->schema([
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->required()
                             ->maxLength(255)
                             ->live(onBlur: true)
@@ -34,32 +47,32 @@ class TagResource extends Resource
                                 $set('slug', Str::slug($state));
                             }),
 
-                        Forms\Components\TextInput::make('slug')
+                        TextInput::make('slug')
                             ->required()
                             ->maxLength(255)
                             ->unique(Tag::class, 'slug', ignoreRecord: true)
                             ->rules(['alpha_dash'])
                             ->helperText('Auto-generated from name, but can be customized'),
 
-                        Forms\Components\Textarea::make('description')
+                        Textarea::make('description')
                             ->maxLength(1000)
                             ->rows(3)
                             ->columnSpanFull(),
                     ])
                     ->columns(2),
 
-                Forms\Components\Section::make('Appearance & Scope')
+                Section::make('Appearance & Scope')
                     ->schema([
-                        Forms\Components\ColorPicker::make('color')
+                        ColorPicker::make('color')
                             ->label('Tag Color')
                             ->helperText('Choose a color to represent this tag'),
 
-                        Forms\Components\Select::make('model_type')
+                        Select::make('model_type')
                             ->label('Model Restriction')
                             ->options([
                                 'App\\Models\\Game' => 'Games Only',
                                 'App\\Models\\Media' => 'Media Only',
-                                // Add other model types as needed
+                                // Hier meer modles toevoegen indien nodig
                             ])
                             ->placeholder('Universal (can be used with any model)')
                             ->helperText('Leave empty to make this tag available for all models'),
@@ -72,23 +85,23 @@ class TagResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                TextColumn::make('id')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('slug')
+                TextColumn::make('slug')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->limit(50),
 
-                Tables\Columns\TextColumn::make('color'),
+                TextColumn::make('color'),
 
-                Tables\Columns\TextColumn::make('model_type')
+                TextColumn::make('model_type')
                     ->label('Scope')
                     ->formatStateUsing(function (?string $state): string {
                         if (!$state) {
@@ -97,13 +110,13 @@ class TagResource extends Resource
                         return class_basename($state);
                     }),
 
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
+                EditAction::make(),
+                DeleteAction::make()
                     ->before(function (Tag $record) {
                         $gamesCount = $record->games()->count();
                         $mediaCount = $record->media()->count();
@@ -114,8 +127,8 @@ class TagResource extends Resource
                     }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
                         ->before(function ($records) {
                             foreach ($records as $record) {
                                 $gamesCount = $record->games()->count();
@@ -142,9 +155,9 @@ class TagResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTags::route('/'),
-            'create' => Pages\CreateTag::route('/create'),
-            'edit' => Pages\EditTag::route('/{record}/edit'),
+            'index' => ListTags::route('/'),
+            'create' => CreateTag::route('/create'),
+            'edit' => EditTag::route('/{record}/edit'),
         ];
     }
 

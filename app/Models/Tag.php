@@ -22,11 +22,9 @@ class Tag extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'color' => 'string',
     ];
 
-    /**
-     * Boot the model to auto-generate slug
-     */
     protected static function boot()
     {
         parent::boot();

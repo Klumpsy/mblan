@@ -12,8 +12,8 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="flex justify-between mb-6">
+        <div class="max-w-7xl mx-auto xs::px-2 sm:px-6 lg:px-8">
+            <div class="flex justify-between mb-6 ">
                 <a href="{{ route('games') }}"
                     class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
@@ -23,11 +23,11 @@
                     </svg>
                     Back to Games
                 </a>
-                <div>
-                    <livewire:game.like :game="$game" />
-                </div>
+                <livewire:game.like :game="$game" />
             </div>
-
+            <div class="flex items-center space-x-2 my-4 ">
+                @each('components.tag', $game->tags, 'tag')
+            </div>
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg mb-8">
                 <div class="relative w-full aspect-video"> <!-- aspect ratio 16:9 -->
                     @if ($game->image)
