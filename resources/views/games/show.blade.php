@@ -12,7 +12,7 @@
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-7xl mx-auto xs::px-2 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="flex justify-between mb-6 ">
                 <a href="{{ route('games') }}"
                     class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
@@ -34,7 +34,7 @@
                         <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}"
                             class="w-full h-full object-cover">
 
-                        <div class="absolute bottom-0 left-0 right-0 bg-black/70 p-6">
+                        <div class="invisible md:visible absolute bottom-0 left-0 right-0 bg-black/70 p-6">
                             <h2 class="text-4xl font-bold text-primary-400 mb-2">{{ $game->name }}</h2>
                             <span class="text-gray-200 dark:text-white text-lg max-w-3xl">
                                 {!! $game->short_description !!}
@@ -48,9 +48,15 @@
                 </div>
             </div>
 
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
                 <div class="md:col-span-2 space-y-6" x-data="{ openSection: 1 }">
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 md:hidden">
+                        <span
+                            class="text-gray-200 text-md prose dark:prose-invert max-w-none dark:text-gray-400 text-md">
+                            {!! $game->short_description !!}
+                        </span>
+                    </div>
+
                     @if ($game->text_block_one)
                         <x-text-block :text="$game->text_block_one" :title="'About the Game'" :index="1" />
                     @endif

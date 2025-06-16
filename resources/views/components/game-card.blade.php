@@ -16,11 +16,11 @@
 
 
         <div class="md:w-2/3 p-4">
-            <div class="flex items-center justify-between mb-2">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            <div class="flex-column sm:flex sm:justify-between items-center mb-2 space-y-2">
+                <h5 class="w-full text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                     {{ $game->name }}
                 </h5>
-                <div class="flex items-center space-x-2">
+                <div class="flex items-center space-x-2 w-full sm:width-auto justify-start sm:justify-end">
                     @each('components.tag', $game->tags, 'tag')
                 </div>
             </div>
