@@ -11,7 +11,7 @@ class EditionController extends Controller
 {
     public function index(): View
     {
-        $editions = Edition::all();
+        $editions = Edition::all()->withRelationshipAutoloading();
         return view('edition.index', compact('editions'));
     }
 

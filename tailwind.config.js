@@ -145,7 +145,7 @@ export default {
                         },
                     },
                 },
-                dark: {
+                invert: {
                     css: {
                         color: theme("colors.dark.300"),
                         a: {

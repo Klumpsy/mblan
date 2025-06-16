@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditionController;
 use App\Http\Controllers\GameController;
@@ -31,6 +32,10 @@ Route::middleware([
 ])->group(function () {
     Route::controller(DashboardController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
+    });
+    Route::controller(BlogController::class)->group(function () {
+        Route::get('/blogs', 'index')->name('blogs');
+        Route::get('/blogs/{slug}', 'show')->name('blogs.show');
     });
     Route::controller(GameController::class)->group(function () {
         Route::get('/games', 'index')->name('games');

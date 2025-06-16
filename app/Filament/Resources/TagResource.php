@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TagResource\Pages;
 use App\Filament\Resources\TagResource\Pages\CreateTag;
 use App\Filament\Resources\TagResource\Pages\EditTag;
 use App\Filament\Resources\TagResource\Pages\ListTags;
@@ -10,7 +9,6 @@ use App\Models\Tag;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\ColorPicker;
@@ -72,7 +70,7 @@ class TagResource extends Resource
                             ->options([
                                 'App\\Models\\Game' => 'Games Only',
                                 'App\\Models\\Media' => 'Media Only',
-                                // Hier meer modles toevoegen indien nodig
+                                'App\\Models\\Blog' => 'Blog only'
                             ])
                             ->placeholder('Universal (can be used with any model)')
                             ->helperText('Leave empty to make this tag available for all models'),
@@ -120,9 +118,10 @@ class TagResource extends Resource
                     ->before(function (Tag $record) {
                         $gamesCount = $record->games()->count();
                         $mediaCount = $record->media()->count();
+                        $blogCount = $record->blogs()->count();
 
-                        if ($gamesCount > 0 || $mediaCount > 0) {
-                            throw new \Exception("Cannot delete tag that is being used by {$gamesCount} game(s) and {$mediaCount} media item(s).");
+                        if ($gamesCount > 0 || $mediaCount > 0 || $blogCount > 0) {
+                            throw new \Exception("Cannot delete tag that is being used by {$gamesCount} game(s) / {$mediaCount} media item(s) / {$blogCount} blog item(s).");
                         }
                     }),
             ])
@@ -133,8 +132,9 @@ class TagResource extends Resource
                             foreach ($records as $record) {
                                 $gamesCount = $record->games()->count();
                                 $mediaCount = $record->media()->count();
+                                $blogCount = $record->blogs()->count();
 
-                                if ($gamesCount > 0 || $mediaCount > 0) {
+                                if ($gamesCount > 0 || $mediaCount > 0 || $blogCount > 0) {
                                     throw new \Exception("Cannot delete tag '{$record->name}' that is being used.");
                                 }
                             }

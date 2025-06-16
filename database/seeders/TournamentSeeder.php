@@ -14,7 +14,7 @@ class TournamentSeeder extends Seeder
      */
     public function run(): void
     {
-        Tournament::factory()->count(10)->create([
+        Tournament::factory(10)->create([
             'schedule_id' => function () {
                 return Schedule::inRandomOrder()->first()->id;
             },
