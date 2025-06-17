@@ -6,7 +6,7 @@
         <h2 class="text-2xl font-medium text-primary-40 text-primary-400">
             Latest News
         </h2>
-        <a href="{{ route('blogs.show', $blog) }}"
+        <a href="{{ route('blogs.show', $blog->slug) }}"
             class="text-md text-primary-200 space-x-3 flex justify-between items-center">
             <span>Read more</span>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
