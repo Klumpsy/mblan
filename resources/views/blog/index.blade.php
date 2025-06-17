@@ -7,14 +7,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <form method="GET" action="{{ route('blogs') }}" class="mb-4 md:flex md:items-center px-2 md:px-0">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search blog posts..."
-                    class="border rounded px-3 py-2 text-sm w-full md:w-1/3 mb-2 md:mb-0 dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
-                <button type="submit"
-                    class="bg-gray-600 text-primary-400 font-bold px-4 py-2 rounded text-sm md:w-auto md:ml-2 w-full">
-                    Search
-                </button>
-            </form>
 
             @if ($blogs->count() > 0)
                 <div class="space-y-6">

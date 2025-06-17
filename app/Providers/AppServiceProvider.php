@@ -40,6 +40,5 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         Tournament::observe(TournamentObserver::class);
         UserTournament::observe(UserTournamentObserver::class);
-        Signup::observe(SignupObserver::class);
     }
 }
