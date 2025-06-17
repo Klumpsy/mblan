@@ -8,7 +8,7 @@ class TournamentController extends Controller
 {
     public function index()
     {
-        $tournaments = Tournament::all();
+        $tournaments = Tournament::all()->withRelationshipAutoloading();
         return view('tournaments.index', [
             'tournaments' => $tournaments,
         ]);

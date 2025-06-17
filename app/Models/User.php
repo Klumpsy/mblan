@@ -82,10 +82,34 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Signup::class);
     }
 
+    public function blogs(): HasMany
+    {
+        return $this->hasMany(Blog::class, 'author_id');
+    }
+
+    public function blogComments(): HasMany
+    {
+        return $this->hasMany(BlogComment::class, 'author_id');
+    }
+
     public function hasSignedUpFor(Edition $edition): bool
     {
         return $this->signups()->where('edition_id', $edition->id)->exists();
     }
+
+    public function hasSignedUpForLatestEdition(): bool
+    {
+        $latestEdition = Edition::latest('year')->first();
+
+        if (!$latestEdition) {
+            return false;
+        }
+
+        return $this->signups()
+            ->where('edition_id', $latestEdition->id)
+            ->exists();
+    }
+
 
     public function tournamentsWithScores(): BelongsToMany
     {

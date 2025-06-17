@@ -26,6 +26,9 @@
                         <x-nav-link href="{{ route('media') }}" :active="request()->routeIs('media')">
                             {{ __('Media') }}
                         </x-nav-link>
+                        <x-nav-link href="{{ route('blogs') }}" :active="request()->routeIs('blogs')">
+                            {{ __('News') }}
+                        </x-nav-link>
                     @endcan
 
                 </div>
@@ -146,6 +149,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link href="{{ route('media') }}" :active="request()->routeIs('media')">
                     {{ __('Media') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link href="{{ route('blogs') }}" :active="request()->routeIs('blogs')">
+                    {{ __('News') }}
                 </x-responsive-nav-link>
             @endcan
         </div>
