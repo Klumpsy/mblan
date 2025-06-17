@@ -25,8 +25,7 @@ class MediaRelationManager extends RelationManager
         return $form
             ->schema([
                 FileUpload::make('file_path')
-                    ->label('Media Files')
-                    ->multiple()
+                    ->label('Media File') // Singular label
                     ->image()
                     ->directory('editions/media')
                     ->preserveFilenames()
@@ -54,6 +53,7 @@ class MediaRelationManager extends RelationManager
                     ->required(),
             ]);
     }
+
 
     public function table(Table $table): Table
     {

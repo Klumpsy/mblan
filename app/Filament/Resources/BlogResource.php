@@ -117,6 +117,11 @@ class BlogResource extends Resource
                             ->label('Featured Image')
                             ->image()
                             ->directory('blog-images')
+                            ->disk('public')
+                            ->visibility('public')
+                            ->required()
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('16:9')
                             ->maxSize(2048)
                             ->imageEditorAspectRatios([
                                 '16:9',

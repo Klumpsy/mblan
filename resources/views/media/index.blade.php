@@ -43,13 +43,7 @@
 
             <div class="flex flex-col items-center">
                 <img :src="image" alt="Full Image" class="max-h-[70vh] w-auto mb-4 rounded shadow-lg">
-                <div class="flex justify-center space-x-4 mb-4">
-                    <template x-for="tag in tags" :key="tag">
-                        <span
-                            class="inline-block bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-sm"
-                            x-text="tag"></span>
-                    </template>
-                </div>
+
                 <div class="flex justify-center">
                     <a :href="image" download
                         class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
