@@ -82,7 +82,12 @@ class GameResource extends Resource
                         ->label('Tags')
                         ->multiple()
                         ->relationship('tags', 'name')
-                        ->options(Tag::forModel(modelClass: Game::class)->pluck('name', 'id'))
+                        ->options(
+                            Tag::where(function ($query) {
+                                $query->where('model_type', Game::class)
+                                    ->orWhereNull('model_type');
+                            })->pluck('name', 'id')
+                        )
                         ->searchable()
                 ])->columns(2),
                 Section::make([

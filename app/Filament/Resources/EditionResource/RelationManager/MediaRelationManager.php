@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\EditionResource\RelationManager;
 
+use App\Models\Media;
+use App\Models\Tag;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -12,7 +14,7 @@ use Filament\Tables\Table;
 use Filament\Tables\Actions;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Columns\ImageColumn;
-use Illuminate\Container\Attributes\Tag;
+use Filament\Tables\Columns\TextColumn;
 
 class MediaRelationManager extends RelationManager
 {
@@ -30,10 +32,17 @@ class MediaRelationManager extends RelationManager
                     ->preserveFilenames()
                     ->required(),
 
-                TagsInput::make('tags')
+                Select::make('tags')
                     ->label('Tags')
-                    ->placeholder('Add tags (optional)')
-                    ->columnSpanFull(),
+                    ->multiple()
+                    ->relationship('tags', 'name')
+                    ->options(
+                        Tag::where(function ($query) {
+                            $query->where('model_type', Media::class)
+                                ->orWhereNull('model_type');
+                        })->pluck('name', 'id')
+                    )
+                    ->searchable(),
 
                 Select::make('type')
                     ->label('Type')
@@ -57,8 +66,8 @@ class MediaRelationManager extends RelationManager
                     ->circular()
                     ->height(40),
 
-                Tables\Columns\TextColumn::make('type')->label('Type'),
-                Tables\Columns\TextColumn::make('created_at')->since()->label('Uploaded'),
+                TextColumn::make('type')->label('Type'),
+                TextColumn::make('created_at')->since()->label('Uploaded'),
             ])
             ->headerActions([
                 CreateAction::make()
@@ -72,10 +81,18 @@ class MediaRelationManager extends RelationManager
                             ->preserveFilenames()
                             ->required(),
 
-                        TagsInput::make('tags')
+
+                        Select::make('tags')
                             ->label('Tags')
-                            ->placeholder('Add tags (optional)')
-                            ->columnSpanFull(),
+                            ->multiple()
+                            ->relationship('tags', 'name')
+                            ->options(
+                                Tag::where(function ($query) {
+                                    $query->where('model_type', Media::class)
+                                        ->orWhereNull('model_type');
+                                })->pluck('name', 'id')
+                            )
+                            ->searchable(),
 
                         Select::make('type')
                             ->label('Type')

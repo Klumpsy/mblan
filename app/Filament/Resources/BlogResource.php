@@ -6,6 +6,7 @@ use App\Filament\Resources\BlogResource\Pages\CreateBlog;
 use App\Filament\Resources\BlogResource\Pages\EditBlog;
 use App\Filament\Resources\BlogResource\Pages\ListBlogs;
 use App\Models\Blog;
+use App\Models\Tag;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
@@ -65,6 +66,18 @@ class BlogResource extends Resource
                             ->options(User::all()->pluck('name', 'id'))
                             ->required()
                             ->default(Auth::id())
+                            ->searchable(),
+
+                        Select::make('tags')
+                            ->label('Tags')
+                            ->multiple()
+                            ->relationship('tags', 'name')
+                            ->options(
+                                Tag::where(function ($query) {
+                                    $query->where('model_type', Blog::class)
+                                        ->orWhereNull('model_type');
+                                })->pluck('name', 'id')
+                            )
                             ->searchable(),
 
                         Textarea::make('preview_text')
