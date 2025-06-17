@@ -15,8 +15,13 @@ class BlogController extends Controller
 
     public function show(string $slug): View
     {
+        $blog = Blog::where('slug', $slug)
+            ->withCount('comments')
+            ->firstOrFail()
+            ->withRelationshipAutoloading();
+
         return view('blog.show', [
-            'blog' => Blog::where('slug', $slug)->firstOrFail()
+            'blog' => $blog,
         ]);
     }
 }

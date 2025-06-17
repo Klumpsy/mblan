@@ -32,7 +32,7 @@ class Blog extends Model
 
     public function comments(): HasMany
     {
-        return $this->hasMany(BlogComment::class);
+        return $this->hasMany(BlogComment::class)->orderBy('created_at', 'desc');
     }
 
     public function author(): BelongsTo
