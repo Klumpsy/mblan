@@ -1,22 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="flex justify-between items-center">
-            <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight">
-                {{ $blog->title }}
-            </h1>
-            @if ($blog->published)
-                <span
-                    class="text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full">
-                    Published
-                </span>
-            @else
-                <span
-                    class="text-sm bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-400 px-3 py-1 rounded-full">
-                    Draft
-                </span>
-            @endif
-        </div>
-    </x-slot>
+
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div class="flex justify-between mb-6">
@@ -31,7 +14,7 @@
                 </a>
             </div>
             <div class="mb-8">
-                <div class="flex items-center space-x-4 mb-4">
+                <div class="flex items-center justify-between space-x-4 mb-4">
                     <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <img src="{{ $blog->author->profile_photo_url ?? asset('images/default-avatar.png') }}"
                             alt="{{ $blog->author->name }}'s Avatar"
@@ -40,6 +23,9 @@
                             <div class="font-medium text-gray-900 dark:text-white">{{ $blog->author->name }}</div>
                             <div class="text-sm">{{ $blog->published_at->format('F j, Y \a\t g:i A') }}</div>
                         </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        @each('components.tag', $blog->tags, 'tag')
                     </div>
                 </div>
             </div>

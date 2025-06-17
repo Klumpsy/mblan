@@ -14,9 +14,9 @@
                         <div
                             class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg transition-all duration-300 hover:shadow-2xl">
                             <div class="md:flex">
-                                <div class="md:w-1/3">
+                                <div class="md:w-1/3 aspect-[4/3] overflow-hidden">
                                     <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}"
-                                        class="w-full h-full object-fit">
+                                        class="w-full h-full object-cover" />
                                 </div>
                                 <div class="{{ $blog->image ? 'md:w-2/3' : 'w-full' }} p-6">
                                     <div class="flex items-center justify-between space-x-4 mb-3">
@@ -50,6 +50,9 @@
                                             {{ $blog->title }}
                                         </a>
                                     </h2>
+                                    <div class="flex items-center space-x-2 mb-2">
+                                        @each('components.tag', $blog->tags, 'tag')
+                                    </div>
 
                                     @if ($blog->preview_text)
                                         <p class="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">

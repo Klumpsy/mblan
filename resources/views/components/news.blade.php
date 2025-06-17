@@ -17,6 +17,9 @@
     </div>
 
     <div class="my-2">
+        <div class="flex items-center space-x-2">
+            @each('components.tag', $blog->tags, 'tag')
+        </div>
         <h2 class="text-lg text-primary-200 my-2">
             {{ $blog->title }}
         </h2>
