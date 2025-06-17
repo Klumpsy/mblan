@@ -20,7 +20,6 @@ class Game extends Model
         'text_block_three',
         'short_description',
         'image',
-        'tags',
         'link_to_website',
         'link_to_youtube',
         'likes'

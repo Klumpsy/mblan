@@ -118,7 +118,6 @@ class BlogResource extends Resource
                             ->image()
                             ->directory('blog-images')
                             ->maxSize(2048)
-                            ->imageEditor()
                             ->imageEditorAspectRatios([
                                 '16:9',
                                 '4:3',

@@ -15,6 +15,12 @@
                                 class="w-full h-48 object-cover transform transition-transform duration-300 hover:scale-105 opacity-0"
                                 x-init="$el.onload = () => $el.classList.remove('opacity-0')">
                         </template>
+
+                        <div
+                            class="flex items-center space-x-2 w-full sm:width-auto justify-start sm:justify-start p-2">
+                            @each('components.tag', $item->tags, 'tag')
+                        </div>
+
                     </div>
                 @empty
                     <p class="col-span-full text-center text-gray-500 dark:text-gray-400">
