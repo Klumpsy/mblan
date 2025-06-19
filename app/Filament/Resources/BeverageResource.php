@@ -38,7 +38,7 @@ class BeverageResource extends Resource
                     RichEditor::make('description')
                         ->required()
                         ->unique()
-                        ->maxLength(50),
+                        ->maxLength(250),
                     Toggle::make('contains_alcohol'),
                     FileUpload::make('image')
                         ->disk('public')
