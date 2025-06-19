@@ -30,6 +30,7 @@
         </div>
     </div>
     <form wire:submit="addComment" class="w-full">
+        @csrf
         <div class="mt-4">
             <textarea id="comment" wire:model="comment" rows="4"
                 class="w-full rounded-lg border border-gray-300 p-4 text-gray-900 placeholder-gray-500 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50 transition-colors duration-200 resize-none shadow-sm"
