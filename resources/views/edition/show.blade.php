@@ -17,7 +17,7 @@
                         class="whitespace-nowrap md:mt-0 text-sm bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 px-3 py-1 rounded-full  hover:bg-green-200 dark:hover:bg-green-700 transition-colors cursor-pointer">
                         Sign up for {{ $edition->name }}
                     </a>
-                @elseif(auth()->user()->hasSignedUpFor($edition) && $edition->loggedInUserHasConfirmedSignup())
+                @elseif(auth()->user()->hasSignedUpFor($edition) && auth()->user()->can('accessWithConfirmedSignup', $edition))
                     <span
                         class="bg-green-800 text-green-100 dark:text-green-400 dark:bg-green-800 px-3 py-1 rounded-full">
                         Participating
@@ -72,7 +72,7 @@
                 </div>
             </div>
 
-            @if ($edition->loggedInUserHasConfirmedSignup())
+            @can('accessWithConfirmedSignup', $edition)
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                     <div class="flex flex-col md:flex-row md:items-center p-4 md:p-6">
                         <div class="flex-grow">
@@ -89,7 +89,7 @@
                         </div>
                     </div>
                 </div>
-            @endif
+            @endcan
 
             <livewire:edition.schedule :edition="$edition" />
 

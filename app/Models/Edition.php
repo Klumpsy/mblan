@@ -52,10 +52,4 @@ class Edition extends Model
     {
         return $this->hasMany(Media::class);
     }
-
-    public function loggedInUserHasConfirmedSignup($userId = null): bool
-    {
-        $userId = $userId ?? Auth::id();
-        return $this->confirmedSignups()->where('user_id', $userId)->exists();
-    }
 }

@@ -33,10 +33,12 @@
                     Cancel
                 </button>
 
-                <a href="{{ route('editions.signout', $edition->slug) }}"
-                    class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded">
-                    Confirm Leave
-                </a>
+                <form method="POST" action="{{ route('editions.signout', $edition->slug) }}">
+                    @csrf()
+                    <button class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded">
+                        Confirm leave
+                    </button>
+                </form>
             </div>
         </div>
     </div>

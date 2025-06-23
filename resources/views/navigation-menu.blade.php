@@ -19,7 +19,7 @@
                     <x-nav-link href="{{ route('editions') }}" :active="str_starts_with(request()->path(), 'editions')" class="whitespace-nowrap">
                         {{ __('Editions') }}
                     </x-nav-link>
-                    @can('hasConfirmedSignup', auth()->user())
+                    @can('viewPagesThatRequireSignup', auth()->user())
                         <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')" class="whitespace-nowrap">
                             {{ __('Tournaments') }}
                         </x-nav-link>
@@ -35,7 +35,7 @@
 
             <!-- Right side - Desktop -->
             <div class="hidden lg:flex lg:items-center lg:space-x-4">
-                @can('hasConfirmedSignup', auth()->user())
+                @can('viewPagesThatRequireSignup', auth()->user())
                     <a href="{{ config('app.discord_server') }}" target="_blank" rel="noopener noreferrer"
                         class="flex-shrink-0">
                         <img src="{{ asset('images/discord.png') }}" alt="Discord"
@@ -108,7 +108,7 @@
 
             <!-- Mobile/Tablet Right Side (md and below) -->
             <div class="flex items-center space-x-3 lg:hidden">
-                @can('hasConfirmedSignup', auth()->user())
+                @can('viewPagesThatRequireSignup', auth()->user())
                     <a href="{{ config('app.discord_server') }}" target="_blank" rel="noopener noreferrer"
                         class="flex-shrink-0">
                         <img src="{{ asset('images/discord.png') }}" alt="Discord"
@@ -143,7 +143,7 @@
             <x-responsive-nav-link href="{{ route('editions') }}" :active="str_starts_with(request()->path(), 'editions')">
                 {{ __('Editions') }}
             </x-responsive-nav-link>
-            @can('hasConfirmedSignup', auth()->user())
+            @can('viewPagesThatRequireSignup', auth()->user())
                 <x-responsive-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
                     {{ __('Tournaments') }}
                 </x-responsive-nav-link>

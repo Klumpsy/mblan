@@ -56,7 +56,6 @@ class Schedule extends Component
                 });
 
                 if ($gamesForDate->isNotEmpty()) {
-                    // Clone the schedule to avoid modifying the original
                     $scheduleClone = clone $schedule;
                     $scheduleClone->gamesForDate = $gamesForDate;
                     $schedulesForDate->push($scheduleClone);

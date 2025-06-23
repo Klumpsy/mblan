@@ -39,7 +39,7 @@ class UserPolicy
         return $user->role === 'admin';
     }
 
-    /**
+    /**ÂÂ
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, User $model): bool
@@ -63,7 +63,7 @@ class UserPolicy
         return $user->role === 'admin';
     }
 
-    public function hasConfirmedSignup(User $user): bool
+    public function viewPagesThatRequireSignup(User $user): bool
     {
         return $user->signups()->where('confirmed', true)->exists();
     }

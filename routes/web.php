@@ -45,14 +45,14 @@ Route::middleware([
         Route::get('/editions', 'index')->name('editions');
         Route::get('/editions/{edition:slug}', 'show')->name('editions.show');
         Route::get('/editions/{edition:slug}/signup', 'signup')->name('editions.signup');
-        Route::get('/editions/{edition:slug}/signout', 'signout')->name('editions.signout');
+        Route::post('/editions/{edition:slug}/signout', 'signout')->name('editions.signout');
     });
     Route::controller(TournamentController::class)->group(function () {
-        Route::get('/tournaments', 'index')->name('tournaments')->middleware('can:hasConfirmedSignup,' . User::class);
+        Route::get('/tournaments', 'index')->name('tournaments')->middleware('can:viewPagesThatRequireSignup,' . User::class);
         Route::get('/tournament/{tournament}', 'show')->name('tournaments.show');
     });
     Route::controller(MediaController::class)->group(function () {
-        Route::get('/media', 'index')->name('media')->middleware('can:hasConfirmedSignup,' . User::class);;
+        Route::get('/media', 'index')->name('media')->middleware('can:viewPagesThatRequireSignup,' . User::class);;
     });
     Route::controller(AchievementController::class)->group(function () {
         Route::get('/achievements', 'index')->name('achievements');

@@ -13,9 +13,17 @@
                         <div>
                             <div class="font-medium text-gray-900 dark:text-white">
                                 {{ $blogComment->author->name }}
-                                @if ($blogComment->author->id === $blog->author->id)
+                                @can('delete-blog-comment', $blogComment)
+                                    )
                                     <span class="text-xs text-primary-300">(author)</span>
-                                @endif
+                                    <span wire:click="deleteComment({{ $blogComment->id }})"
+                                        class="text-red-400 cursor-pointer hover:text-red-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-4 h-4 inline-block">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                @endcan
                             </div>
                             <div class="text-sm">{{ $blogComment->created_at->format('F j, Y \a\t g:i A') }}</div>
                         </div>

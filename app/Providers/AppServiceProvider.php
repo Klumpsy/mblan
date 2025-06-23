@@ -14,8 +14,10 @@ use App\Observers\TournamentObserver;
 use App\Observers\UserGameObserver;
 use App\Observers\UserObserver;
 use App\Achievements\AchievementStrategyResolver;
+use App\Models\BlogComment;
 use App\Models\UserTournament;
 use App\Observers\UserTournamentObserver;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,5 +42,9 @@ class AppServiceProvider extends ServiceProvider
         User::observe(UserObserver::class);
         Tournament::observe(TournamentObserver::class);
         UserTournament::observe(UserTournamentObserver::class);
+
+        Gate::define('delete-blog-comment', function (User $user, BlogComment $blogComment) {
+            return $blogComment->author->is($user) || $user->isAdmin();
+        });
     }
 }

@@ -5,6 +5,7 @@ namespace App\Livewire\Blog;
 use App\Models\Blog;
 use App\Models\BlogComment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 
@@ -32,6 +33,12 @@ class CommentSection extends Component
         $this->blog->comments()->save($comment);
 
         $this->reset('comment');
+    }
+
+    public function deleteComment(BlogComment $blogComment): void
+    {
+        Gate::authorize('delete-blog-comment', $blogComment);
+        $blogComment->delete();
     }
 
     public function render()
