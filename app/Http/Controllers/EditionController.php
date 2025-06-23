@@ -15,23 +15,21 @@ class EditionController extends Controller
         return view('edition.index', compact('editions'));
     }
 
-    public function show(string $slug): View
+    public function show(Edition $edition): View
     {
         return view('edition.show', [
-            'edition' => Edition::where('slug', $slug)->firstOrFail()
+            'edition' => $edition
         ]);
     }
 
-    public function signup(string $slug): View
+    public function signup(Edition $edition): View
     {
-        $edition = Edition::where('slug', $slug)->firstOrFail();
         $this->authorize('signup', $edition);
         return view('edition.signup', ['edition' => $edition]);
     }
 
-    public function signout(string $slug): View
+    public function signout(Edition $edition): View
     {
-        $edition = Edition::where('slug', $slug)->firstOrFail();
         $this->authorize('signout', $edition);
 
         $user = Auth::user();

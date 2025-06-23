@@ -18,6 +18,7 @@ class GameController extends Controller
 
         $games = $query->withCount('likedByUsers')
             ->with(['likedByUsers' => fn($q) => $q->where('user_id', Auth::id())])
+            ->with('tags')
             ->paginate(5);
 
         return view('games.index', [
@@ -25,10 +26,10 @@ class GameController extends Controller
         ]);
     }
 
-    public function show(string $id): View
+    public function show(Game $game): View
     {
         return view('games.show', [
-            'game' => Game::findOrFail($id)
+            'game' => $game
         ]);
     }
 }

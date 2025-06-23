@@ -3,6 +3,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <form method="GET" action="{{ route('games') }}" class="mb-4 md:flex md:items-center px-2 md:px-0">
+                @csrf
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Search games..."
                     class="border rounded px-3 py-2 text-sm w-full md:w-1/3 mb-2 md:mb-0" />
                 <button type="submit"

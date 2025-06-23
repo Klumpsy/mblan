@@ -13,7 +13,7 @@ class MediaController extends Controller
     public function index()
     {
 
-        $media = Media::all();
+        $media = Media::query()->with('tags')->get();
         return view('media.index', [
             'media' => $media,
         ]);

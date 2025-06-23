@@ -35,21 +35,21 @@ Route::middleware([
     });
     Route::controller(BlogController::class)->group(function () {
         Route::get('/blogs', 'index')->name('blogs');
-        Route::get('/blogs/{slug}', 'show')->name('blogs.show');
+        Route::get('/blogs/{blog:slug}', 'show')->name('blogs.show');
     });
     Route::controller(GameController::class)->group(function () {
         Route::get('/games', 'index')->name('games');
-        Route::get('/games/{id}', 'show')->name('games.show');
+        Route::get('/games/{game}', 'show')->name('games.show');
     });
     Route::controller(EditionController::class)->group(function () {
         Route::get('/editions', 'index')->name('editions');
-        Route::get('/editions/{id}', 'show')->name('editions.show');
-        Route::get('/editions/{slug}/signup', 'signup')->name('editions.signup');
-        Route::get('/editions/{slug}/signout', 'signout')->name('editions.signout');
+        Route::get('/editions/{edition:slug}', 'show')->name('editions.show');
+        Route::get('/editions/{edition:slug}/signup', 'signup')->name('editions.signup');
+        Route::get('/editions/{edition:slug}/signout', 'signout')->name('editions.signout');
     });
     Route::controller(TournamentController::class)->group(function () {
         Route::get('/tournaments', 'index')->name('tournaments')->middleware('can:hasConfirmedSignup,' . User::class);
-        Route::get('/tournament/{id}', 'show')->name('tournaments.show');
+        Route::get('/tournament/{tournament}', 'show')->name('tournaments.show');
     });
     Route::controller(MediaController::class)->group(function () {
         Route::get('/media', 'index')->name('media')->middleware('can:hasConfirmedSignup,' . User::class);;
