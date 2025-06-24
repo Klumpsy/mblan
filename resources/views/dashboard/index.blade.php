@@ -1,10 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
-    </x-slot>
-
 
     @if ($user->hasSignedUpForLatestEdition() && $latestBlog)
         <div class="pt-12">
