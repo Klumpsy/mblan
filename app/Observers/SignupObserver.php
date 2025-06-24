@@ -27,7 +27,7 @@ class SignupObserver
     public function updated(Signup $signup): void
     {
         if ($signup->isDirty('confirmed') && $signup->confirmed) {
-            Mail::to($signup->user->email)->send(new Approved($signup));
+            Mail::to($signup->user->email)->queue(new Approved($signup));
         }
     }
 

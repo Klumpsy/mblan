@@ -91,7 +91,7 @@ class Signup extends Component
             session()->flash('success', 'Successfully signed up for ' . $this->edition->name . '!');
 
             $signup = Auth::user()->signups()->where('edition_id', $this->edition->id)->first();
-            Mail::to(Auth::user()->email)->send(new Welcome($signup));
+            Mail::to(Auth::user()->email)->queue(new Welcome($signup));
 
             $this->redirect('/dashboard');
             $this->reset(['currentStep', 'selectedSchedules', 'selectedBeverages', 'staysOnCampsite', 'joinsBarbecue']);
