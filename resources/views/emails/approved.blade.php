@@ -63,7 +63,7 @@
             <h2>📍 Event Details</h2>
             <ul>
                 <li><strong>Event:</strong> {{ $signup->edition->name }} ({{ $signup->edition->year }})</li>
-                <li><strong>Location:</strong> Tachtigbunderweg 6 - 7693PT - Sibculo</li>
+                <li><strong>Location:</strong> Tachtig Bunderweg 6 - Sibculo</li>
                 <li><strong>Check-in:</strong> {{ $signup->schedules->first()->name }} 10.00</li>
             </ul>
 
@@ -75,9 +75,19 @@
 
             <h2>🧳 What Should You Bring?</h2>
             <ul>
-                <li>Sleeping gear if you're camping</li>
-                <li>Laptop or PC with a monitor/mounts - keyboard - mouse - headset</li>
-                <li>A good attitude and your best jokes 😄</li>
+                <li>🛌 Sleeping gear if you're camping</li>
+                <li>💻 A gaming-ready setup: laptop or PC, monitor/mounts, keyboard, mouse, headset</li>
+                <li>😄 A good attitude—and your best jokes!</li>
+            </ul>
+
+            <h2>🧳 What can you expect:</h2>
+            <ul>
+                <li>🪑 Desks and Chairs provided, but bring your own chair if you want something extra comfy</li>
+                <li>🥤 Desk-mounted beverage holders</li>
+                <li>🌐 Network cable, Wi-Fi, and power are all provided—no need to bring your own</li>
+                <li>🎸 A full Rock Band stage — team up and rock out with other guests</li>
+                <li>🧊 Extra amenities in the LAN barn: refrigerator, coffee machines, and a chill-out corner</li>
+                <li>⛺ A comfortable camping field to pitch your tent and relax</li>
             </ul>
 
             <hr style="margin: 30px 0;">

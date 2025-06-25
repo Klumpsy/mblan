@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mblan Welcome Test</title>
+    <title>MBLAN Welcome Test</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,7 +49,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎉 Welcome to Mblan, {{ $user->name }}</h1>
+            <h1>🎉 Welcome to MBLAN, {{ $user->name }}</h1>
             <p>We're absolutely thrilled to have you join us for <strong>MBLAN25</strong>! Your signup has been
                 successfully received.</p>
         </div>
