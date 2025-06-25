@@ -52,7 +52,7 @@
 
                     <div class="p-6">
                         <div class="text-green-300 text-sm mb-2">
-                            Your avarage costs: €{{ number_format($signup->calculateCost(), 2) }} <span
+                            Your average costs: €{{ number_format($signup->calculateCost(), 2) }} <span
                                 class="text-xs text-white">(This may change and is calculated based on your
                                 choices)</span>
                         </div>
