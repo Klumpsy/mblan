@@ -11,6 +11,7 @@ class BlogController extends Controller
     {
         $blogs = Blog::where('published', true)
             ->with(['author', 'tags'])
+            ->orderBy('published_at', 'desc')
             ->get();
 
         return view('blog.index', compact('blogs'));
