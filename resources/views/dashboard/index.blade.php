@@ -13,7 +13,7 @@
     <div class="pt-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg">
-                <x-events :user="$user" />
+                <x-events :user="$user" :latestEdition="$latestEdition" />
             </div>
         </div>
     </div>
