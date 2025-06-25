@@ -5,7 +5,7 @@
     </h2>
 
     <p class="mt-6 mb-6 text-gray-500 dark:text-white leading-relaxed">
-        Your upcoming eventss are listed below. Click on an event to view more details or manage your signup.
+        Your upcoming events are listed below. Click on an event to view more details or manage your signup.
     </p>
     <div class="flex justify-between mb-6">
         @if ($latestEdition && $user->signups->isEmpty())
