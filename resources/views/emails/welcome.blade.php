@@ -66,16 +66,21 @@
                 <li><strong>Event:</strong> {{ $signup->edition->name }} ({{ $signup->edition->year }})</li>
                 <li><strong>Status:</strong> ⏳ Pending Review</li>
                 <li><strong>Campsite Stay:</strong>
-                    {{ $signup->stays_on_campsite ? '🏕️ Yes, I\'ll be camping!' : '❌ No camping' }}
+                    {{ $signup->stays_on_campsite ? '🏕️ Yes, I’ll be camping!' : '❌ No camping' }}
                 </li>
                 <li><strong>Barbecue:</strong>
                     {{ $signup->joins_barbecue ? '🍖 Count me in for the BBQ!' : '❌ No BBQ for me' }}
                 </li>
-                <li><strong>Barbecue:</strong>
+                <li><strong>Pizza:</strong>
                     {{ $signup->joins_pizza ? '🍕 Count me in for the Pizza!' : '❌ No Pizza for me' }}
                 </li>
                 <li><strong>Tshirt:</strong>
-                    {{ $signup->wants_tshirt ? '👕 I ordered a MBLAN25 T-Shirt (size: {{ $signup->tshirt_size }}) - text: {{ $signup->tshirt_text }}.' : '❌ No T-Shirt for me' }}
+                    @if ($signup->wants_tshirt)
+                        👕 I ordered a MBLAN25 T-Shirt (size: {{ $signup->tshirt_size }}) - text:
+                        {{ $signup->tshirt_text }}.
+                    @else
+                        ❌ No T-Shirt for me
+                    @endif
                 </li>
             </ul>
 

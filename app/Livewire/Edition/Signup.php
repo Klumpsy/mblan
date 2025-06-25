@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Edition;
 
-use App\Enums\TshirtSize;
 use App\Enums\TshirtSizeType;
 use App\Mail\Welcome;
 use App\Models\Edition;

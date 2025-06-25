@@ -130,18 +130,21 @@
                             @endif
 
                             <div class="flex items-center text-sm">
-                                <x-heroicon-o-shopping-cart class="w-5 h-15 text-gray-400 mr-1" />
+                                <x-heroicon-o-shopping-cart class="w-5 h-5 text-gray-400 mr-1 shrink-0" />
+
                                 @if ($signup->beverages->isEmpty())
                                     <span class="text-gray-600 dark:text-gray-300">
                                         You have no prevered beverages.
                                     </span>
                                 @else
-                                    @foreach ($signup->beverages as $beverage)
-                                        <span
-                                            class="inline-block text-xs text-primary-200 px-2 py-2 rounded-full me-2 uppercase font-semibold tracking-wide border-r-2 pr-2 last:border-r-0 border-gray-100 dark:border-gray-700">
-                                            {{ $beverage->name }}
-                                        </span>
-                                    @endforeach
+                                    <div class="flex flex-wrap gap-2 ms-2">
+                                        @foreach ($signup->beverages as $beverage)
+                                            <span
+                                                class="inline-block text-xs text-primary-200 px-2 py-1 rounded-full uppercase font-semibold tracking-wide bg-primary-800/20 border border-primary-700/30">
+                                                {{ $beverage->name }}
+                                            </span>
+                                        @endforeach
+                                    </div>
                                 @endif
                             </div>
                         </div>

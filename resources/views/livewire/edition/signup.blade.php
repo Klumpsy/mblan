@@ -74,7 +74,9 @@
                                     $formattedDate = $carbonDate->format('D, M j');
                                 @endphp
 
-                                <div class="text-sm text-gray-500">{{ $formattedDate }}</div>
+                                <div class="text-sm text-gray-500">{{ $formattedDate }}
+                                    (€{{ number_format(\App\Models\Signup::COSTS_PER_DAY, 2) }})
+                                </div>
                             </div>
                         </label>
                     @empty
@@ -121,7 +123,7 @@
                                 class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1">
                             <div class="flex-1">
                                 <label for="pizza" class="block font-medium text-gray-900 cursor-pointer">
-                                    Join the pizza on Friday
+                                    Join the pizza on Friday (€{{ number_format(\App\Models\Signup::PIZZA_COST, 2) }})
                                 </label>
                                 <p class="text-sm text-gray-600 mt-1">
                                     I would like to have a pizza ordered on Friday.
@@ -138,6 +140,8 @@
                             <div class="flex-1">
                                 <label for="bbq" class="block font-medium text-gray-900 cursor-pointer">
                                     Join the barbecue on Saturday
+                                    (€{{ number_format(\App\Models\Signup::BBQ_COST, 2) }})
+                                    <span />
                                 </label>
                                 <p class="text-sm text-gray-600 mt-1">
                                     I would like to participate in the group barbecue event.
