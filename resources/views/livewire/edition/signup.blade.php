@@ -306,10 +306,10 @@
             @if (!empty($selectedSchedules))
                 <div>📅 {{ implode(', ', $this->selectedScheduleNames) }}</div>
             @endif
-            @if ($staysOnCampsite)
+            @if ($joinsPizza)
                 <div>🍕 Eating pizza on Friday</div>
             @endif
-            @if ($joinsPizza)
+            @if ($staysOnCampsite)
                 <div>🏕️ Staying on campsite</div>
             @endif
             @if ($joinsBarbecue)
