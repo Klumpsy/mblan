@@ -300,13 +300,16 @@
         <h4 class="text-sm font-medium text-gray-900 mb-2">Summary:</h4>
         <div class="text-sm text-gray-600 space-y-1">
             @if (!empty($selectedSchedules))
-                <div>📅 {{ count($selectedSchedules) }} day(s) selected</div>
+                <div>📅 {{ implode(', ', $this->selectedScheduleNames) }}</div>
             @endif
             @if ($staysOnCampsite)
+                <div>🍕 Eating pizza on Friday</div>
+            @endif
+            @if ($joinsPizza)
                 <div>🏕️ Staying on campsite</div>
             @endif
             @if ($joinsBarbecue)
-                <div>🍖 Joining barbecue @if ($isVegan)
+                <div>🍖 Joining barbecue on Saturday @if ($isVegan)
                         (vegan)
                     @endif
                 </div>

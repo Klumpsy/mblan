@@ -79,7 +79,7 @@ class Signup extends Component
         }
     }
 
-    public function updatedSelectedSchedules()
+    public function updatedSelectedSchedules(): void
     {
         $this->joinsOnFriday = $this->computeJoinsOnFriday();
         $this->joinsOnSaturday = $this->computeJoinsOnSaturday();
@@ -90,6 +90,14 @@ class Signup extends Component
         if ($this->currentStep > 1) {
             $this->currentStep--;
         }
+    }
+
+    public function getSelectedScheduleNamesProperty(): array
+    {
+        return $this->edition->schedules
+            ->whereIn('id', $this->selectedSchedules)
+            ->pluck('name')
+            ->toArray();
     }
 
     private function computeJoinsOnFriday(): bool
@@ -177,7 +185,7 @@ class Signup extends Component
             1 => 'Select Days',
             2 => 'Preferences',
             3 => 'Beverages',
-            4 => $this->edition->name . ' tshirt',
+            4 => $this->edition->name . ' T-Shirt',
             default => 'Step ' . $step
         };
     }
