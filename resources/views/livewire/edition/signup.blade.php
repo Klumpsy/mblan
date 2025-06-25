@@ -315,7 +315,7 @@
                 </div>
             @endif
             @if (!empty($selectedBeverages))
-                <div>🥤 {{ count($selectedBeverages) }} beverage(s) selected</div>
+                <div>🥤 {{ implode(', ', $this->selectedBeverageNames) }}</div>
             @endif
             @if ($wantsTshirt)
                 <div>👕 Rocking the {{ $edition->name }} t-shirt</div>
