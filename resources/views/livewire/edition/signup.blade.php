@@ -131,18 +131,21 @@
                     @endif
 
 
-                    <div class="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
-                        <input type="checkbox" wire:model.live="joinsBarbecue" id="bbq"
-                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1">
-                        <div class="flex-1">
-                            <label for="bbq" class="block font-medium text-gray-900 cursor-pointer">
-                                Join the barbecue on Saturday
-                            </label>
-                            <p class="text-sm text-gray-600 mt-1">
-                                I would like to participate in the group barbecue event.
-                            </p>
+                    @if ($joinsOnSaturday)
+                        <div class="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
+                            <input type="checkbox" wire:model.live="joinsBarbecue" id="bbq"
+                                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1">
+                            <div class="flex-1">
+                                <label for="bbq" class="block font-medium text-gray-900 cursor-pointer">
+                                    Join the barbecue on Saturday
+                                </label>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    I would like to participate in the group barbecue event.
+                                </p>
+                            </div>
                         </div>
-                    </div>
+                    @endif
+
                 </div>
 
                 @if ($joinsBarbecue)

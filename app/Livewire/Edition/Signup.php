@@ -24,6 +24,7 @@ class Signup extends Component
     public int $currentStep = 1;
     public int $totalSteps = 4;
     public bool $joinsOnFriday = false;
+    public bool $joinsOnSaturday = false;
 
     #[Rule('required|array|min:1')]
     public array $selectedSchedules = [];
@@ -81,6 +82,7 @@ class Signup extends Component
     public function updatedSelectedSchedules()
     {
         $this->joinsOnFriday = $this->computeJoinsOnFriday();
+        $this->joinsOnSaturday = $this->computeJoinsOnSaturday();
     }
 
     public function previousStep()
@@ -95,6 +97,17 @@ class Signup extends Component
         foreach ($this->selectedSchedules as $scheduleId) {
             $schedule = $this->edition->schedules->find($scheduleId);
             if ($schedule && $schedule->date && Carbon::parse($schedule->date)->isFriday()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function computeJoinsOnSaturday(): bool
+    {
+        foreach ($this->selectedSchedules as $scheduleId) {
+            $schedule = $this->edition->schedules->find($scheduleId);
+            if ($schedule && $schedule->date && Carbon::parse($schedule->date)->isSaturday()) {
                 return true;
             }
         }
