@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\TshirtSizeType;
 use App\Models\Edition;
 use App\Models\Signup;
 use App\Models\User;
@@ -15,9 +16,14 @@ class SignupService
         array $schedules,
         array $beverages = [],
         bool $staysOnCampsite = false,
-        bool $joinsBarbecue = false
-    ): Signup {
+        bool $joinsBarbecue = false,
+        bool $joinsPizza = false,
+        bool $isVegan = false,
+        bool $wantsTshirt = false,
+        ?TshirtSizeType $tshirtSize = null,
+        ?string $tshirtText = null
 
+    ): Signup {
 
         return DB::transaction(function () use (
             $user,
@@ -25,13 +31,23 @@ class SignupService
             $schedules,
             $beverages,
             $staysOnCampsite,
-            $joinsBarbecue
+            $joinsBarbecue,
+            $joinsPizza,
+            $isVegan,
+            $wantsTshirt,
+            $tshirtSize,
+            $tshirtText
         ) {
             $signup = Signup::create([
                 'user_id' => $user->id,
                 'edition_id' => $edition->id,
                 'stays_on_campsite' => $staysOnCampsite,
                 'joins_barbecue' => $joinsBarbecue,
+                'joins_pizza' => $joinsPizza,
+                'is_vegan' => $isVegan,
+                'wants_tshirt' => $wantsTshirt,
+                'tshirt_size' => $tshirtSize,
+                'tshirt_text' => $tshirtText,
                 'confirmed' => false
             ]);
 

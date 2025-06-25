@@ -70,9 +70,10 @@
                             <div class="flex-1">
                                 <div class="font-medium text-gray-900">{{ $schedule->name }}</div>
                                 @php
-                                    $carbonDate = \Carbon\Carbon::parse($edition->date);
+                                    $carbonDate = \Carbon\Carbon::parse($schedule->date);
                                     $formattedDate = $carbonDate->format('D, M j');
                                 @endphp
+
                                 <div class="text-sm text-gray-500">{{ $formattedDate }}</div>
                             </div>
                         </label>
@@ -114,12 +115,28 @@
                         </div>
                     </div>
 
+                    @if ($joinsOnFriday)
+                        <div class="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
+                            <input type="checkbox" wire:model.live="joinsPizza" id="pizza"
+                                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1">
+                            <div class="flex-1">
+                                <label for="pizza" class="block font-medium text-gray-900 cursor-pointer">
+                                    Join the pizza on Friday
+                                </label>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    I would like to have a pizza ordered on Friday.
+                                </p>
+                            </div>
+                        </div>
+                    @endif
+
+
                     <div class="flex items-start space-x-3 p-4 border border-gray-200 rounded-lg">
-                        <input type="checkbox" wire:model="joinsBarbecue" id="bbq"
+                        <input type="checkbox" wire:model.live="joinsBarbecue" id="bbq"
                             class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded mt-1">
                         <div class="flex-1">
                             <label for="bbq" class="block font-medium text-gray-900 cursor-pointer">
-                                Join the barbecue
+                                Join the barbecue on Saturday
                             </label>
                             <p class="text-sm text-gray-600 mt-1">
                                 I would like to participate in the group barbecue event.
@@ -127,6 +144,27 @@
                         </div>
                     </div>
                 </div>
+
+                @if ($joinsBarbecue)
+                    <div>
+                        <div class="flex items-start space-x-3 p-4 rounded-lg">
+                            <input type="checkbox" wire:model="isVegan" id="vegan"
+                                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                            <div class="flex-1">
+                                <label for="vegan" class="block font-medium text-gray-900 cursor-pointer">
+                                    Are you vegan?
+                                </label>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    I would like vegan options for the BBQ
+                                </p>
+                                @error('isVegan')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
             </div>
         @endif
 
@@ -169,6 +207,67 @@
                 </div>
             </div>
         @endif
+
+        @if ($currentStep === 4)
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                        Get your MBLAN {{ $edition->name }} T-shirt
+                    </h3>
+                    <p class="text-gray-600 mb-6">
+                        If you would like to wear {{ $edition->name }} merch, select this
+                        option. A T-shirt costs €25 and you can customize the text to give yourself a cool LAN title!
+                    </p>
+                </div>
+
+                <div class="space-y-4">
+                    <label
+                        class="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                        <input type="checkbox" wire:model.live="wantsTshirt"
+                            class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded">
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-900">Yes, I want a T-shirt! (€25)</div>
+                            <div class="text-sm text-gray-500">Get your personalized {{ $edition->name }} T-shirt</div>
+                        </div>
+                    </label>
+                </div>
+
+                @if ($wantsTshirt)
+                    <div class="space-y-4 p-4 bg-gray-50 rounded-lg">
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                T-shirt Size
+                            </label>
+                            <select wire:model="tshirtSize"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                                @foreach (App\Enums\TshirtSizeType::cases() as $size)
+                                    <option value="{{ $size->value }}">{{ $size->value }}</option>
+                                @endforeach
+                            </select>
+                            @error('tshirtSize')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Custom Text (Optional)
+                            </label>
+                            <input type="text" wire:model.live="tshirtText"
+                                placeholder="Enter your LAN title (max 20 characters)" maxlength="20"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                            <p class="mt-1 text-xs text-gray-500">
+                                Characters: {{ strlen($tshirtText) }}/20
+                            </p>
+                            @error('tshirtText')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>
 
     <div class="flex justify-between items-center mt-6">
@@ -204,10 +303,16 @@
                 <div>🏕️ Staying on campsite</div>
             @endif
             @if ($joinsBarbecue)
-                <div>🍖 Joining barbecue</div>
+                <div>🍖 Joining barbecue @if ($isVegan)
+                        (vegan)
+                    @endif
+                </div>
             @endif
             @if (!empty($selectedBeverages))
                 <div>🥤 {{ count($selectedBeverages) }} beverage(s) selected</div>
+            @endif
+            @if ($wantsTshirt)
+                <div>👕 Rocking the {{ $edition->name }} t-shirt</div>
             @endif
         </div>
     </div>

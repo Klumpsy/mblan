@@ -19,6 +19,7 @@ class SignupObserver
         AchievementService::check($user, AchievementType::FIRST_SIGNUP->value);
         AchievementService::check($user, AchievementType::JOIN_BARBECUE->value);
         AchievementService::check($user, AchievementType::JOIN_CAMPING->value);
+        AchievementService::check($user, AchievementType::GET_TSHIRT_25->value);
     }
 
     /**

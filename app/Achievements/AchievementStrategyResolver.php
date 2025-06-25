@@ -21,6 +21,7 @@ class AchievementStrategyResolver
             AchievementType::GAME_LIKE_10->value => new GameLikes10Achievement(),
             AchievementType::JOIN_BARBECUE->value => new JoinBarbecueAchievement(),
             AchievementType::JOIN_CAMPING->value => new JoinCampingAchievement(),
+            AchievementType::GET_TSHIRT_25->value => new GetTshirtAchievement(),
             default => null,
         };
     }

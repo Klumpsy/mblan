@@ -45,7 +45,7 @@
         <p class="mt-4 text-sm">
             <a href="{{ route('games') }}"
                 class="inline-flex items-center font-semibold text-primary-700 dark:text-primary-300">
-                Stem nu
+                Vote now
 
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                     class="ms-1 w-5 h-5 fill-primary-500 dark:fill-primary-200">

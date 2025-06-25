@@ -13,6 +13,7 @@ enum AchievementType: string
     case JOIN_CAMPING = 'join-camping';
     case JOIN_EDITION_24 = 'join-edition_24';
     case JOIN_EDITION_25 = 'join-edition_25';
+    case GET_TSHIRT_25 = 'get_tshirt_25';
 
     public static function availableSlugs(): array
     {

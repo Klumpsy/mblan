@@ -66,9 +66,17 @@
                 <li><strong>Event:</strong> {{ $signup->edition->name }} ({{ $signup->edition->year }})</li>
                 <li><strong>Status:</strong> ⏳ Pending Review</li>
                 <li><strong>Campsite Stay:</strong>
-                    {{ $signup->stays_on_campsite ? '🏕️ Yes, I\'ll be camping!' : '❌ No camping' }}</li>
+                    {{ $signup->stays_on_campsite ? '🏕️ Yes, I\'ll be camping!' : '❌ No camping' }}
+                </li>
                 <li><strong>Barbecue:</strong>
-                    {{ $signup->joins_barbecue ? '🍖 Count me in for the BBQ!' : '❌ No BBQ for me' }}</li>
+                    {{ $signup->joins_barbecue ? '🍖 Count me in for the BBQ!' : '❌ No BBQ for me' }}
+                </li>
+                <li><strong>Barbecue:</strong>
+                    {{ $signup->joins_pizza ? '🍕 Count me in for the Pizza!' : '❌ No Pizza for me' }}
+                </li>
+                <li><strong>Tshirt:</strong>
+                    {{ $signup->wants_tshirt ? '👕 I ordered a MBLAN25 T-shirt (size: {{ $signup->tshirt_size }}) - text: {{ $signup->tshirt_text }}.' : '❌ No T-shirt for me' }}
+                </li>
             </ul>
 
             <h2>🎯 Your Selected Activities</h2>
@@ -112,7 +120,7 @@
             <p><strong>Questions?</strong> Don't hesitate to reach out to us at <strong>organisation@mblan.nl</strong>
             </p>
 
-            <p>Thank you for choosing Mblan for your next adventure!</p>
+            <p>Thank you for choosing MBLAN25 for your next adventure!</p>
 
             <p><strong>Bart, Martin & Corneel</strong><br>
                 <em>The Mblan Team</em> 🌟

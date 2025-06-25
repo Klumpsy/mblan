@@ -43,6 +43,11 @@
                     </div>
 
                     <div class="p-6">
+                        <div class="text-green-300 text-sm mb-2">
+                            Your avarage costs: €{{ number_format($signup->calculateCost(), 2) }} <span
+                                class="text-xs text-white">(This may change and is calculated based on your
+                                choices)</span>
+                        </div>
                         <div class="flex items-start justify-between mb-3">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                                 {{ $signup->edition->name }}
@@ -78,8 +83,37 @@
                                         </span>
                                     @endif
                                     @if ($signup->joins_barbecue)
-                                        <span class="inline-block  text-violet-400 py-2 px-2">
+                                        <span
+                                            class="inline-block  text-violet-400 py-2 px-2  border-gray-100 dark:border-gray-700 border-r-2">
                                             BBQ
+                                        </span>
+                                    @endif
+                                    @if ($signup->joins_pizza)
+                                        <span class="inline-block  text-violet-400 py-2 px-2">
+                                            PIZZA
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="flex items-center text-sm">
+                                <x-heroicon-o-paper-airplane class="w-5 h-15 text-gray-400 mr-1" />
+                                <div class="text-gray-600 dark:text-gray-300 text-xs">
+                                    @if ($signup->stays_on_campsite)
+                                        <span
+                                            class="inline-block text-pink-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
+                                            T-shirt
+                                        </span>
+                                    @endif
+                                    @if ($signup->joins_barbecue)
+                                        <span
+                                            class="inline-block  text-pink-400 py-2 px-2  border-gray-100 dark:border-gray-700 border-r-2">
+                                            {{ $signup->tshirt_size }}
+                                        </span>
+                                    @endif
+                                    @if ($signup->joins_pizza)
+                                        <span class="inline-block  text-pink-400 py-2 px-2">
+                                            {{ $signup->tshirt_text }}
                                         </span>
                                     @endif
                                 </div>

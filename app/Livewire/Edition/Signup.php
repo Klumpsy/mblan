@@ -2,23 +2,28 @@
 
 namespace App\Livewire\Edition;
 
+use App\Enums\TshirtSize;
+use App\Enums\TshirtSizeType;
 use App\Mail\Welcome;
 use App\Models\Edition;
 use App\Models\Signup as SignupModel;
 use App\Models\Beverage;
 use App\Services\SignupService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rules\Enum;
 
 class Signup extends Component
 {
     public Edition $edition;
 
     public int $currentStep = 1;
-    public int $totalSteps = 3;
+    public int $totalSteps = 4;
+    public bool $joinsOnFriday = false;
 
     #[Rule('required|array|min:1')]
     public array $selectedSchedules = [];
@@ -31,6 +36,21 @@ class Signup extends Component
 
     #[Rule('boolean')]
     public bool $joinsBarbecue = false;
+
+    #[Rule('boolean')]
+    public bool $joinsPizza = false;
+
+    #[Rule('boolean')]
+    public bool $isVegan = false;
+
+    #[Rule('boolean|required')]
+    public bool $wantsTshirt = false;
+
+    #[Rule('max:20')]
+    public string $tshirtText = '';
+
+    #[Rule(new Enum(TshirtSizeType::class))]
+    public TshirtSizeType $tshirtSize = TshirtSizeType::SIZE_M;
 
     public function mount(Edition $edition): void
     {
@@ -58,11 +78,27 @@ class Signup extends Component
         }
     }
 
+    public function updatedSelectedSchedules()
+    {
+        $this->joinsOnFriday = $this->computeJoinsOnFriday();
+    }
+
     public function previousStep()
     {
         if ($this->currentStep > 1) {
             $this->currentStep--;
         }
+    }
+
+    private function computeJoinsOnFriday(): bool
+    {
+        foreach ($this->selectedSchedules as $scheduleId) {
+            $schedule = $this->edition->schedules->find($scheduleId);
+            if ($schedule && $schedule->date && Carbon::parse($schedule->date)->isFriday()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function signup()
@@ -85,7 +121,12 @@ class Signup extends Component
                 schedules: $this->selectedSchedules,
                 beverages: $this->selectedBeverages,
                 staysOnCampsite: $this->staysOnCampsite,
-                joinsBarbecue: $this->joinsBarbecue
+                joinsBarbecue: $this->joinsBarbecue,
+                joinsPizza: $this->joinsPizza,
+                isVegan: $this->isVegan,
+                wantsTshirt: $this->wantsTshirt,
+                tshirtSize: $this->tshirtSize,
+                tshirtText: $this->tshirtText
             );
 
             session()->flash('success', 'Successfully signed up for ' . $this->edition->name . '!');
@@ -110,6 +151,8 @@ class Signup extends Component
                 return true;
             case 3:
                 return true;
+            case 4:
+                return true;
             default:
                 return false;
         }
@@ -121,6 +164,7 @@ class Signup extends Component
             1 => 'Select Days',
             2 => 'Preferences',
             3 => 'Beverages',
+            4 => $this->edition->name . ' tshirt',
             default => 'Step ' . $step
         };
     }
