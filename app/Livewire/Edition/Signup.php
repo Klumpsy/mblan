@@ -82,6 +82,15 @@ class Signup extends Component
     {
         $this->joinsOnFriday = $this->computeJoinsOnFriday();
         $this->joinsOnSaturday = $this->computeJoinsOnSaturday();
+
+        if (!$this->joinsOnSaturday) {
+            $this->joinsBarbecue = false;
+            $this->isVegan = false;
+        }
+
+        if (!$this->joinsOnFriday) {
+            $this->joinsPizza = false;
+        }
     }
 
     public function previousStep()
