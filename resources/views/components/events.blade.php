@@ -104,28 +104,30 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center text-sm">
-                                <x-heroicon-o-paper-airplane class="w-5 h-15 text-gray-400 mr-1" />
-                                <div class="text-gray-600 dark:text-gray-300 text-xs">
-                                    @if ($signup->wants_tshirt)
-                                        <span
-                                            class="inline-block text-pink-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
-                                            T-shirt
-                                        </span>
-                                    @endif
-                                    @if ($signup->tshirt_size)
-                                        <span
-                                            class="inline-block  text-pink-400 py-2 px-2  border-gray-100 dark:border-gray-700 border-r-2">
-                                            {{ $signup->tshirt_size }}
-                                        </span>
-                                    @endif
-                                    @if ($signup->tshirt_text)
-                                        <span class="inline-block  text-pink-400 py-2 px-2">
-                                            {{ $signup->tshirt_text }}
-                                        </span>
-                                    @endif
+                            @if ($signup->wants_tshirt)
+                                <div class="flex items-center text-sm">
+                                    <x-heroicon-o-paper-airplane class="w-5 h-15 text-gray-400 mr-1" />
+                                    <div class="text-gray-600 dark:text-gray-300 text-xs">
+                                        @if ($signup->wants_tshirt)
+                                            <span
+                                                class="inline-block text-pink-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
+                                                T-shirt
+                                            </span>
+                                        @endif
+                                        @if ($signup->tshirt_size)
+                                            <span
+                                                class="inline-block  text-pink-400 py-2 px-2  border-gray-100 dark:border-gray-700 border-r-2">
+                                                {{ $signup->tshirt_size }}
+                                            </span>
+                                        @endif
+                                        @if ($signup->tshirt_text)
+                                            <span class="inline-block  text-pink-400 py-2 px-2">
+                                                {{ $signup->tshirt_text }}
+                                            </span>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
 
                             <div class="flex items-center text-sm">
                                 <x-heroicon-o-shopping-cart class="w-5 h-15 text-gray-400 mr-1" />
