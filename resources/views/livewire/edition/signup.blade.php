@@ -303,7 +303,7 @@
                 <div>📅 {{ implode(', ', $this->selectedScheduleNames) }}</div>
             @endif
             @if ($staysOnCampsite)
-                <div>🍕 Eating pizza on Friday</div>
+                <div>🍕 Eating pizza on F</div>
             @endif
             @if ($joinsPizza)
                 <div>🏕️ Staying on campsite</div>
@@ -315,7 +315,7 @@
                 </div>
             @endif
             @if (!empty($selectedBeverages))
-                <div>🥤 {{ implode(', ', $this->selectedBeverageNames) }}</div>
+                <div>🥤 {{ count($selectedBeverages) }} beverage(s) selected</div>
             @endif
             @if ($wantsTshirt)
                 <div>👕 Rocking the {{ $edition->name }} t-shirt</div>

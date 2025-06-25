@@ -100,13 +100,6 @@ class Signup extends Component
             ->toArray();
     }
 
-    public function getSelectedBeverageNamesProperty(): array
-    {
-        return Beverage::whereIn('id', $this->selectedBeverages)
-            ->pluck('name')
-            ->toArray();
-    }
-
     private function computeJoinsOnFriday(): bool
     {
         foreach ($this->selectedSchedules as $scheduleId) {
