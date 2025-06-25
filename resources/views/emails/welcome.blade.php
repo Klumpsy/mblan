@@ -75,7 +75,7 @@
                     {{ $signup->joins_pizza ? '🍕 Count me in for the Pizza!' : '❌ No Pizza for me' }}
                 </li>
                 <li><strong>Tshirt:</strong>
-                    {{ $signup->wants_tshirt ? '👕 I ordered a MBLAN25 T-shirt (size: {{ $signup->tshirt_size }}) - text: {{ $signup->tshirt_text }}.' : '❌ No T-shirt for me' }}
+                    {{ $signup->wants_tshirt ? '👕 I ordered a MBLAN25 T-Shirt (size: {{ $signup->tshirt_size }}) - text: {{ $signup->tshirt_text }}.' : '❌ No T-Shirt for me' }}
                 </li>
             </ul>
 

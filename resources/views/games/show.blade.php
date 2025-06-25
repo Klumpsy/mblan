@@ -1,11 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
             <h1 class="font-semibold text-xl text-gray-800 dark:text-primary-400 leading-tight">
                 {{ $game->name }}
             </h1>
             <span
-                class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full">
+                class="text-sm bg-primary-100 text-primary-800 dark:bg-primary-800 dark:text-primary-400 px-3 py-1 rounded-full whitespace-nowrap self-start sm:self-auto">
                 Released: {{ $game->year_of_release }}
             </span>
         </div>
