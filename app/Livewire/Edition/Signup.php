@@ -29,7 +29,7 @@ class Signup extends Component
     #[Rule('required|array|min:1')]
     public array $selectedSchedules = [];
 
-    #[Rule('array|max:5')]
+    #[Rule('array')]
     public array $selectedBeverages = [];
 
     #[Rule('boolean')]
@@ -96,6 +96,13 @@ class Signup extends Component
     {
         return $this->edition->schedules
             ->whereIn('id', $this->selectedSchedules)
+            ->pluck('name')
+            ->toArray();
+    }
+
+    public function getSelectedBeverageNamesProperty(): array
+    {
+        return Beverage::whereIn('id', $this->selectedBeverages)
             ->pluck('name')
             ->toArray();
     }
