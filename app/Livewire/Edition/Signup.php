@@ -44,7 +44,7 @@ class Signup extends Component
     #[Rule('boolean')]
     public bool $isVegan = false;
 
-    #[Rule('boolean|required')]
+    #[Rule('boolean')]
     public bool $wantsTshirt = false;
 
     #[Rule('max:20')]
