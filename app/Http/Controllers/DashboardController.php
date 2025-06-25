@@ -12,7 +12,9 @@ class DashboardController extends Controller
     public function index(): View
     {
         $user = Auth::user();
-        $latestBlog = Blog::latest()->first();
+        $latestBlog = Blog::where('published', true)
+            ->latest()
+            ->first();
         $latestEdition = Edition::latest()->select('slug', 'name')->first();
 
         return view('dashboard.index', compact('user', 'latestBlog', 'latestEdition'));

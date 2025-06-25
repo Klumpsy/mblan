@@ -9,7 +9,10 @@ class BlogController extends Controller
 {
     public function index()
     {
-        $blogs = Blog::all()->withRelationshipAutoloading();
+        $blogs = Blog::where('published', true)
+            ->with(['author', 'tags'])
+            ->get();
+
         return view('blog.index', compact('blogs'));
     }
 
