@@ -14,7 +14,7 @@ class ScheduleFactory extends Factory
     public function definition()
     {
         $attributes = [
-            'name' => 'Day ' . $this->faker->numberBetween(1, 5),
+            'name' => 'Day ' . fake()->numberBetween(1, 5),
             'edition_id' => Edition::factory(),
             'created_at' => now(),
             'updated_at' => now(),
@@ -66,7 +66,7 @@ class ScheduleFactory extends Factory
 
                 foreach ($games as $game) {
                     $endTime = (clone $startTime)->addMinutes(
-                        $this->faker->randomElement([30, 45, 60, 90, 120])
+                        fake()->randomElement([30, 45, 60, 90, 120])
                     );
 
                     $schedule->games()->attach($game, [

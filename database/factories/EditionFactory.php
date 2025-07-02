@@ -12,12 +12,12 @@ class EditionFactory extends Factory
 
     public function definition()
     {
-        $name = $this->faker->words(3, true) . ' Edition';
+        $name = fake()->words(3, true) . ' Edition';
         return [
             'name' => $name,
             'logo' => null,
-            'description' => $this->faker->paragraphs(3, true),
-            'year' => $this->faker->year(),
+            'description' => fake()->paragraphs(3, true),
+            'year' => fake()->year(),
             'slug' => Str::slug($name),
             'created_at' => now(),
             'updated_at' => now(),

@@ -14,11 +14,11 @@ class SignupFactory extends Factory
     public function definition(): array
     {
         return [
-            'stays_on_campsite' => $this->faker->boolean(),
-            'joins_barbecue' => $this->faker->boolean(),
-            'user_id' => User::factory(),          
+            'stays_on_campsite' => fake()->boolean(),
+            'joins_barbecue' => fake()->boolean(),
+            'user_id' => User::factory(),
             'edition_id' => Edition::factory(),
-            'confirmed' => $this->faker->boolean(70),
+            'confirmed' => fake()->boolean(70),
         ];
     }
 }

@@ -18,12 +18,12 @@ class BlogFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence,
+            'title' => fake()->sentence,
             'author_id' => User::factory(),
             'image' => null,
-            'content' => $this->faker->paragraph,
-            'preview_text' => $this->faker->text(100),
-            'slug' => $this->faker->unique()->slug,
+            'content' => fake()->paragraph,
+            'preview_text' => fake()->text(100),
+            'slug' => fake()->unique()->slug,
             'published' => true,
             'published_at' => now(),
         ];
