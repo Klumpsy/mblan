@@ -18,6 +18,11 @@ class SignupFactory extends Factory
             'joins_barbecue' => fake()->boolean(),
             'user_id' => User::factory(),
             'edition_id' => Edition::factory(),
+            'wants_tshirt' => fake()->boolean(),
+            'tshirt_text' => fake()->optional(0.5)->text(20),
+            'tshirt_size' => fake()->randomElement(['S', 'M', 'L']),
+            'is_vegan' => fake()->boolean(20),
+            'joins_pizza' => fake()->boolean(90),
             'confirmed' => fake()->boolean(70),
         ];
     }

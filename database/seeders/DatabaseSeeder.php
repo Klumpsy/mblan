@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             EditionSeeder::class,
             ScheduleSeeder::class,
             TournamentSeeder::class,
+            SignupSeeder::class,
         ]);
 
         Edition::where('slug', 'mblan24')->first();

@@ -71,25 +71,23 @@
                     </div>
                 </div>
             </div>
-
             @can('accessWithConfirmedSignup', $edition)
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                    <div class="flex flex-col md:flex-row md:items-center p-4 md:p-6">
-                        <div class="flex-grow">
-                            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Your fellow gamers for
-                                this
-                                edition:</h2>
-                            <div class="mt-3 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                                @foreach ($edition->confirmedSignups as $signup)
-                                    <span class="inline-block bg-gray-600 text-primary-200 py-2 px-2 rounded-full me-2">
-                                        {{ $signup->user->name }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        </div>
+                <div x-data="carousel()" x-init="init()" class="relative w-full overflow-x-hidden">
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                        Your fellow gamers for this edition:
+                    </h2>
+                    <div x-ref="scrollContainer" class="flex space-x-6 whitespace-nowrap overflow-x-auto py-3 no-scrollbar"
+                        style="scroll-behavior: smooth;">
+                        @foreach ($edition->confirmedSignups as $signup)
+                            <x-user-badge-info-modal :user="$signup->user" class="inline-block w-16 h-16" />
+                        @endforeach
+
                     </div>
                 </div>
             @endcan
+
+
+
 
             <livewire:edition.schedule :edition="$edition" />
 
@@ -100,7 +98,7 @@
                         Featured Games
                     </h3>
                     <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                        @foreach ($edition->games()->take(10)->get() as $game)
+                        @foreach ($featuredGames as $game)
                             <a href="{{ route('games.show', $game) }}" class="group">
                                 <div
                                     class="aspect-w-1 aspect-h-1 bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden">
