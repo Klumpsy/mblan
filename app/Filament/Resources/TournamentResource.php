@@ -8,7 +8,7 @@ use App\Models\Tournament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
-use Filament\Forms\Components\TextArea;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -38,7 +38,7 @@ class TournamentResource extends Resource
                     ->onIcon('heroicon-o-check')
                     ->default(false),
 
-                TextArea::make('description')
+                Textarea::make('description')
                     ->rows(3),
 
                 TimePicker::make('time_start')
