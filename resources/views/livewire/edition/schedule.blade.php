@@ -53,9 +53,8 @@
                         </div>
 
                         <div class="space-y-3">
-                            @foreach ($schedule->gamesForDate->sortBy(function ($game) {
-        return $game->pivot->start_date;
-    }) as $game)
+
+                            @foreach ($schedule->gamesForDate as $game)
                                 @php
                                     $startTime = \Carbon\Carbon::parse($game->pivot->start_date);
                                     $endTime = \Carbon\Carbon::parse($game->pivot->end_date);
