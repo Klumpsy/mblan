@@ -47,7 +47,7 @@ class Game extends Model
     public function schedules(): BelongsToMany
     {
         return $this->belongsToMany(Schedule::class, 'game_schedule')
-            ->withPivot('start_date', 'end_date')
+            ->withPivot('start_date', 'end_date', 'is_tournament')
             ->withTimestamps();
     }
 

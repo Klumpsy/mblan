@@ -98,10 +98,23 @@
                                             </div>
 
                                             <div class="mt-2 sm:mt-0">
+                                                @if ($game->pivot->is_tournament)
+                                                    <span
+                                                        class="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs rounded-full">
+                                                        <svg class="w-3 h-3 mr-1" fill="currentColor"
+                                                            viewBox="0 0 20 20">
+                                                            <path fill-rule="evenodd"
+                                                                d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                clip-rule="evenodd"></path>
+                                                        </svg>
+                                                        Tournament
+                                                    </span>
+                                                @endif
                                                 <a href="{{ route('games.show', $game) }}"
                                                     class="inline-flex items-center px-3 py-1 bg-primary-100 dark:bg-primary-800 text-primary-800 dark:text-primary-200 text-sm rounded-md hover:bg-primary-200 dark:hover:bg-primary-700 transition-colors">
                                                     Details
                                                 </a>
+
                                             </div>
                                         </div>
 
