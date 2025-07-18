@@ -2,27 +2,44 @@
 
 namespace App\Observers;
 
-use App\AchievementType;
+use App\Enums\AchievementType;
+use App\Jobs\SendDiscordTournamentAnnouncement;
 use App\Models\Tournament;
 use App\Models\User;
 use App\Services\AchievementService;
+use App\Services\DiscordWebhookService;
 
 class TournamentObserver
 {
-    /**
-     * Handle the Tournament "created" event.
-     */
+
+    public function __construct(
+        private DiscordWebhookService $discordService
+    ) {}
+
     public function created(Tournament $tournament): void
     {
         //
     }
 
-    /**
-     * Handle the Tournament "updated" event.
-     */
     public function updated(Tournament $tournament): void
     {
-        //
+        if ($tournament->isDirty('is_active') && $tournament->is_active) {
+            if (config('discord.queue_announcements', true)) {
+                SendDiscordTournamentAnnouncement::dispatch($tournament, 'started');
+            } else {
+                $this->discordService->announceTournament($tournament);
+            }
+        }
+
+        if ($tournament->isDirty('is_active') && !$tournament->is_active) {
+            if (config('discord.queue_announcements', true)) {
+                SendDiscordTournamentAnnouncement::dispatch($tournament, 'ended');
+                SendDiscordTournamentAnnouncement::dispatch($tournament, 'results');
+            } else {
+                $this->discordService->announceTournamentEnd($tournament);
+                $this->discordService->sendTournamentResults($tournament);
+            }
+        }
     }
 
     /**

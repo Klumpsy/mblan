@@ -74,6 +74,15 @@ class UsersRelationManager extends RelationManager
             ])
             ->actions([
                 EditAction::make()
+                    ->form(fn(Form $form) => $this->form($form))
+                    ->mutateFormDataUsing(function (array $data, $record) {
+                        // Update the pivot table with the new score for the specific user
+                        $this->getOwnerRecord()->usersWithScores()->updateExistingPivot(
+                            $record->id, // Use the record being edited
+                            ['score' => $data['score']]
+                        );
+                        return $data;
+                    })
                     ->after(fn() => $this->recalculateRanking()),
                 DetachAction::make(),
             ])
