@@ -15,6 +15,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\DetachAction;
 use Filament\Tables\Columns\IconColumn;
 
 class GamesRelationManager extends RelationManager
@@ -116,7 +117,7 @@ class GamesRelationManager extends RelationManager
                         ]);
                         return $record;
                     }),
-                DeleteAction::make(),
+                DetachAction::make(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
