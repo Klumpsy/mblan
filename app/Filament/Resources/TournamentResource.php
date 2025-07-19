@@ -68,6 +68,8 @@ class TournamentResource extends Resource
                 TextColumn::make('name')->sortable()->searchable(),
                 ToggleColumn::make('is_active')
                     ->label('Active'),
+                ToggleColumn::make('concluded')
+                    ->label('Concluded'),
                 TextColumn::make('game.name')->label('Game'),
                 TextColumn::make('schedule.name')->sortable(),
                 TextColumn::make('schedule.edition.year')->sortable(),

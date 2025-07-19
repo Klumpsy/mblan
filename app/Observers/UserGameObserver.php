@@ -15,6 +15,7 @@ class UserGameObserver
     {
         AchievementService::check($userGame->user, AchievementType::GAME_LIKE_5->value);
         AchievementService::check($userGame->user, AchievementType::GAME_LIKE_10->value);
+        AchievementService::check($userGame->user, AchievementType::GAME_LIKE_20->value);
     }
 
     /**
