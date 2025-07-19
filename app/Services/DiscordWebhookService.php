@@ -15,10 +15,7 @@ class DiscordWebhookService
         $this->webhookUrl = config('discord.webhook_url');
     }
 
-    /**
-     * Send tournament announcement when it becomes active
-     */
-    public function announceTournament($tournament)
+    public function announceTournament($tournament): bool
     {
         $embed = [
             'title' => '🏆 Tournament Now Active!',
@@ -69,10 +66,7 @@ class DiscordWebhookService
         return $this->sendWebhook($payload);
     }
 
-    /**
-     * Send tournament end notification
-     */
-    public function announceTournamentEnd(Tournament $tournament)
+    public function announceTournamentEnd(Tournament $tournament): bool
     {
         $embed = [
             'title' => '🏁 Tournament Ended',
@@ -110,7 +104,7 @@ class DiscordWebhookService
     }
 
 
-    public function sendTournamentResults($tournament)
+    public function sendTournamentResults($tournament): bool
     {
         $users = $tournament->usersWithScores()->orderBy('ranking')->get();
 
@@ -161,10 +155,7 @@ class DiscordWebhookService
         return $this->sendWebhook($payload);
     }
 
-    /**
-     * Send custom announcement
-     */
-    public function sendCustomAnnouncement($title, $message, $color = 0x5865f2, $pingEveryone = false)
+    public function sendCustomAnnouncement($title, $message, $color = 0x5865f2, $pingEveryone = false): bool
     {
         $embed = [
             'title' => $title,
@@ -187,10 +178,7 @@ class DiscordWebhookService
         return $this->sendWebhook($payload);
     }
 
-    /**
-     * Send schedule announcement (all tournaments for a schedule)
-     */
-    public function announceSchedule($schedule)
+    public function announceSchedule($schedule): bool
     {
         $tournaments = $schedule->tournaments()->with('game')->get();
 
@@ -236,10 +224,7 @@ class DiscordWebhookService
         return $this->sendWebhook($payload);
     }
 
-    /**
-     * Send the actual webhook request
-     */
-    private function sendWebhook($payload)
+    private function sendWebhook($payload): bool
     {
         if (empty($this->webhookUrl)) {
             Log::error('Discord webhook URL not configured');
@@ -265,24 +250,36 @@ class DiscordWebhookService
         }
     }
 
-    /**
-     * Test the webhook connection
-     */
-    public function testWebhook()
+    public function sendAchievementNotification($user, $achievement): bool
     {
-        $payload = [
-            'content' => '🧪 Test message from your Laravel tournament system!',
-            'embeds' => [
+        $embed = [
+            'title' => '🏆 Achievement Unlocked!',
+            'description' => "**{$user->name}** has earned a new achievement!",
+            'color' => 0xffd700,
+            'fields' => [
                 [
-                    'title' => 'Webhook Test',
-                    'description' => 'If you can see this, your Discord webhook is working correctly!',
-                    'color' => 0x00ff00,
-                    'footer' => [
-                        'text' => 'Laravel Tournament System'
-                    ],
-                    'timestamp' => now()->toISOString()
+                    'name' => '🎖️ Achievement',
+                    'value' => $achievement->name,
+                    'inline' => false
                 ]
-            ]
+            ],
+            'footer' => [
+                'text' => 'Keep up the great work!'
+            ],
+            'timestamp' => now()->toISOString()
+        ];
+
+        if (!empty($achievement->description)) {
+            $embed['fields'][] = [
+                'name' => '📝 Description',
+                'value' => $achievement->description,
+                'inline' => false
+            ];
+        }
+
+        $payload = [
+            'content' => "🎉 Congratulations **{$user->name}**!",
+            'embeds' => [$embed]
         ];
 
         return $this->sendWebhook($payload);
