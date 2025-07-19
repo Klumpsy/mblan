@@ -40,6 +40,17 @@ class TournamentObserver
                 $this->discordService->sendTournamentResults($tournament);
             }
         }
+
+        $users = $tournament->usersWithScores;
+
+        foreach ($users as $user) {
+            AchievementService::check($user, AchievementType::WIN_HEARTHSTONE_TOURNAMENT->value);
+            AchievementService::check($user, AchievementType::WIN_MINECRAFT_TOURNAMENT->value);
+            AchievementService::check($user, AchievementType::HEARTHSTONE_TOURNAMENT_RUNNER_UP->value);
+            AchievementService::check($user, AchievementType::MINECRAFT_TOURNAMENT_RUNNER_UP->value);
+            AchievementService::check($user, AchievementType::HEARTHSTONE_TOURNAMENT_THIRD_PLACE->value);
+            AchievementService::check($user, AchievementType::MINECRAFT_TOURNAMENT_THIRD_PLACE->value);
+        }
     }
 
     /**
