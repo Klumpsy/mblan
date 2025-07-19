@@ -31,10 +31,6 @@ abstract class AbstractWinTournament implements AchievementStrategy
                     'progress' => $wins,
                 ],
             ]);
-        } else {
-            $user->achievements()->syncWithoutDetaching([
-                $achievement->id => ['progress' => $wins],
-            ]);
         }
     }
 }
