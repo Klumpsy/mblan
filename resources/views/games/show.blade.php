@@ -68,6 +68,9 @@
                     @if ($game->text_block_three)
                         <x-text-block :text="$game->text_block_three" :title="'Community & Updates'" :index="3" />
                     @endif
+                    @if ($game->installation_instructions)
+                        <x-text-block :text="$game->installation_instructions" :title="'Installation instructions'" :index="4" />
+                    @endif
                 </div>
 
                 <div class="space-y-6">

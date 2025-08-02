@@ -19,6 +19,7 @@ class Game extends Model
         'text_block_two',
         'text_block_three',
         'short_description',
+        'installation_instructions',
         'image',
         'link_to_website',
         'link_to_youtube',

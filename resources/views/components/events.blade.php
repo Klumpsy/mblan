@@ -52,9 +52,14 @@
 
                     <div class="p-6">
                         <div class="text-green-300 text-sm mb-2">
-                            Your average costs: €{{ number_format($signup->calculateCost(), 2) }} <span
-                                class="text-xs text-white">(This may change and is calculated based on your
-                                choices)</span>
+                            @if ($signup->has_paid)
+                                <x-heroicon-o-check-circle class="w-5 h-5 inline-block mr-1" />
+                                You have paid for this event.
+                            @else
+                                Your average costs: €{{ number_format($signup->calculateCost(), 2) }} <span
+                                    class="text-xs text-white">(This may change and is calculated based on your
+                                    choices)</span>
+                            @endif
                         </div>
                         <div class="flex items-start justify-between mb-3">
                             <h3 class="text-lg font-semibold text-gray-900 dark:text-white">

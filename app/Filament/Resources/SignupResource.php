@@ -73,6 +73,8 @@ class SignupResource extends Resource
                         $cost = $record->calculateCost($totalSignups);
                         return '€' . number_format($cost, 2);
                     }),
+                TextColumn::make('user.email')->label('User')->sortable()->searchable(),
+                ToggleColumn::make('has_paid')->label('💰')->sortable(),
                 TextColumn::make('edition.name')
                     ->label('Edition')
                     ->sortable()

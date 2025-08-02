@@ -27,7 +27,8 @@ class Signup extends Model
         'tshirt_text',
         'user_id',
         'edition_id',
-        'confirmed'
+        'confirmed',
+        'has_paid',
     ];
 
     public function user(): BelongsTo

@@ -101,6 +101,8 @@ class GameResource extends Resource
                     RichEditor::make('text_block_three')
                         ->toolbarButtons(self::$textEditorSettings)
                         ->minLength(50),
+                    RichEditor::make('installation_instructions')
+                        ->toolbarButtons(self::$textEditorSettings)
                 ])
             ]);
     }
