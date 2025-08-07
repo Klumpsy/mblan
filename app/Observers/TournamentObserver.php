@@ -50,6 +50,9 @@ class TournamentObserver
             AchievementService::check($user, AchievementType::MINECRAFT_TOURNAMENT_RUNNER_UP->value);
             AchievementService::check($user, AchievementType::HEARTHSTONE_TOURNAMENT_THIRD_PLACE->value);
             AchievementService::check($user, AchievementType::MINECRAFT_TOURNAMENT_THIRD_PLACE->value);
+            AchievementService::check($user, AchievementType::WIN_ZEEPKIST_TOURNAMENT->value);
+            AchievementService::check($user, AchievementType::ZEEPKIST_TOURNAMENT_RUNNER_UP->value);
+            AchievementService::check($user, AchievementType::ZEEPKIST_TOURNAMENT_THIRD_PLACE->value);
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\Achievements;
 use App\Interfaces\AchievementStrategy;
 use App\Models\Achievement;
 use App\Models\User;
+use App\Models\UserAchievement;
 
 class GameLikes20Achievement implements AchievementStrategy
 {
@@ -12,17 +13,17 @@ class GameLikes20Achievement implements AchievementStrategy
     {
         $count = $user->likedGames()->count();
 
-        if ($count >= ($achievement->threshold ?? 20)) {
-            $user->achievements()->syncWithoutDetaching([
-                $achievement->id => [
-                    'achieved_at' => now(),
-                    'progress' => $count,
-                ],
-            ]);
-        } else {
-            $user->achievements()->syncWithoutDetaching([
-                $achievement->id => ['progress' => $count],
-            ]);
+        $userAchievement = UserAchievement::firstOrNew([
+            'user_id' => $user->id,
+            'achievement_id' => $achievement->id,
+        ]);
+
+        $userAchievement->progress = $count;
+
+        if ($count >= ($achievement->threshold ?? 20) && !$userAchievement->achieved_at) {
+            $userAchievement->achieved_at = now();
         }
+
+        $userAchievement->save();
     }
 }

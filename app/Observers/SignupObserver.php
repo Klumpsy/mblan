@@ -30,6 +30,15 @@ class SignupObserver
         if ($signup->isDirty('confirmed') && $signup->confirmed) {
             Mail::to($signup->user->email)->queue(new Approved($signup));
         }
+
+        AchievementService::check($signup->user, AchievementType::DRINK_5_BEERS->value);
+        AchievementService::check($signup->user, AchievementType::DRINK_10_BEERS->value);
+        AchievementService::check($signup->user, AchievementType::DRINK_15_BEERS->value);
+        AchievementService::check($signup->user, AchievementType::DRINK_20_BEERS->value);
+        AchievementService::check($signup->user, AchievementType::DRINK_24_BEERS->value);
+        AchievementService::check($signup->user, AchievementType::DRINK_30_BEERS->value);
+        AchievementService::check($signup->user, AchievementType::DRINK_40_BEERS->value);
+        AchievementService::check($signup->user, AchievementType::DRINK_48_BEERS->value);
     }
 
     /**
