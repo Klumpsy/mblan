@@ -4,10 +4,11 @@ namespace App\Filament\Resources\SignupResource\Pages;
 
 use App\Filament\Resources\SignupResource;
 use App\Filament\Resources\SignupResource\Widgets\CostsOverview;
-use App\Filament\Resources\SignupResource\Widgets\CostsPerSignupTable;
 use App\Filament\Resources\SignupResource\Widgets\SignupFeatureChart;
 use App\Filament\Resources\SignupResource\Widgets\TshirtSizeChart;
-use Filament\Actions;
+use App\Filament\Resources\SignupResource\Widgets\BeerLeaderboardWidget;
+use App\Filament\Resources\SignupResource\Widgets\RealtimeBeerActivityWidget;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSignups extends ListRecords
@@ -17,7 +18,7 @@ class ListSignups extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 
@@ -27,6 +28,8 @@ class ListSignups extends ListRecords
             CostsOverview::class,
             TshirtSizeChart::class,
             SignupFeatureChart::class,
+            RealtimeBeerActivityWidget::class,
+            BeerLeaderboardWidget::class,
         ];
     }
 }

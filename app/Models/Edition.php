@@ -52,4 +52,23 @@ class Edition extends Model
     {
         return $this->hasMany(Media::class);
     }
+
+    public function getBeerLeaderboard()
+    {
+        return $this->signups()
+            ->with('user')
+            ->where('confirmed', true)
+            ->where('beer_count', '>', 0)
+            ->whereHas('user', function ($query) {
+                $query->whereNotNull('discord_id');
+            })
+            ->orderBy('beer_count', 'desc')
+            ->orderBy('last_beer_at', 'asc')
+            ->get();
+    }
+
+    public function getTotalBeersAttribute(): int
+    {
+        return $this->signups()->sum('beer_count');
+    }
 }

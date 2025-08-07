@@ -16,19 +16,18 @@ class UserAchievementObserver
      */
     public function created(UserAchievement $userAchievement): void
     {
-        $user = $userAchievement->user;
-        $achievement = $userAchievement->achievement;
+        if ($userAchievement->achieved_at) {
+            $user = $userAchievement->user;
+            $achievement = $userAchievement->achievement;
 
-        $this->discordService->sendAchievementNotification($user, $achievement);
+            $this->discordService->sendAchievementNotification($user, $achievement);
+        }
     }
 
     /**
      * Handle the Achievement "updated" event.
      */
-    public function updated(UserAchievement $userAchievement): void
-    {
-        //
-    }
+    public function updated(UserAchievement $userAchievement): void {}
 
     /**
      * Handle the Achievement "deleted" event.

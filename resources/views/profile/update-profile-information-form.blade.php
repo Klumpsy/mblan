@@ -85,6 +85,14 @@
                 @endif
             @endif
         </div>
+
+        <div class="col-span-6 sm:col-span-4">
+            <x-label for="discord_id" value="{{ __('Discord ID') }}" />
+            <x-input id="discord_id" type="text" class="mt-1 block w-full" wire:model="state.discord_id" />
+            <x-input-error for="discord_id" class="mt-2" />
+        </div>
+
+
     </x-slot>
 
     <x-slot name="actions">

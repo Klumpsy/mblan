@@ -19,8 +19,10 @@ class SignupFeatureChart extends ChartWidget
                         Signup::where('is_vegan', true)->count(),
                         Signup::where('wants_tshirt', true)->count(),
                         Signup::where('stays_on_campsite', true)->count(),
+                        Signup::where('has_paid', true)->count(),
+                        Signup::where('joins_pizza', true)->count(),
                     ],
-                    'backgroundColor' => ['#f87171', '#34d399', '#60a5fa', '#facc15'],
+                    'backgroundColor' => ['#f87171', '#34d399', '#60a5fa', '#facc15', '#a78bfa', '#fbbf24'],
                 ],
             ],
             'labels' => [
@@ -28,6 +30,8 @@ class SignupFeatureChart extends ChartWidget
                 'Is Vegan 🌱',
                 'Wants T-Shirt 👕',
                 'Campsite 🏕️',
+                'Has Paid 💰',
+                'Joins Pizza 🍕',
             ],
         ];
     }

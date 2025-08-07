@@ -29,7 +29,17 @@ class Signup extends Model
         'edition_id',
         'confirmed',
         'has_paid',
+        'beer_count',
+        'last_beer_at'
     ];
+
+    protected $casts = [
+        'stays_on_campsite' => 'boolean',
+        'joins_barbecue' => 'boolean',
+        'confirmed' => 'boolean',
+        'last_beer_at' => 'datetime',
+    ];
+
 
     public function user(): BelongsTo
     {
@@ -74,5 +84,27 @@ class Signup extends Model
         $cost += $this->schedules->count() * self::COSTS_PER_DAY;
 
         return $cost;
+    }
+
+    public function canDrinkBeer(): bool
+    {
+        if (!$this->confirmed) {
+            return false;
+        }
+
+        if (!$this->last_beer_at) {
+            return true;
+        }
+
+        return $this->last_beer_at->diffInSeconds(now()) >= 60;
+    }
+
+    public function getBeerCooldownAttribute(): int
+    {
+        if (!$this->last_beer_at) {
+            return 0;
+        }
+
+        return max(0, 60 - $this->last_beer_at->diffInSeconds(now()));
     }
 }
