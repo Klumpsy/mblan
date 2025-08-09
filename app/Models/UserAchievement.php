@@ -9,6 +9,13 @@ class UserAchievement extends Pivot
 {
     protected $table = 'achievement_user';
 
+    protected $fillable = [
+        'user_id',
+        'achievement_id',
+        'progress',
+        'achieved_at',
+    ];
+
     protected $casts = [
         'achieved_at' => 'datetime',
     ];
