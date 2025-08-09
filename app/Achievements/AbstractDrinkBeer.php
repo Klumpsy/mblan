@@ -27,17 +27,29 @@ abstract class AbstractDrinkBeer implements AchievementStrategy
         $totalBeers = $currentSignup->beer_count;
         $threshold = $achievement->threshold ?? static::BEER_COUNT_THRESHOLD;
 
-        $userAchievement = UserAchievement::firstOrNew([
+        $userAchievement = UserAchievement::where([
             'user_id' => $user->id,
             'achievement_id' => $achievement->id,
-        ]);
+        ])->first();
 
-        $userAchievement->progress = $totalBeers;
+        if (!$userAchievement) {
+            // Create new record
+            UserAchievement::create([
+                'user_id' => $user->id,
+                'achievement_id' => $achievement->id,
+                'progress' => $totalBeers,
+                'achieved_at' => $totalBeers >= $threshold ? now() : null,
+            ]);
+        } else {
+            // Update existing record
+            $updates = ['progress' => $totalBeers];
 
-        if ($totalBeers >= $threshold && !$userAchievement->achieved_at) {
-            $userAchievement->achieved_at = now();
+            // Only set achieved_at if not already achieved and threshold is met
+            if (!$userAchievement->achieved_at && $totalBeers >= $threshold) {
+                $updates['achieved_at'] = now();
+            }
+
+            $userAchievement->update($updates);
         }
-
-        $userAchievement->save();
     }
 }
