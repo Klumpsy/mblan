@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\UserAchievement;
 use App\Services\DiscordWebhookService;
+use Illuminate\Support\Facades\Log;
 
 class UserAchievementObserver
 {
@@ -25,11 +26,25 @@ class UserAchievementObserver
 
     public function created(UserAchievement $userAchievement): void
     {
+        Log::info('UserAchievement created observer triggered', [
+            'user_id' => $userAchievement->user_id,
+            'achievement_id' => $userAchievement->achievement_id,
+            'achieved_at' => $userAchievement->achieved_at
+        ]);
+
         $this->handleAchievement($userAchievement);
     }
 
     public function updated(UserAchievement $userAchievement): void
     {
+        Log::info('UserAchievement updated observer triggered', [
+            'user_id' => $userAchievement->user_id,
+            'achievement_id' => $userAchievement->achievement_id,
+            'achieved_at' => $userAchievement->achieved_at,
+            'was_changed' => $userAchievement->wasChanged('achieved_at'),
+            'original' => $userAchievement->getOriginal('achieved_at')
+        ]);
+
         if (
             $userAchievement->wasChanged('achieved_at') &&
             $userAchievement->getOriginal('achieved_at') === null &&
