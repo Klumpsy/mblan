@@ -26,7 +26,7 @@ class UserAchievementObserver
 
     public function created(UserAchievement $userAchievement): void
     {
-        Log::info('UserAchievement created observer triggered', [
+        Log::critical('UserAchievement created observer triggered', [
             'user_id' => $userAchievement->user_id,
             'achievement_id' => $userAchievement->achievement_id,
             'achieved_at' => $userAchievement->achieved_at
@@ -37,7 +37,7 @@ class UserAchievementObserver
 
     public function updated(UserAchievement $userAchievement): void
     {
-        Log::info('UserAchievement updated observer triggered', [
+        Log::critical('UserAchievement updated observer triggered', [
             'user_id' => $userAchievement->user_id,
             'achievement_id' => $userAchievement->achievement_id,
             'achieved_at' => $userAchievement->achieved_at,
@@ -46,10 +46,9 @@ class UserAchievementObserver
         ]);
 
         if (
-            $userAchievement->wasChanged('achieved_at') &&
-            $userAchievement->getOriginal('achieved_at') === null &&
-            $userAchievement->achieved_at !== null
+            $userAchievement->wasChanged('achieved_at')
         ) {
+
             $this->handleAchievement($userAchievement);
         }
     }
