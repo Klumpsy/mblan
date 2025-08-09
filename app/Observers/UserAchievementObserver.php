@@ -14,20 +14,30 @@ class UserAchievementObserver
     /**
      * Handle the Achievement "created" event.
      */
-    public function created(UserAchievement $userAchievement): void
+    private function handleAchievement(UserAchievement $userAchievement): void
     {
         if ($userAchievement->achieved_at) {
             $user = $userAchievement->user;
             $achievement = $userAchievement->achievement;
-
             $this->discordService->sendAchievementNotification($user, $achievement);
         }
     }
 
-    /**
-     * Handle the Achievement "updated" event.
-     */
-    public function updated(UserAchievement $userAchievement): void {}
+    public function created(UserAchievement $userAchievement): void
+    {
+        $this->handleAchievement($userAchievement);
+    }
+
+    public function updated(UserAchievement $userAchievement): void
+    {
+        if (
+            $userAchievement->wasChanged('achieved_at') &&
+            $userAchievement->getOriginal('achieved_at') === null &&
+            $userAchievement->achieved_at !== null
+        ) {
+            $this->handleAchievement($userAchievement);
+        }
+    }
 
     /**
      * Handle the Achievement "deleted" event.
