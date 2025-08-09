@@ -1,6 +1,7 @@
-@props(['text', 'title', 'index'])
+@props(['text', 'title', 'index', 'id' => null])
 
-<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
+    @if ($id) id="{{ $id }}" @endif>
     <h3 class="flex justify-between text-2xl font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2 cursor-pointer"
         @click="openSection = openSection === {{ $index }} ? null : {{ $index }}">
         <span>{{ $title }}</span>

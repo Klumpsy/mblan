@@ -30,13 +30,7 @@ class UserAchievementObserver
 
     public function updated(UserAchievement $userAchievement): void
     {
-        if (
-            $userAchievement->wasChanged('achieved_at') &&
-            $userAchievement->getOriginal('achieved_at') === null &&
-            $userAchievement->achieved_at !== null
-        ) {
-            $this->handleAchievement($userAchievement);
-        }
+        $this->handleAchievement($userAchievement);
     }
 
     /**

@@ -69,7 +69,8 @@
                         <x-text-block :text="$game->text_block_three" :title="'Community & Updates'" :index="3" />
                     @endif
                     @if ($game->installation_instructions)
-                        <x-text-block :text="$game->installation_instructions" :title="'Installation instructions'" :index="4" />
+                        <x-text-block :text="$game->installation_instructions" :title="'Installation instructions'" :index="4" :index="4"
+                            id="installation-instructions" />
                     @endif
                 </div>
 

@@ -97,6 +97,29 @@
                                             </div>
 
                                             <div class="mt-2 sm:mt-0">
+                                                @if ($game->installation_instructions)
+                                                    @if ($game->installation_instructions)
+                                                        <a href="{{ route('games.show', $game) }}#installation-instructions"
+                                                            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold text-sm rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ease-out group">
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="h-4 w-4 group-hover:rotate-12 transition-transform duration-200"
+                                                                fill="none" viewBox="0 0 24 24"
+                                                                stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                            </svg>
+                                                            Installation Guide
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                class="h-3 w-3 group-hover:translate-x-1 transition-transform duration-200"
+                                                                fill="none" viewBox="0 0 24 24"
+                                                                stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2" d="M9 5l7 7-7 7" />
+                                                            </svg>
+                                                        </a>
+                                                    @endif
+                                                @endif
                                                 @if ($game->pivot->is_tournament)
                                                     <span
                                                         class="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 text-xs rounded-full">
