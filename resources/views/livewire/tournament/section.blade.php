@@ -45,7 +45,7 @@
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                            @foreach (collect($leaderboard)->groupBy('team_name') as $teamName => $members)
+                            @foreach (collect($tournament->getLeaderboard())->groupBy('team_name') as $teamName => $members)
                                 {{-- Team row --}}
                                 <tr class="bg-gray-200 dark:bg-gray-900">
                                     <td class="px-6 py-3 font-bold text-gray-900 dark:text-gray-200" colspan="2">
