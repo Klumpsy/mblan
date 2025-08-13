@@ -8,9 +8,6 @@ use App\Filament\Resources\BlogResource\Pages\ListBlogs;
 use App\Models\Blog;
 use App\Models\Tag;
 use App\Models\User;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -26,6 +23,7 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -173,6 +171,15 @@ class BlogResource extends Resource
                 IconColumn::make('published')
                     ->boolean()
                     ->sortable(),
+                ToggleColumn::make('is_featured')
+                    ->label('Featured')
+                    ->afterStateUpdated(function ($record, $state) {
+                        if ($state) {
+                            Blog::where('id', '!=', $record->id)
+                                ->where('is_featured', true)
+                                ->update(['is_featured' => false]);
+                        }
+                    }),
 
                 TextColumn::make('published_at')
                     ->label('Publish Date')

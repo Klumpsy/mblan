@@ -27,12 +27,24 @@ class EditionController extends Controller
         $userIds = $edition->confirmedSignups->pluck('user_id')->merge(
             $edition->signups->pluck('user_id')
         )->unique();
-
         $users = User::whereIn('id', $userIds)
-            ->withCount(['achievements', 'tournaments', 'blogComments', 'likedGames'])
-            ->with(['likedGames' => fn($q) => $q->latest('game_user_likes.created_at')->take(3)])
+            ->withCount([
+                'achievements as achievements_count' => function ($query) {
+                    $query->whereNotNull('achievement_user.achieved_at');
+                },
+                'tournaments',
+                'blogComments',
+                'likedGames'
+            ])
+            ->with([
+                'likedGames' => fn($q) => $q
+                    ->latest('game_user_likes.created_at')
+                    ->take(3)
+            ])
             ->get()
             ->keyBy('id');
+
+
 
         $edition->confirmedSignups->each(function ($signup) use ($users) {
             $signup->setRelation('user', $users[$signup->user_id]);

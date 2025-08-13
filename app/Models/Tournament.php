@@ -21,6 +21,12 @@ class Tournament extends Model
         'time_end',
         'game_id',
         'schedule_id',
+        'is_team_based',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'is_team_based' => 'boolean',
     ];
 
     public function game(): BelongsTo
@@ -37,7 +43,13 @@ class Tournament extends Model
     {
         return $this->belongsToMany(User::class, 'tournament_user')
             ->using(UserTournament::class)
-            ->withPivot('score', 'ranking')
+            ->withPivot(
+                'score',
+                'ranking',
+                'team_name',
+                'team_number',
+                'team_score'
+            )
             ->withTimestamps();
     }
 
@@ -87,7 +99,7 @@ class Tournament extends Model
     public function getLeaderboard(): Collection
     {
         return $this->usersWithScores()
-            ->withPivot('score', 'ranking')
+            ->withPivot('score', 'ranking', 'team_name', 'team_number', 'team_score')
             ->orderBy('pivot_ranking')
             ->get()
             ->map(function ($user) {
@@ -95,6 +107,9 @@ class Tournament extends Model
                     'name' => $user->name,
                     'score' => $user->pivot->score,
                     'ranking' => $user->pivot->ranking,
+                    'team_name' => $user->pivot->team_name,
+                    'team_number' => $user->pivot->team_number,
+                    'team_score' => $user->pivot->team_score,
                     'profile_photo_path' => $user->profile_photo_path ?? null,
                 ];
             });

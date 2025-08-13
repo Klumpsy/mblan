@@ -38,6 +38,13 @@ class TournamentResource extends Resource
                     ->onIcon('heroicon-o-check')
                     ->default(false),
 
+                Toggle::make('is_team_based')
+                    ->label('Team Based Tournament')
+                    ->onIcon('heroicon-o-user-group')
+                    ->offIcon('heroicon-o-user')
+                    ->default(false)
+                    ->helperText('Enable this for team-based tournaments where players compete in teams.'),
+
                 Textarea::make('description')
                     ->rows(3),
 
@@ -68,6 +75,10 @@ class TournamentResource extends Resource
                 TextColumn::make('name')->sortable()->searchable(),
                 ToggleColumn::make('is_active')
                     ->label('Active'),
+                ToggleColumn::make('is_team_based')
+                    ->label('Team Based')
+                    ->onIcon('heroicon-o-user-group')
+                    ->offIcon('heroicon-o-user'),
                 ToggleColumn::make('concluded')
                     ->label('Concluded'),
                 TextColumn::make('game.name')->label('Game'),

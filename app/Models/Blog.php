@@ -22,11 +22,13 @@ class Blog extends Model
         'slug',
         'published',
         'published_at',
+        'is_featured',
     ];
 
     protected $casts = [
         'published' => 'boolean',
         'published_at' => 'datetime',
+        'is_featured' => 'boolean',
     ];
 
 
