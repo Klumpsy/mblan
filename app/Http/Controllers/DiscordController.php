@@ -149,4 +149,67 @@ class DiscordController extends Controller
             ], 500);
         }
     }
+
+    public function addPizza(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'discord_id' => 'required|string',
+                'pizza_order' => 'required|string|max:500'
+            ]);
+
+            // Find user by discord_id
+            $user = User::where('discord_id', $request->discord_id)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'User not found. Please link your Discord account on the website first.'
+                ], 404);
+            }
+
+            $currentEdition = Edition::where('year', now()->year)->first();
+
+            if (!$currentEdition) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No active edition found.'
+                ], 404);
+            }
+
+            // Find the user's signup for the current edition
+            $signup = Signup::where('user_id', $user->id)
+                ->where('edition_id', $currentEdition->id)
+                ->where('confirmed', true)
+                ->first();
+
+            if (!$signup) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You need to sign up for the current edition first.'
+                ], 404);
+            }
+
+            // Simply save the pizza order
+            $signup->update(['pizza_order' => $request->pizza_order]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Pizza order saved successfully!'
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid request data.',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Discord pizza save error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'An error occurred while saving pizza order.'
+            ], 500);
+        }
+    }
 }
