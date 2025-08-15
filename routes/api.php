@@ -22,5 +22,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('discord')->group(function () {
     Route::post('/beer', [DiscordController::class, 'addBeer']);
     Route::get('/beer/leaderboard', [DiscordController::class, 'getBeerLeaderboard']);
-    Route::get('/pizza', [DiscordController::class, 'addPizza']);
+    Route::post('/pizza', [DiscordController::class, 'addPizza']);
 });
