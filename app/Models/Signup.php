@@ -30,6 +30,7 @@ class Signup extends Model
         'confirmed',
         'has_paid',
         'beer_count',
+        'pizza_order',
         'last_beer_at'
     ];
 
