@@ -208,7 +208,7 @@ class DiscordController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while saving pizza order.'
+                'message' => 'An error occurred while saving pizza order.' . $e->getMessage()
             ], 500);
         }
     }
