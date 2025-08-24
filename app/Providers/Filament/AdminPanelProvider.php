@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\DashboardStatsWidget;
+use App\Filament\Widgets\RecentSignupsWidget;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -38,8 +40,8 @@ class AdminPanelProvider extends PanelProvider
             ->authGuard('web')
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                DashboardStatsWidget::class,
+                RecentSignupsWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

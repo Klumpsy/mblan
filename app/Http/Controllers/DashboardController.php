@@ -22,8 +22,9 @@ class DashboardController extends Controller
                 ->orderBy('published_at', 'desc')
                 ->first();
         }
-
-        $latestEdition = Edition::latest()->select('slug', 'name')->first();
+        $latestEdition = Edition::where('is_active', true)
+            ->select('id', 'slug', 'name', 'is_exclusive', 'is_active', 'year')
+            ->first();
 
         return view('dashboard.index', compact('user', 'latestBlog', 'latestEdition'));
     }

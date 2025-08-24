@@ -43,9 +43,15 @@ Route::middleware([
     });
     Route::controller(EditionController::class)->group(function () {
         Route::get('/editions', 'index')->name('editions');
-        Route::get('/editions/{edition:slug}', 'show')->name('editions.show');
-        Route::get('/editions/{edition:slug}/signup', 'signup')->name('editions.signup');
-        Route::post('/editions/{edition:slug}/signout', 'signout')->name('editions.signout');
+        Route::get('/editions/{edition:slug}', 'show')
+            ->name('editions.show')
+            ->middleware('can:view-edition,edition');
+        Route::get('/editions/{edition:slug}/signup', 'signup')
+            ->name('editions.signup')
+            ->middleware('can:signup-edition,edition');
+        Route::post('/editions/{edition:slug}/signout', 'signout')
+            ->name('editions.signout')
+            ->middleware('can:signout-edition,edition');
     });
     Route::controller(TournamentController::class)->group(function () {
         Route::get('/tournaments', 'index')->name('tournaments')->middleware('can:viewPagesThatRequireSignup,' . User::class);

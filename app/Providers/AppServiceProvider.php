@@ -15,6 +15,7 @@ use App\Observers\UserGameObserver;
 use App\Observers\UserObserver;
 use App\Achievements\AchievementStrategyResolver;
 use App\Models\BlogComment;
+use App\Models\Edition;
 use App\Models\UserAchievement;
 use App\Models\UserTournament;
 use App\Observers\UserAchievementObserver;
@@ -48,6 +49,14 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('delete-blog-comment', function (User $user, BlogComment $blogComment) {
             return $blogComment->author->is($user) || $user->isAdmin();
+        });
+
+        Gate::define('signup-edition', function (User $user, Edition $edition) {
+            return $edition->hasExclusiveAccess($user) && !$user->hasSignedUpFor($edition);
+        });
+
+        Gate::define('view-edition', function (User $user, Edition $edition) {
+            return $edition->hasExclusiveAccess($user);
         });
     }
 }
