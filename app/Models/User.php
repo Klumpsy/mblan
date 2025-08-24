@@ -162,4 +162,10 @@ class User extends Authenticatable implements FilamentUser
 
         return max(0, 60 - $currentSignup->last_beer_at->diffInSeconds(now()));
     }
+
+    public function exclusiveEditions(): BelongsToMany
+    {
+        return $this->belongsToMany(Edition::class, 'edition_user_exclusive')
+            ->withTimestamps();
+    }
 }

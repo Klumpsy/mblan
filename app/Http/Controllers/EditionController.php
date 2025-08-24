@@ -12,8 +12,38 @@ class EditionController extends Controller
 {
     public function index(): View
     {
-        $editions = Edition::all()->withRelationshipAutoloading();
+        $user = Auth::user();
+
+        // Get all public editions
+        $publicEditions = Edition::where('is_exclusive', false)->get();
+
+        // Get exclusive editions where user has access
+        $exclusiveEditions = Edition::where('is_exclusive', true)
+            ->whereHas('exclusiveUsers', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->get();
+
+        $editions = $publicEditions->merge($exclusiveEditions);
+
         return view('edition.index', compact('editions'));
+    }
+
+    public function signup(Edition $edition): View
+    {
+        return view('edition.signup', ['edition' => $edition]);
+    }
+
+    public function signout(Edition $edition): View
+    {
+        $user = Auth::user();
+        $user->signups()->where('edition_id', $edition->id)->delete();
+
+        $tournamentIds = Tournament::whereHas('schedule', fn($query) => $query->where('edition_id', $edition->id))->pluck('id');
+        $user->tournaments()->detach($tournamentIds);
+
+        session()->flash('success', 'You have successfully signed out of the edition.');
+        return view('edition.signup', ['edition' => $edition]);
     }
 
     public function show(Edition $edition): View
@@ -59,28 +89,5 @@ class EditionController extends Controller
             'edition' => $edition,
             'featuredGames' => $featuredGames,
         ]);
-    }
-
-
-
-    public function signup(Edition $edition): View
-    {
-        $this->authorize('signup', $edition);
-        return view('edition.signup', ['edition' => $edition]);
-    }
-
-    public function signout(Edition $edition): View
-    {
-        $this->authorize('signout', $edition);
-
-        $user = Auth::user();
-        $user->signups()->where('edition_id', $edition->id)->delete();
-
-        $tournamentIds = Tournament::whereHas('schedule', fn($query) => $query->where('edition_id', $edition->id))->pluck('id');
-
-        $user->tournaments()->detach($tournamentIds);
-
-        session()->flash('success', 'You have successfully signed out of the edition.');
-        return view('edition.signup', ['edition' => $edition]);
     }
 }
