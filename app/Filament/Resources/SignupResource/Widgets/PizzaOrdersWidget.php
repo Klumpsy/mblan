@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PizzaOrdersWidget extends BaseWidget
 {
     protected static ?int $sort = 3;
-    protected static ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '30s';
     protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
@@ -112,7 +112,7 @@ class PizzaOrdersWidget extends BaseWidget
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('view_full_order')
+                \Filament\Actions\Action::make('view_full_order')
                     ->label('View Full Order')
                     ->icon('heroicon-o-eye')
                     ->color('primary')

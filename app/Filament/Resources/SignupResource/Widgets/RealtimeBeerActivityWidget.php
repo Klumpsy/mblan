@@ -9,10 +9,10 @@ use App\Models\Edition;
 class RealtimeBeerActivityWidget extends Widget
 {
     protected static ?int $sort = 5;
-    protected static ?string $pollingInterval = '5s';
+    protected ?string $pollingInterval = '5s';
     protected int | string | array $columnSpan = 'full';
 
-    protected static string $view = 'filament.widgets.realtime-beer-activity';
+    protected string $view = 'filament.widgets.realtime-beer-activity';
 
     protected function getViewData(): array
     {

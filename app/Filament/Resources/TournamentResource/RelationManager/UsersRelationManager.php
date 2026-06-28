@@ -3,17 +3,17 @@
 namespace App\Filament\Resources\TournamentResource\RelationManager;
 
 use App\Models\User;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\DetachAction;
-use Filament\Tables\Actions\DetachBulkAction;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\AttachAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Notifications\Notification;
 use Filament\Tables\Grouping\Group;
@@ -435,7 +435,7 @@ class UsersRelationManager extends RelationManager
         return $table;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         $tournament = $this->getOwnerRecord();
 

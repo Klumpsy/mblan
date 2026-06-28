@@ -7,7 +7,7 @@ use Filament\Widgets\ChartWidget;
 
 class SignupFeatureChart extends ChartWidget
 {
-    protected static ?string $heading = 'Signup Feature Breakdown';
+    protected ?string $heading = 'Signup Feature Breakdown';
 
     protected function getData(): array
     {

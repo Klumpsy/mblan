@@ -11,7 +11,7 @@ use App\Models\Schedule;
 use App\Models\Edition;
 use App\Models\Signup;
 use App\Models\Achievement;
-use Filament\Forms\Form;
+use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -21,14 +21,14 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 
 class AchievementResource extends Resource
 {
     protected static ?string $model = Achievement::class;
-    protected static ?string $navigationIcon = 'heroicon-o-star';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-star';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -98,8 +98,8 @@ class AchievementResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('manage_users')
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\Action::make('manage_users')
                     ->label('Manage Users')
                     ->icon('heroicon-o-user-group')
                     ->visible(fn(Achievement $record): bool => $record->isManual())
@@ -141,8 +141,8 @@ class AchievementResource extends Resource
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

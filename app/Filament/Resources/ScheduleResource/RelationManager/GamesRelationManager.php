@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\ScheduleResource\RelationManager;
 
 use App\Models\Game;
-use Filament\Tables\Actions\Action;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Schemas\Schema;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -12,18 +12,18 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\DetachAction;
+use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DetachAction;
 use Filament\Tables\Columns\IconColumn;
 
 class GamesRelationManager extends RelationManager
 {
     protected static string $relationship = 'games';
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -123,7 +123,7 @@ class GamesRelationManager extends RelationManager
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('toggleTournament')
+                    \Filament\Actions\BulkAction::make('toggleTournament')
                         ->label('Toggle Tournament Status')
                         ->icon('heroicon-o-trophy')
                         ->color('primary')

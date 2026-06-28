@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 class BeerLeaderboardWidget extends BaseWidget
 {
     protected static ?int $sort = 2;
-    protected static ?string $pollingInterval = '30s';
+    protected ?string $pollingInterval = '30s';
     protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
