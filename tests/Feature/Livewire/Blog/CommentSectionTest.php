@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature\Livewire;
+namespace Tests\Feature\Livewire\Blog;
 
 use App\Livewire\Blog\CommentSection;
 use App\Models\Blog;
