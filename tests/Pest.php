@@ -76,7 +76,7 @@ function createUsers(int $count = 3, array $attributes = []): \Illuminate\Databa
 /**
  * Acting as a user (authentication helper)
  */
-function actingAsUser(\App\Models\User $user = null): \Tests\TestCase
+function actingAsUser(?\App\Models\User $user = null): \Tests\TestCase
 {
     $user = $user ?: createUser();
     return test()->actingAs($user);
@@ -166,7 +166,7 @@ function validEmails(): array
 /**
  * Make authenticated request
  */
-function authenticatedRequest(string $method, string $uri, array $data = [], \App\Models\User $user = null): \Illuminate\Testing\TestResponse
+function authenticatedRequest(string $method, string $uri, array $data = [], ?\App\Models\User $user = null): \Illuminate\Testing\TestResponse
 {
     $user = $user ?: createUser();
     return test()->actingAs($user)->json($method, $uri, $data);
@@ -175,7 +175,7 @@ function authenticatedRequest(string $method, string $uri, array $data = [], \Ap
 /**
  * Make GET request as authenticated user
  */
-function authenticatedGet(string $uri, \App\Models\User $user = null): \Illuminate\Testing\TestResponse
+function authenticatedGet(string $uri, ?\App\Models\User $user = null): \Illuminate\Testing\TestResponse
 {
     return authenticatedRequest('GET', $uri, [], $user);
 }
@@ -183,7 +183,7 @@ function authenticatedGet(string $uri, \App\Models\User $user = null): \Illumina
 /**
  * Make POST request as authenticated user
  */
-function authenticatedPost(string $uri, array $data = [], \App\Models\User $user = null): \Illuminate\Testing\TestResponse
+function authenticatedPost(string $uri, array $data = [], ?\App\Models\User $user = null): \Illuminate\Testing\TestResponse
 {
     return authenticatedRequest('POST', $uri, $data, $user);
 }
@@ -191,7 +191,7 @@ function authenticatedPost(string $uri, array $data = [], \App\Models\User $user
 /**
  * Make PUT request as authenticated user
  */
-function authenticatedPut(string $uri, array $data = [], \App\Models\User $user = null): \Illuminate\Testing\TestResponse
+function authenticatedPut(string $uri, array $data = [], ?\App\Models\User $user = null): \Illuminate\Testing\TestResponse
 {
     return authenticatedRequest('PUT', $uri, $data, $user);
 }
@@ -199,7 +199,7 @@ function authenticatedPut(string $uri, array $data = [], \App\Models\User $user 
 /**
  * Make DELETE request as authenticated user
  */
-function authenticatedDelete(string $uri, \App\Models\User $user = null): \Illuminate\Testing\TestResponse
+function authenticatedDelete(string $uri, ?\App\Models\User $user = null): \Illuminate\Testing\TestResponse
 {
     return authenticatedRequest('DELETE', $uri, [], $user);
 }
