@@ -15,7 +15,7 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
-use GamesRelationManager;
+use App\Filament\Resources\ScheduleResource\RelationManager\GamesRelationManager;
 
 class ScheduleResource extends Resource
 {

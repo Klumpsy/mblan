@@ -58,5 +58,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('view-edition', function (User $user, Edition $edition) {
             return $edition->hasExclusiveAccess($user);
         });
+
+        Gate::define('signout-edition', function (User $user, Edition $edition) {
+            return $user->hasSignedUpFor($edition);
+        });
     }
 }

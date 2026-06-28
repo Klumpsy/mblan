@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Filament\Resources\ScheduleResource\RelationManager;
+
 use App\Models\Game;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Form;
