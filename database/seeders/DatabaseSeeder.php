@@ -2,35 +2,42 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
-use App\Models\Edition;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::factory()->create([
-            'name' => 'Bart Klumpers',
-            'email' => 'bart_klumperman@live.nl',
-            'password' => Hash::make('12345678'),
-            'role' => 'admin'
-        ]);
+        User::updateOrCreate(
+            ['email' => 'bart_klumperman@live.nl'],
+            [
+                'name' => 'Bart Klumperman',
+                'password' => Hash::make('admin'),
+                'role' => 'admin',
+                'discord_id' => 'admin-discord',
+                'email_verified_at' => now(),
+            ]
+        );
 
-        User::factory()->count(3)->create([
-            'role' => 'user',
-        ]);
+        // A believable crowd. Give roughly half a Discord id so leaderboards populate.
+        User::factory()->count(24)->create(['role' => 'user'])
+            ->each(function (User $user, int $i) {
+                if ($i % 2 === 0) {
+                    $user->forceFill(['discord_id' => 'discord-' . $user->id])->save();
+                }
+            });
 
         $this->call([
             GameSeeder::class,
             EditionSeeder::class,
             ScheduleSeeder::class,
+            BlogSeeder::class,
             TournamentSeeder::class,
             SignupSeeder::class,
+            AchievementSeeder::class,
+            BlogCommentSeeder::class,
         ]);
-
-        Edition::where('slug', 'mblan24')->first();
-        Edition::where('slug', 'mblan25')->first();
     }
 }

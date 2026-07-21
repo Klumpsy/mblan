@@ -5,11 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\Edition;
 use App\Models\Tournament;
 use App\Models\User;
+use App\Support\CurrentEdition;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class EditionController extends Controller
 {
+    /**
+     * Switch the edition the visitor is currently viewing. The whole site
+     * (accent colour, games, tournaments, media) then reflects that edition.
+     */
+    public function switchViewing(Edition $edition, CurrentEdition $current): RedirectResponse
+    {
+        if ($edition->hasExclusiveAccess(Auth::user())) {
+            $current->set($edition);
+        }
+
+        return back();
+    }
+
     public function index(): View
     {
         $user = Auth::user();

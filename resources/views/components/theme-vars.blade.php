@@ -1,9 +1,10 @@
+@props(['color' => null])
 @php
-    // Allow an explicit colour (e.g. an edition's own page) to override the active theme.
+    // Explicit colour wins (e.g. the public landing page); otherwise follow the
+    // edition the visitor is currently viewing (navbar switcher / active edition).
     $service = app(\App\Support\ThemeService::class);
-    $palette = isset($color) && $color
-        ? $service->paletteFor($color)
-        : $service->activePalette();
+    $hex = $color ?: app(\App\Support\CurrentEdition::class)->color();
+    $palette = $service->paletteFor($hex);
 @endphp
 <style>
     :root {

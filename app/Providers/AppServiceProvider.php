@@ -32,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(AchievementStrategyResolver::class, function ($app) {
             return new AchievementStrategyResolver();
         });
+
+        $this->app->singleton(\App\Support\CurrentEdition::class);
     }
 
     /**

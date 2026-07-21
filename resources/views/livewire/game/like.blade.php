@@ -1,12 +1,8 @@
-<span class="inline-flex items-center text-sm text-gray-500 cursor-pointer group" wire:click="toggleLike"
+<span class="inline-flex items-center gap-1.5 clip-corner metal-edge px-3 py-1.5 font-display text-sm uppercase tracking-wider text-forge-steel cursor-pointer group transition-all duration-200 hover:text-white hover:shadow-glow-sm"
+    wire:click="toggleLike"
     wire:loading.class="opacity-50">
-    <span
-        class="mr-1 transition-transform duration-200 ease-in-out {{ $isLiked ? 'text-red-500 scale-110' : 'group-hover:scale-110' }}">
-        @if ($isLiked)
-            ❤️
-        @else
-            🤍
-        @endif
+    <span class="{{ $isLiked ? 'text-primary-400 text-glow' : '' }}">
+        {{ $isLiked ? 'Liked' : 'Like' }}
     </span>
-    <span wire:loading.delay.class="opacity-50">{{ $likesCount }}</span>
+    <span class="text-primary-300" wire:loading.delay.class="opacity-50">{{ $likesCount }}</span>
 </span>

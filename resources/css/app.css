@@ -101,26 +101,19 @@
         background-size: 200% 100%;
     }
 
-    /* Dark wooden barn planks — pure CSS, no image asset */
+    /* Dark "green space" base — deep forest with a soft forge glow, no stripes */
     .wood-panel {
-        background-color: #0c130f;
+        background-color: #0a120e;
         background-image:
-            repeating-linear-gradient(90deg,
-                rgb(0 0 0 / 0.55) 0px,
-                rgb(0 0 0 / 0.55) 2px,
-                transparent 2px,
-                transparent 6px),
-            repeating-linear-gradient(90deg,
-                #101a14 0px,
-                #0b120e 46px,
-                #0e1611 92px,
-                #0a0f0c 138px);
+            radial-gradient(140% 120% at 50% -10%, rgb(var(--c-primary-500) / 0.14), transparent 55%),
+            radial-gradient(90% 80% at 100% 0%, rgb(var(--c-primary-700) / 0.10), transparent 60%),
+            linear-gradient(180deg, #0c1510, #070c0a);
     }
     .wood-panel::after {
         content: "";
         position: absolute;
         inset: 0;
-        background: radial-gradient(120% 90% at 50% 0%, rgb(var(--c-primary-500) / 0.08), transparent 60%);
+        background: radial-gradient(120% 90% at 50% 100%, rgb(var(--c-primary-500) / 0.06), transparent 60%);
         pointer-events: none;
     }
 

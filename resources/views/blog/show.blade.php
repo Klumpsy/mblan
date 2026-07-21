@@ -1,115 +1,122 @@
 <x-app-layout>
 
-    <div class="py-8">
-        <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-            <div class="flex justify-between mb-6">
-                <a href="{{ route('blogs') }}"
-                    class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-gray-700 dark:text-gray-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+    <section class="relative py-12 md:py-16">
+        <div class="pointer-events-none absolute inset-0 bg-grid opacity-15"></div>
+        <div class="relative mx-auto max-w-6xl px-6">
+
+            <div class="mb-8">
+                <x-forge.btn variant="ghost" href="{{ route('blogs') }}" class="!px-5 !py-2.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                     Back to news
-                </a>
+                </x-forge.btn>
             </div>
-            <div class="mb-8">
-                <div class="flex items-center justify-between space-x-4 mb-4">
-                    <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+
+            <div class="mb-8" x-data x-reveal>
+                <div class="mb-4 flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 text-sm text-forge-steel/70">
                         <img src="{{ $blog->author->profile_photo_url ?? asset('images/default-avatar.png') }}"
                             alt="{{ $blog->author->name }}'s Avatar"
-                            class="inline-block w-10 h-10 aspect-square rounded-full mr-2">
+                            class="inline-block h-11 w-11 aspect-square rounded-full ring-1 ring-primary-500/30">
                         <div>
-                            <div class="font-medium text-gray-900 dark:text-white">{{ $blog->author->name }}</div>
-                            <div class="text-sm">{{ $blog->published_at->format('F j, Y \a\t g:i A') }}</div>
+                            <div class="font-display uppercase tracking-widest text-white">{{ $blog->author->name }}</div>
+                            <div class="text-xs uppercase tracking-widest text-primary-400/80">{{ $blog->published_at->format('F j, Y \a\t g:i A') }}</div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center justify-end gap-2">
                         @each('components.tag', $blog->tags, 'tag')
                     </div>
                 </div>
             </div>
+
             @if ($blog->image)
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg mb-8">
-                    <div class="relative w-full">
-                        <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}"
-                            class="w-full h-full object-fit">
-                        <div class="invisible md:visible absolute bottom-0 left-0 right-0 bg-black/70 p-6">
-                            <h2 class="text-2xl font-bold text-primary-400 mb-2">{{ $blog->title }}</h2>
-                            @if ($blog->preview_text)
-                                <span class="text-gray-200 dark:text-white text-lg max-w-3xl">
-                                    {{ $blog->preview_text }}
-                                </span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            @endif
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="md:col-span-3">
-                    @if ($blog->preview_text)
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 md:hidden mb-6">
-                            <span class="text-gray-600 dark:text-gray-300 text-md">
-                                {{ $blog->preview_text }}
-                            </span>
-                        </div>
-                    @endif
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-                        <div class="p-8">
-                            <div class="prose prose-md dark:prose-invert max-w-none">
-                                {!! $blog->content !!}
+                <div class="mb-10" x-data x-reveal.100>
+                    <x-forge.card class="overflow-hidden !p-0">
+                        <div class="relative w-full">
+                            <img src="{{ asset('storage/' . $blog->image) }}" alt="{{ $blog->title }}"
+                                class="h-full w-full object-cover">
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-forge-black/90 via-forge-black/20 to-transparent"></div>
+                            <div class="invisible md:visible absolute bottom-0 left-0 right-0 p-8">
+                                <h1 class="mb-2 font-display text-3xl font-bold uppercase tracking-wide text-white md:text-4xl text-glow">{{ $blog->title }}</h1>
+                                @if ($blog->preview_text)
+                                    <span class="max-w-3xl text-lg text-forge-steel/90">
+                                        {{ $blog->preview_text }}
+                                    </span>
+                                @endif
                             </div>
                         </div>
+                    </x-forge.card>
+                </div>
+            @endif
+
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
+                <div class="md:col-span-3">
+                    @if ($blog->preview_text)
+                        <div class="mb-6 md:hidden" x-data x-reveal>
+                            <x-forge.card>
+                                <h1 class="mb-3 font-display text-2xl font-bold uppercase tracking-wide text-white">{{ $blog->title }}</h1>
+                                <span class="text-forge-steel/80">
+                                    {{ $blog->preview_text }}
+                                </span>
+                            </x-forge.card>
+                        </div>
+                    @endif
+                    <div x-data x-reveal.100>
+                        <x-forge.card class="overflow-hidden">
+                            <div class="p-2 md:p-4">
+                                <div class="prose prose-invert max-w-none prose-headings:font-display prose-headings:uppercase prose-headings:tracking-wide prose-headings:text-white prose-a:text-primary-300 hover:prose-a:text-primary-200 prose-strong:text-white prose-p:text-forge-steel/90 prose-li:text-forge-steel/90 prose-p:leading-relaxed">
+                                    {!! $blog->content !!}
+                                </div>
+                            </div>
+                        </x-forge.card>
                     </div>
                 </div>
-                <div class="space-y-6">
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-                        <h3
-                            class="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
+
+                <div class="space-y-6" x-data x-reveal.150>
+                    <x-forge.card>
+                        <h3 class="mb-4 border-b border-primary-500/20 pb-2 font-display text-lg font-bold uppercase tracking-wide text-white">
                             Post Details
                         </h3>
-                        <ul class="space-y-3">
-                            <li class="flex justify-between">
-                                <span class="text-gray-500 dark:text-gray-400">Author:</span>
-                                <span
-                                    class="font-medium text-gray-900 dark:text-white">{{ $blog->author->name }}</span>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex justify-between gap-2">
+                                <span class="text-forge-steel/60">Author</span>
+                                <span class="font-medium text-white">{{ $blog->author->name }}</span>
                             </li>
-                            <li class="flex justify-between">
-                                <span class="text-gray-500 dark:text-gray-400">Published:</span>
-                                <span
-                                    class="font-medium text-gray-900 dark:text-white">{{ $blog->published_at->format('M j, Y') }}</span>
+                            <li class="flex justify-between gap-2">
+                                <span class="text-forge-steel/60">Published</span>
+                                <span class="font-medium text-white">{{ $blog->published_at->format('M j, Y') }}</span>
                             </li>
-                            <li class="flex justify-between">
-                                <span class="text-gray-500 dark:text-gray-400">Comments:</span>
-                                <span
-                                    class="font-medium text-gray-900 dark:text-white">{{ $blog->comments->count() }}</span>
+                            <li class="flex justify-between gap-2">
+                                <span class="text-forge-steel/60">Comments</span>
+                                <span class="font-medium text-white">{{ $blog->comments->count() }}</span>
                             </li>
-                            <li class="flex justify-between">
-                                <span class="text-gray-500 dark:text-gray-400">Status:</span>
+                            <li class="flex justify-between gap-2">
+                                <span class="text-forge-steel/60">Status</span>
                                 @if ($blog->published)
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-400 rounded-full">
-                                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full mr-1"></span>
+                                    <span class="inline-flex items-center gap-1.5 border border-primary-500/30 bg-primary-500/15 px-2.5 py-0.5 clip-corner text-xs font-medium uppercase tracking-wider text-primary-300">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-primary-400 shadow-glow-sm"></span>
                                         Published
                                     </span>
                                 @else
-                                    <span
-                                        class="inline-flex items-center px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-400 rounded-full">
-                                        <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full mr-1"></span>
+                                    <span class="inline-flex items-center gap-1.5 border border-amber-500/30 bg-amber-500/15 px-2.5 py-0.5 clip-corner text-xs font-medium uppercase tracking-wider text-amber-300">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-amber-400"></span>
                                         Draft
                                     </span>
                                 @endif
                             </li>
                         </ul>
-                    </div>
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4">
-                        <div class="space-y-2 max-h-90">
+                    </x-forge.card>
+
+                    <x-forge.card>
+                        <div class="space-y-2">
                             <livewire:blog.comment-section :$blog />
                         </div>
-                    </div>
-
+                    </x-forge.card>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </x-app-layout>

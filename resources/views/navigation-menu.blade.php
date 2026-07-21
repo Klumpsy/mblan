@@ -35,6 +35,8 @@
 
             <!-- Right side - Desktop -->
             <div class="hidden lg:flex lg:items-center lg:space-x-4">
+                <x-edition-switcher />
+
                 @can('viewPagesThatRequireSignup', auth()->user())
                     <a href="{{ config('app.discord_server') }}" target="_blank" rel="noopener noreferrer"
                         class="flex-shrink-0">
@@ -130,6 +132,9 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden lg:hidden">
+        <div class="px-4 pt-3">
+            <x-edition-switcher />
+        </div>
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}

@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="MBLAN26 — The Forge III. Forged in the barn. High tech in a wooden barn — the Martin & Bart LAN party.">
+    <meta name="description" content="MBLAN26 - The Barn III. Forged in the barn. High tech in a wooden barn - the Martin & Bart LAN party.">
 
-    <title>MBLAN26 — The Forge</title>
+    <title>MBLAN26 - The Barn</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=chakra-petch:400,500,600,700|montserrat:400,500,600,700&display=swap" rel="stylesheet" />
@@ -33,7 +33,7 @@
             </a>
 
             <div class="hidden items-center gap-8 md:flex">
-                <a href="#story" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">The Forge</a>
+                <a href="#story" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">The Barn</a>
                 <a href="#games" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Games</a>
                 <a href="#editions" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Editions</a>
                 @if ($latestBlogs->isNotEmpty())
@@ -65,7 +65,7 @@
                 <x-forge.badge>Editie III &bull; 2026</x-forge.badge>
             </div>
 
-            <img src="{{ asset('images/mblan26-logo.jpg') }}" alt="MBLAN26 — The Forge"
+            <img src="{{ asset('images/mblan26-logo.jpg') }}" alt="MBLAN26 - The Barn"
                 class="mb-8 w-full max-w-2xl mix-blend-screen drop-shadow-[0_0_45px_rgb(var(--c-primary-500)/0.35)] transition-transform duration-700 hover:scale-[1.02]" />
 
             <p class="mb-3 font-display text-lg uppercase tracking-[0.4em] text-primary-300 text-glow md:text-2xl">
@@ -73,19 +73,21 @@
             </p>
             <p class="mb-10 max-w-xl text-sm text-forge-steel/80 md:text-base">
                 High tech in a wooden barn. Once a year, friends gather to forge friendships,
-                inside jokes, and legendary memories. This isn't just a LAN party — this is MBLAN.
+                inside jokes, and legendary memories. This isn't just a LAN party - this is MBLAN.
             </p>
 
-            {{-- Event info chips --}}
-            <div class="mb-10 flex flex-wrap items-center justify-center gap-3 text-xs uppercase tracking-widest text-forge-steel/80">
-                <span class="metal-edge clip-corner px-4 py-2">📅 Editie III &middot; 2026</span>
-                <span class="metal-edge clip-corner px-4 py-2">📍 The Barn &middot; Location Secret</span>
-                <span class="metal-edge clip-corner px-4 py-2">⏳ Coming Soon</span>
+            {{-- Event info --}}
+            <div class="mb-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-display text-xs uppercase tracking-[0.25em] text-forge-steel/70">
+                <span>Editie III &middot; 2026</span>
+                <span class="text-primary-400/50">/</span>
+                <span>The Barn &middot; Location Secret</span>
+                <span class="text-primary-400/50">/</span>
+                <span>Coming Soon</span>
             </div>
 
             <div class="flex flex-wrap items-center justify-center gap-4">
                 @auth
-                    <x-forge.btn href="{{ url('/dashboard') }}">Enter The Forge</x-forge.btn>
+                    <x-forge.btn href="{{ url('/dashboard') }}">Enter The Barn</x-forge.btn>
                 @else
                     <x-forge.btn href="{{ route('login') }}">Login</x-forge.btn>
                     @if (Route::has('register'))
@@ -108,7 +110,7 @@
                     <x-forge.heading eyebrow="The Brand Story">This isn't just a<br>LAN party</x-forge.heading>
                     <div class="space-y-4 text-forge-steel/80">
                         <p>Every year, a group of friends turns a barn into a digital forge for one weekend.
-                            No swords are hammered here — but friendships, inside jokes, victories and
+                            No swords are hammered here - but friendships, inside jokes, victories and
                             legendary memories are.</p>
                         <p class="font-display uppercase tracking-widest text-primary-300">
                             This isn't just a LAN party. This is MBLAN.
@@ -230,10 +232,10 @@
         <div class="absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-3xl px-6 text-center" x-data x-reveal>
             <h2 class="font-display text-4xl font-bold uppercase tracking-wide text-white md:text-6xl">Forged in the Barn</h2>
-            <p class="mx-auto mt-4 max-w-lg text-forge-steel/70">Ready to join the next chapter? Claim your spot at MBLAN26 — The Forge III.</p>
+            <p class="mx-auto mt-4 max-w-lg text-forge-steel/70">Ready to join the next chapter? Claim your spot at MBLAN26 - The Barn III.</p>
             <div class="mt-10 flex flex-wrap justify-center gap-4">
                 @auth
-                    <x-forge.btn href="{{ url('/dashboard') }}">Enter The Forge</x-forge.btn>
+                    <x-forge.btn href="{{ url('/dashboard') }}">Enter The Barn</x-forge.btn>
                 @else
                     <x-forge.btn href="{{ route('login') }}">Login</x-forge.btn>
                     @if (Route::has('register'))
@@ -248,7 +250,7 @@
     <footer class="border-t border-primary-500/10 bg-forge-black py-10">
         <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
             <span class="font-display text-lg font-bold uppercase tracking-widest text-white">MBLAN<span class="text-primary-400">26</span></span>
-            <p class="text-xs uppercase tracking-widest text-forge-steel/50">Martin &amp; Bart LAN Party &middot; The Forge</p>
+            <p class="text-xs uppercase tracking-widest text-forge-steel/50">Martin &amp; Bart LAN Party &middot; The Barn</p>
         </div>
     </footer>
 

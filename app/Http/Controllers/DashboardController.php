@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use App\Models\Edition;
+use App\Support\CurrentEdition;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(): View
+    public function index(CurrentEdition $current): View
     {
         $user = Auth::user();
 
@@ -22,9 +23,8 @@ class DashboardController extends Controller
                 ->orderBy('published_at', 'desc')
                 ->first();
         }
-        $latestEdition = Edition::where('is_active', true)
-            ->select('id', 'slug', 'name', 'is_exclusive', 'is_active', 'year')
-            ->first();
+        // Follow the edition the user is currently viewing (navbar switcher).
+        $latestEdition = $current->get();
 
         return view('dashboard.index', compact('user', 'latestBlog', 'latestEdition'));
     }

@@ -1,1 +1,2 @@
-<hr {{ $attributes->merge(['class' => 'forge-seam border-0']) }} />
+{{-- Dividers intentionally render as quiet vertical spacing (no stripe rule). --}}
+<div {{ $attributes->merge(['class' => 'h-16']) }} aria-hidden="true"></div>

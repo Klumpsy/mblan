@@ -1,4 +1,5 @@
-<a href="/">
-    <img src="{{ asset('images/logo.svg') }}" alt="MBLAN Logo"
-        class="w-64 md:w-96 h-auto transition-all duration-700 ease-in-out transform hover:scale-105" />
+<a href="/" class="inline-block transition-transform duration-700 ease-in-out hover:scale-105">
+    <span class="font-display text-4xl md:text-5xl font-bold uppercase tracking-widest text-white text-glow">
+        MBLAN<span class="text-primary-400">26</span>
+    </span>
 </a>

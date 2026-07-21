@@ -4,14 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Game;
 use App\Models\Tag;
+use App\Support\CurrentEdition;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class GameController extends Controller
 {
-    public function index(): View
+    public function index(CurrentEdition $current): View
     {
+        $edition = $current->get();
+
         $query = Game::query();
+
+        // Only games scheduled in the edition currently being viewed.
+        if ($edition) {
+            $query->whereHas('schedules', fn($q) => $q->where('schedules.edition_id', $edition->id));
+        }
 
         if (request('search')) {
             $query->where('name', 'like', '%' . request('search') . '%');
@@ -40,7 +48,8 @@ class GameController extends Controller
         return view('games.index', [
             'games' => $games,
             'availableTags' => $availableTags,
-            'selectedTags' => request('tags', [])
+            'selectedTags' => request('tags', []),
+            'edition' => $edition,
         ]);
     }
 

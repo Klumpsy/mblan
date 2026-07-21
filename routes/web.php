@@ -59,6 +59,7 @@ Route::middleware([
     });
     Route::controller(EditionController::class)->group(function () {
         Route::get('/editions', 'index')->name('editions');
+        Route::get('/editions/{edition:slug}/view', 'switchViewing')->name('editions.switch');
         Route::get('/editions/{edition:slug}', 'show')
             ->name('editions.show')
             ->middleware('can:view-edition,edition');

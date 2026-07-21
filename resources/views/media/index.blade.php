@@ -36,9 +36,9 @@
         class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
         <div class="bg-white dark:bg-gray-900 p-3 rounded-lg max-w-3xl w-full relative" @click.outside="open = false">
             <button @click="open = false"
-                class="absolute top-2 right-2 text-gray-700 dark:text-gray-300 hover:text-red-500"
+                class="absolute top-2 right-2 text-forge-steel hover:text-primary-300 text-2xl leading-none"
                 aria-label="Close Modal">
-                ✕
+                &times;
             </button>
 
             <div class="flex flex-col items-center">

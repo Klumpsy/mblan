@@ -1,10 +1,12 @@
-<div
-    class="p-6 lg:p-8 bg-white dark:bg-gray-800 dark:bg-gradient-to-bl dark:from-gray-700/50 dark:via-transparent border-b border-gray-200 dark:border-gray-700">
-    <h2 class="mt-2 text-2xl font-medium text-primary-40 text-primary-400">
-        Your events
+<div class="p-6 lg:p-8">
+    <div class="mb-3">
+        <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">Your Events</span>
+    </div>
+    <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-white">
+        Your Events
     </h2>
 
-    <p class="mt-6 mb-6 text-gray-500 dark:text-white leading-relaxed">
+    <p class="mt-4 mb-6 text-sm text-forge-steel/80 leading-relaxed">
         Your upcoming events are listed below. Click on an event to view more details or manage your signup.
     </p>
 
@@ -13,18 +15,17 @@
         $latestEdition &&
             !$user->signups->contains('edition_id', $latestEdition->id) &&
             $latestEdition->hasExclusiveAccess($user))
-        <div class="flex justify-between mb-6">
-            <a href="{{ route('editions.signup', $latestEdition->slug) }}"
-                class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md font-semibold text-xs text-primary-300 dark:text-primary-300 uppercase tracking-widest shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
+        <div class="mb-6">
+            <x-forge.btn href="{{ route('editions.signup', $latestEdition->slug) }}">
                 Sign up for {{ $latestEdition->name }}
-            </a>
+            </x-forge.btn>
         </div>
     @endif
 
     {{-- Show message if no latest edition is available --}}
     @if (!$latestEdition)
-        <div class="flex justify-between mb-6">
-            <p class="text-gray-500 dark:text-gray-400">
+        <div class="mb-6">
+            <p class="text-sm text-forge-steel/70">
                 There are currently no active editions available for signup. Please check back later for upcoming
                 events.
             </p>
@@ -35,72 +36,64 @@
     @if ($latestEdition && $user->signups->where('edition_id', $latestEdition->id)->isNotEmpty())
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             @foreach ($user->signups->where('edition_id', $latestEdition->id) as $signup)
-                <div
-                    class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow duration-200">
+                <div class="clip-corner metal-edge overflow-hidden transition-shadow duration-300 hover:shadow-glow-sm">
                     @if (!$signup->confirmed)
                         {{-- Unconfirmed signup card --}}
                         <div class="p-6 text-center">
-                            <div class="flex justify-center mb-4">
-                                <div
-                                    class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-primary-500 dark:text-primary-400" fill="none"
-                                        stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            <h3 class="mb-2 font-display text-lg font-bold uppercase tracking-wide text-white">
                                 Pending Confirmation
                             </h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">
+                            <p class="mb-4 text-sm text-forge-steel/70">
                                 Your signup is being processed. We'll notify you once it's confirmed.
                             </p>
-                            <div
-                                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-400">
-                                <div class="w-2 h-2 bg-primary-400 rounded-full mr-2 animate-pulse"></div>
+                            <div class="inline-flex items-center font-display text-xs uppercase tracking-[0.2em] text-warning-400">
+                                <span class="mr-2 h-2 w-2 rounded-full bg-warning-400 animate-pulse"></span>
                                 Processing
                             </div>
                         </div>
                     @else
                         {{-- Confirmed signup card --}}
-                        <div class="relative h-48 bg-gradient-to-br from-blue-400 to-purple-500">
-                            <img src="{{ asset('storage/' . $signup->edition->logo) }}"
-                                alt="{{ $signup->edition->name }}" class="w-full h-full object-cover">
+                        <div class="relative h-48 bg-gradient-to-br from-forge-graphite to-forge-panel">
+                            @if ($signup->edition->logo)
+                                <img src="{{ asset('storage/' . $signup->edition->logo) }}"
+                                    alt="{{ $signup->edition->name }}" class="h-full w-full object-cover">
+                            @else
+                                <div class="flex h-full w-full items-center justify-center bg-forge-graphite font-display text-xs uppercase tracking-[0.2em] text-forge-steel/40">
+                                    {{ $signup->edition->name }}
+                                </div>
+                            @endif
                         </div>
 
                         <div class="p-6">
-                            <div class="text-green-300 text-sm mb-2">
+                            <div class="mb-3 text-sm text-primary-300">
                                 @if ($signup->has_paid)
-                                    <x-heroicon-o-check-circle class="w-5 h-5 inline-block mr-1" />
                                     You have paid for this event.
                                 @else
                                     Your average costs: €{{ number_format($signup->calculateCost(), 2) }}
-                                    <span class="text-xs text-white">(This may change and is calculated based on your
+                                    <span class="text-xs text-forge-steel/60">(This may change and is calculated based on your
                                         choices)</span>
                                 @endif
                             </div>
 
-                            <div class="flex items-start justify-between mb-3">
-                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                            <div class="mb-3 flex items-start justify-between">
+                                <h3 class="font-display text-lg font-bold uppercase tracking-wide text-white">
                                     {{ $signup->edition->name }}
                                 </h3>
-                                <span class="text-sm text-gray-500 dark:text-gray-400">
+                                <span class="text-sm text-forge-steel/60">
                                     {{ $signup->edition->year }}
                                 </span>
                             </div>
 
-                            <div class="space-y-3 mb-4">
+                            <div class="mb-4 space-y-3">
                                 {{-- Schedule dates --}}
-                                <div class="flex items-center text-sm">
-                                    <x-heroicon-o-calendar class="w-5 h-5 text-gray-400 mr-3" />
+                                <div class="flex flex-wrap items-center text-sm">
                                     @foreach ($signup->schedules as $schedule)
                                         <span
-                                            class="inline-flex flex-col items-center text-primary-400 me-2 border-r-2 pr-2 last:border-r-0 border-gray-100 dark:border-gray-700">
+                                            class="me-2 inline-flex flex-col items-center border-r border-primary-500/20 pr-2 text-primary-400 last:border-r-0">
                                             <span class="text-xs font-medium uppercase">
                                                 {{ \Carbon\Carbon::parse($schedule->date)->format('D') }}
                                             </span>
-                                            <span class="text-xs mt-1">
+                                            <span class="mt-1 text-xs">
                                                 {{ \Carbon\Carbon::parse($schedule->date)->format('d-m-Y') }}
                                             </span>
                                         </span>
@@ -109,22 +102,19 @@
 
                                 {{-- Event options --}}
                                 <div class="flex items-center text-sm">
-                                    <x-heroicon-o-fire class="w-5 h-5 text-gray-400 mr-1" />
-                                    <div class="text-gray-600 dark:text-gray-300 text-xs">
+                                    <div class="text-xs text-forge-steel/80">
                                         @if ($signup->stays_on_campsite)
-                                            <span
-                                                class="inline-block text-violet-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
+                                            <span class="inline-block border-r border-primary-500/20 px-2 py-2 font-display uppercase tracking-wide text-primary-300">
                                                 CAMPSITE
                                             </span>
                                         @endif
                                         @if ($signup->joins_barbecue)
-                                            <span
-                                                class="inline-block text-violet-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
+                                            <span class="inline-block border-r border-primary-500/20 px-2 py-2 font-display uppercase tracking-wide text-primary-300">
                                                 BBQ
                                             </span>
                                         @endif
                                         @if ($signup->joins_pizza)
-                                            <span class="inline-block text-violet-400 py-2 px-2">
+                                            <span class="inline-block px-2 py-2 font-display uppercase tracking-wide text-primary-300">
                                                 PIZZA
                                             </span>
                                         @endif
@@ -134,20 +124,17 @@
                                 {{-- T-shirt info --}}
                                 @if ($signup->wants_tshirt)
                                     <div class="flex items-center text-sm">
-                                        <x-heroicon-o-paper-airplane class="w-5 h-5 text-gray-400 mr-1" />
-                                        <div class="text-gray-600 dark:text-gray-300 text-xs">
-                                            <span
-                                                class="inline-block text-pink-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
+                                        <div class="text-xs text-forge-steel/80">
+                                            <span class="inline-block border-r border-primary-500/20 px-2 py-2 font-display uppercase tracking-wide text-primary-300">
                                                 T-shirt
                                             </span>
                                             @if ($signup->tshirt_size)
-                                                <span
-                                                    class="inline-block text-pink-400 py-2 px-2 border-gray-100 dark:border-gray-700 border-r-2">
+                                                <span class="inline-block border-r border-primary-500/20 px-2 py-2 font-display uppercase tracking-wide text-primary-300">
                                                     {{ $signup->tshirt_size }}
                                                 </span>
                                             @endif
                                             @if ($signup->tshirt_text)
-                                                <span class="inline-block text-pink-400 py-2 px-2">
+                                                <span class="inline-block px-2 py-2 font-display uppercase tracking-wide text-primary-300">
                                                     {{ $signup->tshirt_text }}
                                                 </span>
                                             @endif
@@ -156,17 +143,15 @@
                                 @endif
 
                                 {{-- Beverages --}}
-                                <div class="flex items-center text-sm">
-                                    <x-heroicon-o-shopping-cart class="w-5 h-5 text-gray-400 mr-1 shrink-0" />
+                                <div class="flex items-start text-sm">
                                     @if ($signup->beverages->isEmpty())
-                                        <span class="text-gray-600 dark:text-gray-300">
+                                        <span class="text-forge-steel/70">
                                             You have no preferred beverages.
                                         </span>
                                     @else
-                                        <div class="flex flex-wrap gap-2 ms-2">
+                                        <div class="flex flex-wrap gap-2">
                                             @foreach ($signup->beverages as $beverage)
-                                                <span
-                                                    class="inline-block text-xs text-primary-200 px-2 py-1 rounded-full uppercase font-semibold tracking-wide bg-primary-800/20 border border-primary-700/30">
+                                                <span class="inline-block font-display text-xs uppercase tracking-wide text-primary-300">
                                                     {{ $beverage->name }}
                                                 </span>
                                             @endforeach
@@ -175,12 +160,11 @@
                                 </div>
                             </div>
 
-                            <a href="/editions/{{ $signup->edition->slug }}"
-                                class="block w-full text-center dark:bg-gray-700 dark:hover:bg-gray-600 hover:bg-primary-100 text-primary-400 font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
+                            <x-forge.btn variant="ghost" href="/editions/{{ $signup->edition->slug }}" class="w-full">
                                 View Details
-                            </a>
-                            <div
-                                class="mt-4 flex justify-center w-full dark:hover:bg-gray-600 hover:bg-primary-100 text-primary-400 font-medium py-2 px-4 rounded-lg transition-colors duration-200 text-sm">
+                            </x-forge.btn>
+
+                            <div class="mt-4 flex w-full justify-center">
                                 <x-edition-signout-button :edition="$signup->edition" />
                             </div>
                         </div>

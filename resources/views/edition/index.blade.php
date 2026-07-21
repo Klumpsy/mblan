@@ -1,9 +1,15 @@
 <x-app-layout>
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-4">
-                @foreach ($editions as $edition)
-                    <x-edition-card :edition="$edition" />
+    <div class="py-16 md:py-24">
+        <div class="mx-auto max-w-6xl px-6">
+            <div x-data x-reveal>
+                <x-forge.heading eyebrow="The Legacy">Editions</x-forge.heading>
+            </div>
+
+            <div class="space-y-6">
+                @foreach ($editions as $i => $edition)
+                    <div x-data x-reveal.{{ ($i % 3) * 120 }}>
+                        <x-edition-card :edition="$edition" />
+                    </div>
                 @endforeach
             </div>
         </div>

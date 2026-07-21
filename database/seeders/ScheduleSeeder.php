@@ -12,119 +12,69 @@ class ScheduleSeeder extends Seeder
 {
     public function run(): void
     {
-        $edition24 = Edition::where('slug', 'mblan24')->first();
-        $edition25 = Edition::where('slug', 'mblan25')->first();
+        $editions = Edition::whereIn('slug', ['mblan24', 'mblan25', 'mblan26'])
+            ->get()
+            ->keyBy('slug');
 
-        if (!$edition24 || !$edition25) {
-            $this->command->error("Editions not found! Make sure to run the EditionSeeder first.");
+        if ($editions->count() < 3) {
+            $this->command->error('Editions not found! Run EditionSeeder first.');
             return;
         }
 
         $games = Game::all();
-
         if ($games->isEmpty()) {
-            $this->command->error("No games found! Make sure to run the GameSeeder first.");
+            $this->command->error('No games found! Run GameSeeder first.');
             return;
         }
 
-        $getGameByName = function ($name) use ($games) {
-            $game = $games->where('name', $name)->first();
-            if (!$game) {
-                $this->command->warn("Game '$name' not found, skipping...");
-            }
-            return $game;
-        };
+        $game = fn ($name) => $games->firstWhere('name', $name);
 
-        $mblan24Schedules = [
-            [
-                'name' => 'Day 1 - Opening',
-                'edition_id' => $edition24->id,
-                'date' => '2024-06-10',
-                'games' => [
-                    $getGameByName('Warcraft III'),
-                    $getGameByName('Hearthstone - Battlegrounds')
-                ]
+        $plan = [
+            'mblan24' => [
+                ['name' => 'Day 1 - Opening', 'date' => '2024-06-10', 'games' => ['Warcraft III', 'Hearthstone - Battlegrounds']],
+                ['name' => 'Day 2 - Main Event', 'date' => '2024-06-11', 'games' => ['Team Fortress 2', 'Age of Empires III', 'Among Us']],
+                ['name' => 'Day 3 - Finals', 'date' => '2024-06-12', 'games' => ['Diablo III', 'Unreal Tournament 2004']],
             ],
-            [
-                'name' => 'Day 2 - Main Event',
-                'edition_id' => $edition24->id,
-                'date' => '2024-06-11',
-                'games' => [
-                    $getGameByName('Team Fortress 2'),
-                    $getGameByName('Age of Empires III'),
-                    $getGameByName('Among Us')
-                ]
+            'mblan25' => [
+                ['name' => 'Day 1 - Opening Ceremony', 'date' => '2025-07-15', 'games' => ['Battlefield Vietnam', 'Trackmania']],
+                ['name' => 'Day 2 - Main Tournament', 'date' => '2025-07-16', 'games' => ['Warcraft III', 'Team Fortress 2', 'Mario Party']],
+                ['name' => 'Day 3 - Finals Day', 'date' => '2025-07-17', 'games' => ['Age of Empires III', 'Among Us', 'Hearthstone - Battlegrounds']],
             ],
-            [
-                'name' => 'Day 3 - Finals',
-                'edition_id' => $edition24->id,
-                'date' => '2024-06-12',
-                'games' => [
-                    $getGameByName('Diablo III'),
-                    $getGameByName('Unreal Tournament 2004')
-                ]
-            ]
+            'mblan26' => [
+                ['name' => 'Day 1 - Ignition', 'date' => '2026-07-10', 'games' => ['Trackmania', 'Team Fortress 2']],
+                ['name' => 'Day 2 - The Anvil', 'date' => '2026-07-11', 'games' => ['Warcraft III', 'Age of Empires III', 'Among Us']],
+                ['name' => 'Day 3 - Tempered Steel (Finals)', 'date' => '2026-07-12', 'games' => ['Unreal Tournament 2004', 'Hearthstone - Battlegrounds', 'Mario Party']],
+            ],
         ];
 
-        $mblan25Schedules = [
-            [
-                'name' => 'Day 1 - Opening Ceremony',
-                'edition_id' => $edition25->id,
-                'date' => '2025-07-15',
-                'games' => [
-                    $getGameByName('Battlefield Vietnam'),
-                    $getGameByName('Trackmania')
-                ]
-            ],
-            [
-                'name' => 'Day 2 - Main Tournament',
-                'edition_id' => $edition25->id,
-                'date' => '2025-07-16',
-                'games' => [
-                    $getGameByName('Warcraft III'),
-                    $getGameByName('Team Fortress 2'),
-                    $getGameByName('Mario Party')
-                ]
-            ],
-            [
-                'name' => 'Day 3 - Finals Day',
-                'edition_id' => $edition25->id,
-                'date' => '2025-07-17',
-                'games' => [
-                    $getGameByName('Age of Empires III'),
-                    $getGameByName('Among Us'),
-                    $getGameByName('Hearthstone - Battlegrounds')
-                ]
-            ]
-        ];
+        foreach ($plan as $slug => $days) {
+            $edition = $editions->get($slug);
 
-        $createSchedules = function ($scheduleData) {
-            foreach ($scheduleData as $data) {
-                $games = $data['games'];
-                unset($data['games']);
+            foreach ($days as $day) {
+                $schedule = Schedule::create([
+                    'name' => $day['name'],
+                    'edition_id' => $edition->id,
+                    'date' => $day['date'],
+                ]);
 
-                $schedule = Schedule::create($data);
                 $startHour = 10;
-
-                foreach ($games as $game) {
-                    if ($game) {
-                        $endHour = $startHour + 3;
-
-                        $schedule->games()->attach($game->id, [
-                            'start_date' => Carbon::parse($data['date'])->setTime($startHour, 0, 0),
-                            'end_date' => Carbon::parse($data['date'])->setTime($endHour, 0, 0),
-                            'created_at' => Carbon::now(),
-                            'updated_at' => Carbon::now()
-                        ]);
-
-                        $startHour = $endHour + 1;
+                foreach ($day['games'] as $gameName) {
+                    $g = $game($gameName);
+                    if (!$g) {
+                        continue;
                     }
+
+                    $endHour = $startHour + 3;
+                    $schedule->games()->attach($g->id, [
+                        'start_date' => Carbon::parse($day['date'])->setTime($startHour, 0),
+                        'end_date' => Carbon::parse($day['date'])->setTime($endHour, 0),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+                    $startHour = $endHour + 1;
                 }
             }
-        };
-
-        $createSchedules($mblan24Schedules);
-        $createSchedules($mblan25Schedules);
+        }
 
         $this->command->info('Schedules created successfully!');
     }
