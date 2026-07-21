@@ -7,6 +7,9 @@ use App\Http\Controllers\EditionController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\TournamentController;
+use App\Models\Blog;
+use App\Models\Edition;
+use App\Models\Game;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -22,8 +25,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('index');
-});
+    return view('index', [
+        'activeEdition' => Edition::where('is_active', true)->first(),
+        'pastEditions' => Edition::where('is_active', false)
+            ->orderByDesc('year')
+            ->take(3)
+            ->get(),
+        'featuredGames' => Game::orderByDesc('likes')->take(6)->get(),
+        'latestBlogs' => Blog::published()->latest('published_at')->take(3)->get(),
+        'stats' => [
+            'editions' => Edition::count(),
+            'games' => Game::count(),
+            'players' => User::count(),
+        ],
+    ]);
+})->name('home');
 
 Route::middleware([
     'auth:sanctum',
@@ -58,7 +74,7 @@ Route::middleware([
         Route::get('/tournament/{tournament}', 'show')->name('tournaments.show');
     });
     Route::controller(MediaController::class)->group(function () {
-        Route::get('/media', 'index')->name('media')->middleware('can:viewPagesThatRequireSignup,' . User::class);;
+        Route::get('/media', 'index')->name('media')->middleware('can:viewPagesThatRequireSignup,' . User::class);
     });
     Route::controller(AchievementController::class)->group(function () {
         Route::get('/achievements', 'index')->name('achievements');
