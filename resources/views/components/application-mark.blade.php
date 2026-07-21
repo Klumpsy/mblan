@@ -1,3 +1,3 @@
-<img src="{{ asset('images/logo.svg') }}" alt="MBLAN Logo"
-    class="h-18 sm:h-12 md:h-14 w-auto object-contain transition-all duration-300 ease-in-out hover:opacity-90"
-    style="max-height: 3.5rem; aspect-ratio: 140 / 56;" {{ $attributes }} />
+<span {{ $attributes->merge(['class' => 'font-display text-2xl font-bold uppercase tracking-widest text-white']) }}>
+    MBLAN<span class="text-primary-400">26</span>
+</span>
