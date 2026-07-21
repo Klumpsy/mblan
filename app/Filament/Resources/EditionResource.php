@@ -6,6 +6,7 @@ use App\Filament\Resources\EditionResource\Pages;
 use App\Filament\Resources\EditionResource\RelationManager\MediaRelationManager;
 use App\Models\Edition;
 use App\Models\User;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Schemas\Components\Section;
@@ -72,6 +73,11 @@ class EditionResource extends Resource
                             ->searchable()
                             ->required()
                             ->reactive(),
+                        ColorPicker::make('color')
+                            ->label('Thema Kleur')
+                            ->helperText('Deze kleur bepaalt het accent van de hele site wanneer deze editie actief is.')
+                            ->default(\App\Support\ThemeService::DEFAULT_COLOR)
+                            ->required(),
                         Toggle::make('is_active')
                             ->label('Is Actief')
                             ->helperText('Markeer deze editie als de actieve editie. Alleen één editie kan actief zijn tegelijk.')
@@ -165,6 +171,9 @@ class EditionResource extends Resource
                 TextColumn::make('year')
                     ->sortable()
                     ->label('Edition year')
+                    ->toggleable(),
+                \Filament\Tables\Columns\ColorColumn::make('color')
+                    ->label('Thema')
                     ->toggleable(),
                 TextColumn::make('exclusive_status')
                     ->label('Toegang')

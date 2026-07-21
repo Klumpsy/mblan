@@ -17,6 +17,7 @@ class Edition extends Model
         'logo',
         'description',
         'year',
+        'color',
         'is_active',
         'is_exclusive',
         'slug'
@@ -26,6 +27,15 @@ class Edition extends Model
         'is_active' => 'boolean',
         'is_exclusive' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        // Any edition change may affect which colour theme is active site-wide.
+        $flush = fn () => \App\Support\ThemeService::forget();
+
+        static::saved($flush);
+        static::deleted($flush);
+    }
 
     public function schedules(): HasMany
     {

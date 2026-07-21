@@ -14,22 +14,32 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ["Figtree", ...defaultTheme.fontFamily.sans],
-                display: ["Montserrat", ...defaultTheme.fontFamily.sans],
+                sans: ["Montserrat", ...defaultTheme.fontFamily.sans],
+                display: ["'Chakra Petch'", ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                // Driven by CSS variables emitted per active edition (see <x-theme-vars>).
                 primary: {
-                    50: "#FFF7ED",
-                    100: "#FFEDD5",
-                    200: "#FED7AA",
-                    300: "#FDBA74",
-                    400: "#FB923C",
-                    500: "#F97316",
-                    600: "#EA580C",
-                    700: "#C2410C",
-                    800: "#9A3412",
-                    900: "#7C2D12",
-                    950: "#431407",
+                    50: "rgb(var(--c-primary-50) / <alpha-value>)",
+                    100: "rgb(var(--c-primary-100) / <alpha-value>)",
+                    200: "rgb(var(--c-primary-200) / <alpha-value>)",
+                    300: "rgb(var(--c-primary-300) / <alpha-value>)",
+                    400: "rgb(var(--c-primary-400) / <alpha-value>)",
+                    500: "rgb(var(--c-primary-500) / <alpha-value>)",
+                    600: "rgb(var(--c-primary-600) / <alpha-value>)",
+                    700: "rgb(var(--c-primary-700) / <alpha-value>)",
+                    800: "rgb(var(--c-primary-800) / <alpha-value>)",
+                    900: "rgb(var(--c-primary-900) / <alpha-value>)",
+                    950: "rgb(var(--c-primary-950) / <alpha-value>)",
+                },
+                // Fixed brand tokens for the dark "forge in a barn" aesthetic.
+                forge: {
+                    black: "#050807",
+                    forest: "#0E1A16",
+                    graphite: "#1A1A1A",
+                    panel: "#111d18",
+                    steel: "#AEB5B3",
+                    mint: "#C7FFE0",
                 },
                 secondary: {
                     50: "#EFF6FF",
@@ -101,6 +111,36 @@ export default {
                 soft: "0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)",
                 button: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 card: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                glow: "0 0 20px -2px rgb(var(--c-primary-500) / 0.55), 0 0 60px -20px rgb(var(--c-primary-400) / 0.4)",
+                "glow-sm": "0 0 12px -2px rgb(var(--c-primary-500) / 0.5)",
+            },
+            keyframes: {
+                "glow-pulse": {
+                    "0%, 100%": { opacity: "0.55", filter: "brightness(1)" },
+                    "50%": { opacity: "1", filter: "brightness(1.25)" },
+                },
+                shine: {
+                    "0%": { transform: "translateX(-120%) skewX(-20deg)" },
+                    "60%, 100%": { transform: "translateX(220%) skewX(-20deg)" },
+                },
+                float: {
+                    "0%, 100%": { transform: "translateY(0)" },
+                    "50%": { transform: "translateY(-8px)" },
+                },
+                "seam-slide": {
+                    "0%": { backgroundPosition: "0% 50%" },
+                    "100%": { backgroundPosition: "200% 50%" },
+                },
+                "reveal-up": {
+                    "0%": { opacity: "0", transform: "translateY(28px)" },
+                    "100%": { opacity: "1", transform: "translateY(0)" },
+                },
+            },
+            animation: {
+                "glow-pulse": "glow-pulse 3.2s ease-in-out infinite",
+                shine: "shine 4.5s ease-in-out infinite",
+                float: "float 6s ease-in-out infinite",
+                "seam-slide": "seam-slide 6s linear infinite",
             },
             borderRadius: {
                 xl: "1rem",
