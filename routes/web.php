@@ -1,42 +1,40 @@
 <?php
 
-use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditionController;
-use App\Http\Controllers\GameController;
-use App\Http\Controllers\MediaController;
 use App\Http\Controllers\TournamentController;
 use App\Models\Blog;
 use App\Models\Edition;
-use App\Models\Game;
-use App\Models\User;
+use App\Models\Tournament;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
 Route::get('/', function () {
+    $activeEdition = Edition::where('is_active', true)->first()
+        ?? Edition::orderByDesc('year')->first();
+
+    $activeEdition?->load(['schedules' => fn ($q) => $q->orderBy('date'), 'schedules.games']);
+
+    $tournaments = $activeEdition
+        ? Tournament::whereHas('schedule.edition', fn ($q) => $q->where('year', $activeEdition->year))
+            ->with(['game', 'schedule'])
+            ->get()
+        : collect();
+
     return view('index', [
-        'activeEdition' => Edition::where('is_active', true)->first(),
-        'pastEditions' => Edition::where('is_active', false)
-            ->orderByDesc('year')
-            ->take(3)
-            ->get(),
-        'featuredGames' => Game::orderByDesc('likes')->take(6)->get(),
+        'activeEdition' => $activeEdition,
         'latestBlogs' => Blog::published()->latest('published_at')->take(3)->get(),
+        'tournaments' => $tournaments,
         'stats' => [
             'editions' => Edition::count(),
-            'games' => Game::count(),
-            'players' => User::count(),
+            'games' => \App\Models\Game::count(),
+            'players' => \App\Models\User::count(),
         ],
     ]);
 })->name('home');
@@ -46,38 +44,25 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::controller(DashboardController::class)->group(function () {
-        Route::get('/dashboard', 'index')->name('dashboard');
-    });
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Game roster = the current edition's schedule
+    Route::get('/schedule', [EditionController::class, 'schedule'])->name('schedule');
+
+    Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments');
+
     Route::controller(BlogController::class)->group(function () {
         Route::get('/blogs', 'index')->name('blogs');
         Route::get('/blogs/{blog:slug}', 'show')->name('blogs.show');
     });
-    Route::controller(GameController::class)->group(function () {
-        Route::get('/games', 'index')->name('games');
-        Route::get('/games/{game}', 'show')->name('games.show');
-    });
+
+    // Signup flow for an edition (reached from the landing / dashboard CTA)
     Route::controller(EditionController::class)->group(function () {
-        Route::get('/editions', 'index')->name('editions');
-        Route::get('/editions/{edition:slug}/view', 'switchViewing')->name('editions.switch');
-        Route::get('/editions/{edition:slug}', 'show')
-            ->name('editions.show')
-            ->middleware('can:view-edition,edition');
         Route::get('/editions/{edition:slug}/signup', 'signup')
             ->name('editions.signup')
             ->middleware('can:signup-edition,edition');
         Route::post('/editions/{edition:slug}/signout', 'signout')
             ->name('editions.signout')
             ->middleware('can:signout-edition,edition');
-    });
-    Route::controller(TournamentController::class)->group(function () {
-        Route::get('/tournaments', 'index')->name('tournaments')->middleware('can:viewPagesThatRequireSignup,' . User::class);
-        Route::get('/tournament/{tournament}', 'show')->name('tournaments.show');
-    });
-    Route::controller(MediaController::class)->group(function () {
-        Route::get('/media', 'index')->name('media')->middleware('can:viewPagesThatRequireSignup,' . User::class);
-    });
-    Route::controller(AchievementController::class)->group(function () {
-        Route::get('/achievements', 'index')->name('achievements');
     });
 });

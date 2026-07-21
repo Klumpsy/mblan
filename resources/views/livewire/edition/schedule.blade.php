@@ -92,49 +92,11 @@
                                             </div>
 
                                             <div class="mt-2 sm:mt-0">
-                                                @if ($game->installation_instructions)
-                                                    <a href="{{ route('games.show', $game) }}#installation-instructions"
-                                                        class="inline-flex items-center gap-2 px-3 py-2 metal-edge text-forge-steel hover:text-primary-300 font-display text-xs uppercase tracking-widest clip-corner transition-all duration-200 ease-out group">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="h-4 w-4 text-primary-400 group-hover:rotate-12 transition-transform duration-200"
-                                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                                stroke-width="2"
-                                                                d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
-                                                        Installation Guide
-                                                    </a>
-                                                @endif
-
                                                 @if ($game->pivot->is_tournament)
-                                                    <span class="inline-flex items-center gap-2 px-3 py-2 metal-edge text-forge-steel font-display text-xs uppercase tracking-widest clip-corner">
-                                                        <svg class="w-4 h-4 text-warning-400"
-                                                            fill="currentColor" viewBox="0 0 20 20">
-                                                            <path fill-rule="evenodd"
-                                                                d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                                                clip-rule="evenodd"></path>
-                                                        </svg>
-                                                        <span class="text-warning-400">Tournament</span>
+                                                    <span class="inline-flex items-center px-3 py-2 metal-edge font-display text-xs uppercase tracking-widest text-warning-400 clip-corner">
+                                                        Tournament
                                                     </span>
                                                 @endif
-
-                                                <a href="{{ route('games.show', $game) }}"
-                                                    class="inline-flex items-center gap-2 px-3 py-2 border border-primary-500/30 bg-primary-500/15 text-primary-300 hover:text-white font-display text-xs uppercase tracking-widest clip-corner transition-all duration-200 ease-out group">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="h-4 w-4 group-hover:scale-110 transition-transform duration-200"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2"
-                                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    View Details
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        class="h-3 w-3 opacity-60 group-hover:translate-x-1 group-hover:opacity-100 transition-all duration-200"
-                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                                            stroke-width="2" d="M9 5l7 7-7 7" />
-                                                    </svg>
-                                                </a>
                                             </div>
                                         </div>
 
