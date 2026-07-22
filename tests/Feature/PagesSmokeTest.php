@@ -47,8 +47,8 @@ test('landing page renders with ladder', function () {
     $this->get('/')->assertOk()->assertSee('MBLAN');
 });
 
-test('dashboard renders', function () {
-    $this->actingAs($this->user)->get(route('dashboard'))->assertOk();
+test('dashboard redirects to schedule', function () {
+    $this->actingAs($this->user)->get('/dashboard')->assertRedirect('/schedule');
 });
 
 test('schedule (game roster) renders', function () {
@@ -59,10 +59,11 @@ test('tournaments page renders the ladder', function () {
     $this->actingAs($this->user)->get(route('tournaments'))->assertOk();
 });
 
-test('news index renders', function () {
-    $this->actingAs($this->user)->get(route('blogs'))->assertOk();
-});
-
 test('profile page renders', function () {
     $this->actingAs($this->user)->get(route('profile.show'))->assertOk();
+});
+
+test('guests are redirected to login from protected pages', function () {
+    $this->get(route('schedule'))->assertRedirect(route('login'));
+    $this->get(route('tournaments'))->assertRedirect(route('login'));
 });

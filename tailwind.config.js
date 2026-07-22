@@ -135,6 +135,19 @@ export default {
                     "0%": { opacity: "0", transform: "translateY(28px)" },
                     "100%": { opacity: "1", transform: "translateY(0)" },
                 },
+                twinkle: {
+                    "0%, 100%": { opacity: "0.5" },
+                    "50%": { opacity: "1" },
+                },
+                drift: {
+                    "0%": { backgroundPosition: "0% 0%" },
+                    "100%": { backgroundPosition: "100% 100%" },
+                },
+                "float-orb": {
+                    "0%, 100%": { transform: "translateY(0) translateX(0)" },
+                    "33%": { transform: "translateY(-18px) translateX(10px)" },
+                    "66%": { transform: "translateY(10px) translateX(-8px)" },
+                },
             },
             animation: {
                 "glow-pulse": "glow-pulse 3.2s ease-in-out infinite",

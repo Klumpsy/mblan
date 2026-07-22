@@ -48,8 +48,8 @@
             </div>
         @endif
 
-        {{-- Ranked list with animated score bars --}}
-        <ul class="divide-y divide-primary-500/10">
+        {{-- Ranked list with animated score bars (scrolls tidily for large fields) --}}
+        <ul class="max-h-96 divide-y divide-primary-500/10 overflow-y-auto">
             @foreach (($podium->count() >= 2 ? $rest : $rows) as $row)
                 @php $pct = max(4, min(100, round(($row['score'] / $topScore) * 100))); @endphp
                 <li @class([

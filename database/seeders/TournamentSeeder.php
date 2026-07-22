@@ -54,8 +54,9 @@ class TournamentSeeder extends Seeder
                     'higher_is_better' => $preset['higher_is_better'],
                 ]);
 
-                // Attach a field of players with scores, then rank them.
-                $players = collect($userIds)->shuffle()->take(min(8, count($userIds)));
+                // Attach a full field (up to 20) of players with scores, then rank them.
+                $fieldSize = $isActive ? min(20, count($userIds)) : random_int(8, min(16, count($userIds)));
+                $players = collect($userIds)->shuffle()->take($fieldSize);
                 foreach ($players as $uid) {
                     $tournament->usersWithScores()->attach($uid, [
                         'score' => random_int(0, 100),

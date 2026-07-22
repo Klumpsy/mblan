@@ -3,24 +3,18 @@
         <div class="flex justify-between h-16">
             <div class="flex">
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('schedule') }}">
                         <x-application-mark class="block h-9 w-auto" />
                     </a>
                 </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden lg:flex lg:space-x-8 lg:-my-px lg:ms-10">
-                    <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" class="whitespace-nowrap">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
                     <x-nav-link href="{{ route('schedule') }}" :active="request()->routeIs('schedule')" class="whitespace-nowrap">
-                        {{ __('Schedule') }}
+                        {{ __('Schema') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')" class="whitespace-nowrap">
-                        {{ __('Tournaments') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('blogs') }}" :active="request()->routeIs('blogs') || request()->routeIs('blogs.show')" class="whitespace-nowrap">
-                        {{ __('News') }}
+                        {{ __('Toernooien') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -98,17 +92,11 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{ 'block': open, 'hidden': !open }" class="hidden lg:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('schedule') }}" :active="request()->routeIs('schedule')">
-                {{ __('Schedule') }}
+                {{ __('Schema') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
-                {{ __('Tournaments') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('blogs') }}" :active="request()->routeIs('blogs')">
-                {{ __('News') }}
+                {{ __('Toernooien') }}
             </x-responsive-nav-link>
         </div>
 
