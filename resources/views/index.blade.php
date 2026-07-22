@@ -20,55 +20,74 @@
 <body class="font-sans antialiased bg-forge-black text-forge-steel overflow-hidden">
     <x-flash-message />
 
-    <main class="relative flex min-h-screen items-center justify-center">
-        {{-- ===== Deep space backdrop ===== --}}
-        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#04100c] via-forge-black to-[#030605]"></div>
-        <div class="pointer-events-none absolute inset-0 starfield"></div>
-        <div class="pointer-events-none absolute inset-0 starfield starfield-2"></div>
-        <div class="pointer-events-none absolute inset-0 bg-grid opacity-[0.10]"></div>
-        <div class="pointer-events-none absolute left-1/2 top-1/2 h-[60vmax] w-[60vmax] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-500/10 blur-[130px]"></div>
-        <x-forge.embers class="opacity-70" />
+    <main class="relative min-h-screen overflow-hidden">
+        {{-- ===== Dark techy backdrop ===== --}}
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-[#0a140f] via-forge-black to-[#040806]"></div>
+        <div class="pointer-events-none absolute inset-0 bg-grid opacity-[0.14]"></div>
+        <div class="pointer-events-none absolute left-1/2 top-1/2 h-[55vmax] w-[55vmax] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-500/10 blur-[130px]"></div>
+        <x-forge.embers class="opacity-60" />
 
-        {{-- ===== Animated space scene: planets + walking astronauts ===== --}}
-        <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-            {{-- distant ringed planet, top-right --}}
-            <div class="planet absolute right-[8%] top-[12%] h-28 w-28 animate-float md:h-40 md:w-40">
-                <span class="planet__ring"></span>
+        {{-- glowing floor line the gamers walk on --}}
+        <div class="pointer-events-none absolute inset-x-0 bottom-[20%] h-px bg-gradient-to-r from-transparent via-primary-400/60 to-transparent"></div>
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[20%] bg-gradient-to-t from-primary-500/[0.06] to-transparent"></div>
+
+        {{-- ===== The barn (centerpiece) ===== --}}
+        <div class="absolute bottom-[20%] left-1/2 z-0 -translate-x-1/2">
+            <div class="barn">
+                <div class="barn__cable"></div>
+                <div class="barn__roof"></div>
+                <div class="barn__loft"></div>
+                <div class="barn__body">
+                    <div class="barn__window barn__window--l"></div>
+                    <div class="barn__window barn__window--r"></div>
+                    <div class="barn__door">
+                        <div class="barn__glow"></div>
+                        <div class="barn__screen"></div>
+                        <div class="barn__sitter"></div>
+                    </div>
+                </div>
             </div>
-            {{-- small moon, upper-left --}}
-            <div class="planet absolute left-[10%] top-[20%] h-12 w-12 opacity-80"></div>
-
-            {{-- glowing planet horizon the astronauts walk on --}}
-            <div class="planet-surface"></div>
-
-            {{-- a gamer floating & tumbling near the ringed planet ("doing stuff in space") --}}
-            <div class="walker walker--float" style="--bottom: 62%; --dur: 15s; --delay: 0s; --scale: 0.85;">
-                <x-forge.gamer />
-            </div>
-
-            {{-- astronauts strolling across the horizon --}}
-            <div class="walker" style="--bottom: 9%; --dur: 24s; --delay: 0s; --scale: 1.15;"><x-forge.gamer /></div>
-            <div class="walker walker--reverse" style="--bottom: 13%; --dur: 30s; --delay: 3s; --scale: 0.8;"><x-forge.gamer /></div>
-            <div class="walker" style="--bottom: 7%; --dur: 21s; --delay: 6s; --scale: 0.95;"><x-forge.gamer /></div>
-            <div class="walker" style="--bottom: 16%; --dur: 34s; --delay: 1.5s; --scale: 0.65;"><x-forge.gamer /></div>
-            <div class="walker walker--reverse" style="--bottom: 11%; --dur: 27s; --delay: 9s; --scale: 1;"><x-forge.gamer /></div>
         </div>
 
-        {{-- ===== Center content ===== --}}
-        <div class="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 text-center">
-            {{-- Wordmark: silver MBLAN + neon 26, blends into the dark --}}
+        {{-- ===== Little stories: gamers walking to and from the barn ===== --}}
+        <div class="pointer-events-none absolute inset-0 z-[5] overflow-hidden" aria-hidden="true">
+            {{-- arriving with their rig --}}
+            <div class="walker walker--arrive" style="--bottom: 20%; --dur: 16s; --delay: 0s; --scale: 1.1;">
+                <x-forge.gamer gear />
+            </div>
+            {{-- another arrival, smaller/further --}}
+            <div class="walker walker--arrive" style="--bottom: 22.5%; --dur: 21s; --delay: 7s; --scale: 0.8;">
+                <x-forge.gamer gear />
+            </div>
+            {{-- someone heading back out --}}
+            <div class="walker walker--leave" style="--bottom: 20%; --dur: 19s; --delay: 4s; --scale: 1;">
+                <x-forge.gamer />
+            </div>
+            {{-- ambient passer-by strolling across --}}
+            <div class="walker" style="--bottom: 19%; --dur: 26s; --delay: 2s; --scale: 0.9;">
+                <x-forge.gamer />
+            </div>
+            <div class="walker walker--reverse" style="--bottom: 23%; --dur: 32s; --delay: 10s; --scale: 0.7;">
+                <x-forge.gamer />
+            </div>
+        </div>
+
+        {{-- ===== Wordmark (top) ===== --}}
+        <div class="absolute left-1/2 top-[8%] z-20 w-full -translate-x-1/2 px-6 text-center">
             <div class="select-none [transform:skewX(-6deg)]" x-data x-reveal>
                 <h1 class="flex items-baseline justify-center font-display font-bold leading-none tracking-tight">
-                    <span class="bg-gradient-to-b from-white via-[#e7edeb] to-[#7f8f89] bg-clip-text text-transparent text-[clamp(3.5rem,15vw,10rem)] drop-shadow-[0_3px_12px_rgba(0,0,0,0.7)]">MBLAN</span>
-                    <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(3.5rem,15vw,10rem)] drop-shadow-[0_0_30px_rgb(var(--c-primary-500)/0.7)]">26</span>
+                    <span class="bg-gradient-to-b from-white via-[#e7edeb] to-[#7f8f89] bg-clip-text text-transparent text-[clamp(3rem,12vw,8rem)] drop-shadow-[0_3px_12px_rgba(0,0,0,0.7)]">MBLAN</span>
+                    <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(3rem,12vw,8rem)] drop-shadow-[0_0_30px_rgb(var(--c-primary-500)/0.7)]">26</span>
                 </h1>
             </div>
+        </div>
 
-            <p class="mt-8 max-w-md text-sm uppercase tracking-[0.25em] text-forge-steel/70 md:text-base">
+        {{-- ===== Subtitle + actions (bottom) ===== --}}
+        <div class="absolute bottom-[5%] left-1/2 z-20 w-full -translate-x-1/2 px-6 text-center">
+            <p class="mb-6 text-xs uppercase tracking-[0.3em] text-forge-steel/70 md:text-sm">
                 Log in voor het schema en de toernooien
             </p>
-
-            <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <div class="flex flex-wrap items-center justify-center gap-4">
                 @auth
                     <x-forge.btn href="{{ route('schedule') }}">Betreed De Schuur</x-forge.btn>
                 @else
