@@ -3,7 +3,6 @@
 use App\Http\Controllers\EditionController;
 use App\Http\Controllers\TournamentController;
 use App\Models\Edition;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,8 +18,6 @@ Route::get('/', function () {
 
     return view('index', [
         'activeEdition' => $activeEdition,
-        // A few names purely to decorate the hero with floating avatars.
-        'avatarNames' => User::inRandomOrder()->take(8)->pluck('name'),
     ]);
 })->name('home');
 

@@ -165,18 +165,181 @@
         opacity: 0.6;
     }
 
-    /* Floating gaming avatar chip */
-    .avatar-orb {
-        animation: float-orb var(--dur, 12s) ease-in-out infinite;
-        animation-delay: var(--delay, 0s);
-    }
-
     .bg-grid {
         background-image:
             linear-gradient(rgb(var(--c-primary-500) / 0.05) 1px, transparent 1px),
             linear-gradient(90deg, rgb(var(--c-primary-500) / 0.05) 1px, transparent 1px);
         background-size: 44px 44px;
     }
+}
+
+/* ===========================================================================
+   Walking gaming avatars (pure-CSS astronauts) that stroll across the scene,
+   plus CSS planets/moon. No images, no external sprites.
+   =========================================================================== */
+
+.walker {
+    position: absolute;
+    left: 0;
+    bottom: var(--bottom, 12%);
+    width: 34px;
+    height: 60px;
+    transform: scale(var(--scale, 1));
+    animation: walk-across var(--dur, 26s) linear infinite;
+    animation-delay: var(--delay, 0s);
+    will-change: transform;
+}
+.walker--reverse { animation-name: walk-across-rev; }
+
+.gamer {
+    position: relative;
+    width: 34px;
+    height: 60px;
+    transform-origin: bottom center;
+    animation: gamer-bob 0.62s ease-in-out infinite;
+}
+.walker--reverse .gamer { transform: scaleX(-1); }
+
+/* helmet + glowing visor */
+.gamer__head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #b9c6c1 55%, #59696330 100%);
+    border: 1px solid rgb(var(--c-primary-400) / 0.65);
+    box-shadow: 0 0 10px rgb(var(--c-primary-500) / 0.55);
+}
+.gamer__head::after {
+    content: "";
+    position: absolute;
+    inset: 6px 4px 7px 5px;
+    border-radius: 45% 45% 40% 40%;
+    background: rgb(var(--c-primary-500) / 0.9);
+    box-shadow: 0 0 8px rgb(var(--c-primary-400)), inset 0 -2px 3px rgb(0 0 0 / 0.4);
+}
+/* torso + backpack */
+.gamer__body {
+    position: absolute;
+    top: 19px;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    border-radius: 7px 7px 5px 5px;
+    background: linear-gradient(160deg, #e3eae7, #7f8d88 70%, #58635e);
+    border: 1px solid rgb(var(--c-primary-500) / 0.4);
+    box-shadow: inset 0 0 4px rgb(var(--c-primary-500) / 0.4);
+}
+.gamer__body::before { /* chest light */
+    content: "";
+    position: absolute;
+    top: 6px; left: 50%;
+    width: 5px; height: 5px; margin-left: -2.5px;
+    border-radius: 50%;
+    background: rgb(var(--c-primary-300));
+    box-shadow: 0 0 6px rgb(var(--c-primary-400));
+}
+/* swinging arms */
+.gamer__arm {
+    position: absolute;
+    top: 21px;
+    width: 5px; height: 15px;
+    border-radius: 3px;
+    background: linear-gradient(#c3cecb, #6d7b76);
+    transform-origin: top center;
+}
+.gamer__arm--l { left: 3px; animation: gamer-swing 0.62s ease-in-out infinite; }
+.gamer__arm--r { right: 3px; animation: gamer-swing 0.62s ease-in-out infinite reverse; }
+/* stepping legs */
+.gamer__leg {
+    position: absolute;
+    top: 38px;
+    width: 6px; height: 18px;
+    border-radius: 3px;
+    background: linear-gradient(#b8c3bf, #5c6a65);
+    transform-origin: top center;
+}
+.gamer__leg--l { left: 8px; animation: gamer-step 0.62s ease-in-out infinite; }
+.gamer__leg--r { right: 8px; animation: gamer-step 0.62s ease-in-out infinite reverse; }
+
+/* a floating "doing stuff" gamer that hovers by a planet */
+.walker--float { animation: walk-float var(--dur, 14s) ease-in-out infinite; }
+.walker--float .gamer { animation: gamer-tumble 6s ease-in-out infinite; }
+
+/* CSS celestial bodies */
+.planet {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 28%,
+        rgb(var(--c-primary-200) / 0.95),
+        rgb(var(--c-primary-600) / 0.8) 45%,
+        #060b09 82%);
+    box-shadow: 0 0 60px rgb(var(--c-primary-500) / 0.35), inset -8px -8px 24px rgb(0 0 0 / 0.6);
+}
+.planet__ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 190%; height: 46%;
+    transform: translate(-50%, -50%) rotate(-18deg);
+    border-radius: 50%;
+    border: 2px solid rgb(var(--c-primary-400) / 0.5);
+    box-shadow: 0 0 14px rgb(var(--c-primary-500) / 0.3);
+}
+.planet-surface { /* big glowing horizon the walkers stroll on */
+    position: absolute;
+    left: 50%;
+    bottom: -46vw;
+    width: 150vw;
+    height: 60vw;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 0%,
+        rgb(var(--c-primary-700) / 0.4),
+        rgb(var(--c-primary-900) / 0.18) 38%,
+        transparent 66%);
+    box-shadow: 0 -18px 90px -18px rgb(var(--c-primary-500) / 0.5);
+}
+.planet-surface::before { /* crisp glowing horizon line */
+    content: "";
+    position: absolute;
+    top: 0; left: 15%; right: 15%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgb(var(--c-primary-400) / 0.8), transparent);
+    filter: blur(0.5px);
+}
+
+@keyframes walk-across {
+    0%   { transform: translateX(-14vw) scale(var(--scale, 1)); }
+    100% { transform: translateX(114vw) scale(var(--scale, 1)); }
+}
+@keyframes walk-across-rev {
+    0%   { transform: translateX(114vw) scale(var(--scale, 1)); }
+    100% { transform: translateX(-14vw) scale(var(--scale, 1)); }
+}
+@keyframes walk-float {
+    0%   { transform: translateX(-14vw) translateY(0) scale(var(--scale, 1)); }
+    50%  { transform: translateX(50vw) translateY(-30px) scale(var(--scale, 1)); }
+    100% { transform: translateX(114vw) translateY(0) scale(var(--scale, 1)); }
+}
+@keyframes gamer-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-2.5px); }
+}
+@keyframes gamer-step {
+    0%, 100% { transform: rotate(22deg); }
+    50%      { transform: rotate(-22deg); }
+}
+@keyframes gamer-swing {
+    0%, 100% { transform: rotate(-18deg); }
+    50%      { transform: rotate(18deg); }
+}
+@keyframes gamer-tumble {
+    0%, 100% { transform: rotate(-8deg); }
+    50%      { transform: rotate(8deg); }
 }
 
 @media (prefers-reduced-motion: reduce) {
