@@ -4,9 +4,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="MBLAN26. Forged in the barn. High tech in a wooden barn, the Martin and Bart LAN party.">
+    <meta name="description" content="MBLAN26. Gesmeed in de Schuur. High tech in een houten schuur, de Martin en Bart LAN party.">
 
-    <title>MBLAN26 - Forged in the Barn</title>
+    <title>MBLAN26 - Gesmeed in de Schuur</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=chakra-petch:400,500,600,700|montserrat:400,500,600,700&display=swap" rel="stylesheet" />
@@ -29,20 +29,20 @@
                 MBLAN<span class="text-primary-400">26</span>
             </a>
             <div class="hidden items-center gap-8 md:flex">
-                <a href="#schedule" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Schedule</a>
-                <a href="#tournaments" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Tournaments</a>
+                <a href="#schedule" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Schema</a>
+                <a href="#tournaments" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Toernooien</a>
                 @if ($latestBlogs->isNotEmpty())
-                    <a href="#news" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">News</a>
+                    <a href="#news" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Nieuws</a>
                 @endif
-                <a href="#signup" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Signup</a>
+                <a href="#signup" class="text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300">Aanmelden</a>
             </div>
             <div class="flex items-center gap-3">
                 @auth
                     <x-forge.btn href="{{ url('/dashboard') }}" class="!px-5 !py-2.5">Dashboard</x-forge.btn>
                 @else
-                    <a href="{{ route('login') }}" class="hidden text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300 sm:inline">Login</a>
+                    <a href="{{ route('login') }}" class="hidden text-sm uppercase tracking-widest text-forge-steel transition hover:text-primary-300 sm:inline">Inloggen</a>
                     @if (Route::has('register'))
-                        <x-forge.btn href="{{ route('register') }}" class="!px-5 !py-2.5">Join</x-forge.btn>
+                        <x-forge.btn href="{{ route('register') }}" class="!px-5 !py-2.5">Registreren</x-forge.btn>
                     @endif
                 @endauth
             </div>
@@ -64,32 +64,32 @@
                 class="mb-8 w-full max-w-2xl mix-blend-screen drop-shadow-[0_0_45px_rgb(var(--c-primary-500)/0.35)] transition-transform duration-700 hover:scale-[1.02]" />
 
             <p class="mb-3 font-display text-lg uppercase tracking-[0.4em] text-primary-300 text-glow md:text-2xl">
-                Forged in the Barn
+                Gesmeed in de Schuur
             </p>
             <p class="mb-10 max-w-xl text-sm text-forge-steel/80 md:text-base">
-                High tech in a wooden barn. Once a year, friends gather to forge friendships,
-                inside jokes, and legendary memories. This isn't just a LAN party, this is MBLAN.
+                High tech in een houten schuur. Eén keer per jaar komen vrienden samen om
+                vriendschappen, inside jokes en legendarische herinneringen te smeden. Dit is niet zomaar een LAN party, dit is MBLAN.
             </p>
 
             <div class="mb-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-display text-xs uppercase tracking-[0.25em] text-forge-steel/70">
                 <span>{{ $activeEdition?->year ?? '2026' }}</span>
                 <span class="text-primary-400/50">/</span>
-                <span>The Barn, Location Secret</span>
+                <span>The Barn, Locatie Geheim</span>
                 <span class="text-primary-400/50">/</span>
-                <span>Coming Soon</span>
+                <span>Binnenkort</span>
             </div>
 
             <div class="flex flex-wrap items-center justify-center gap-4">
-                <x-forge.btn href="#signup">Sign Up</x-forge.btn>
+                <x-forge.btn href="#signup">Aanmelden</x-forge.btn>
                 @auth
-                    <x-forge.btn variant="ghost" href="{{ url('/dashboard') }}">Enter The Barn</x-forge.btn>
+                    <x-forge.btn variant="ghost" href="{{ url('/dashboard') }}">Betreed De Schuur</x-forge.btn>
                 @else
-                    <x-forge.btn variant="ghost" href="{{ route('login') }}">Login</x-forge.btn>
+                    <x-forge.btn variant="ghost" href="{{ route('login') }}">Inloggen</x-forge.btn>
                 @endauth
             </div>
         </div>
 
-        <a href="#story" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary-400/70 animate-float" aria-label="Scroll down">
+        <a href="#story" class="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary-400/70 animate-float" aria-label="Scroll omlaag">
             <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
         </a>
     </section>
@@ -99,19 +99,19 @@
         <div class="mx-auto max-w-6xl px-6">
             <div class="grid items-center gap-14 md:grid-cols-2">
                 <div x-data x-reveal>
-                    <x-forge.heading eyebrow="The Brand Story">This isn't just a<br>LAN party</x-forge.heading>
+                    <x-forge.heading eyebrow="Het Verhaal">Dit is niet zomaar<br>een LAN party</x-forge.heading>
                     <div class="space-y-4 text-forge-steel/80">
-                        <p>Every year, a group of friends turns a barn into a digital arena for one weekend.
-                            No swords are hammered here, but friendships, inside jokes, victories and
-                            legendary memories are.</p>
+                        <p>Elk jaar verandert een groep vrienden een schuur voor één weekend in een digitale arena.
+                            Hier worden geen zwaarden gesmeed, maar wel vriendschappen, inside jokes, overwinningen en
+                            legendarische herinneringen.</p>
                         <p class="font-display uppercase tracking-widest text-primary-300">
-                            This isn't just a LAN party. This is MBLAN.
+                            Dit is niet zomaar een LAN party. Dit is MBLAN.
                         </p>
                     </div>
                     <div class="mt-10 grid grid-cols-3 gap-6">
-                        <x-forge.stat value="{{ $stats['editions'] }}" label="Editions" x-data x-reveal.100 />
+                        <x-forge.stat value="{{ $stats['editions'] }}" label="Edities" x-data x-reveal.100 />
                         <x-forge.stat value="{{ $stats['games'] }}" label="Games" x-data x-reveal.200 />
-                        <x-forge.stat value="{{ $stats['players'] }}" label="Players" x-data x-reveal.300 />
+                        <x-forge.stat value="{{ $stats['players'] }}" label="Spelers" x-data x-reveal.300 />
                     </div>
                 </div>
                 <div class="relative" x-data x-reveal.150>
@@ -129,7 +129,7 @@
         <section id="schedule" class="relative py-24">
             <div class="mx-auto max-w-6xl px-6">
                 <div x-data x-reveal>
-                    <x-forge.heading eyebrow="Game Roster">The Schedule</x-forge.heading>
+                    <x-forge.heading eyebrow="Speelschema">Speelschema</x-forge.heading>
                 </div>
                 <div class="grid gap-6 md:grid-cols-3">
                     @foreach ($activeEdition->schedules as $i => $day)
@@ -148,7 +148,7 @@
                                             </span>
                                         </li>
                                     @empty
-                                        <li class="text-sm text-forge-steel/50">To be announced</li>
+                                        <li class="text-sm text-forge-steel/50">Wordt nog bekendgemaakt</li>
                                     @endforelse
                                 </ul>
                             </x-forge.card>
@@ -161,43 +161,19 @@
 
     {{-- ================= TOURNAMENTS ================= --}}
     @if ($tournaments->isNotEmpty())
+        @php
+            // Show the live tournament(s) first, then fill up to four ladders.
+            $ladderTournaments = $tournaments->sortByDesc('is_active')->take(4)->values();
+        @endphp
         <section id="tournaments" class="relative border-y border-primary-500/10 bg-forge-forest/40 py-24">
             <div class="mx-auto max-w-6xl px-6">
                 <div x-data x-reveal>
-                    <x-forge.heading eyebrow="Roster and Scores">Tournaments</x-forge.heading>
+                    <x-forge.heading eyebrow="Deelnemers en Scores">Toernooien</x-forge.heading>
                 </div>
                 <div class="grid gap-6 md:grid-cols-2">
-                    @foreach ($tournaments as $i => $tournament)
-                        @php $board = $tournament->getLeaderboard()->take(5); @endphp
+                    @foreach ($ladderTournaments as $i => $tournament)
                         <div x-data x-reveal.{{ ($i % 2) * 120 }}>
-                            <x-forge.card class="h-full">
-                                <div class="mb-4 flex items-start justify-between gap-3">
-                                    <div>
-                                        <h3 class="font-display text-xl font-bold uppercase tracking-wide text-white">{{ $tournament->name }}</h3>
-                                        <p class="mt-1 text-xs uppercase tracking-widest text-primary-400/80">{{ $tournament->game?->name }}</p>
-                                    </div>
-                                    @if ($tournament->is_active)
-                                        <span class="font-display text-xs uppercase tracking-widest text-primary-300 animate-glow-pulse">Live</span>
-                                    @endif
-                                </div>
-                                @if ($board->isNotEmpty())
-                                    <ul class="space-y-2">
-                                        @foreach ($board as $row)
-                                            <li class="flex items-center justify-between gap-3 border-t border-primary-500/10 pt-2 text-sm">
-                                                <span class="flex items-center gap-3">
-                                                    <span class="w-6 font-display text-xs {{ $row['ranking'] === 1 ? 'text-amber-300' : ($row['ranking'] === 2 ? 'text-forge-steel' : ($row['ranking'] === 3 ? 'text-amber-600' : 'text-primary-300')) }}">
-                                                        {{ $row['ranking'] }}
-                                                    </span>
-                                                    <span class="text-forge-steel">{{ $row['name'] }}</span>
-                                                </span>
-                                                <span class="font-display text-primary-300">{{ $row['score'] }}</span>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                @else
-                                    <p class="text-sm text-forge-steel/50">Bracket coming soon.</p>
-                                @endif
-                            </x-forge.card>
+                            <livewire:tournament.ladder :tournament="$tournament" :key="'home-' . $tournament->id" />
                         </div>
                     @endforeach
                 </div>
@@ -210,7 +186,7 @@
         <section id="news" class="relative py-24">
             <div class="mx-auto max-w-6xl px-6">
                 <div x-data x-reveal>
-                    <x-forge.heading eyebrow="From The Barn">Latest News</x-forge.heading>
+                    <x-forge.heading eyebrow="Uit De Schuur">Laatste Nieuws</x-forge.heading>
                 </div>
                 <div class="grid gap-6 md:grid-cols-3">
                     @foreach ($latestBlogs as $i => $blog)
@@ -226,7 +202,7 @@
                                     <h3 class="mb-2 font-display text-lg font-semibold uppercase tracking-wide text-white">{{ $blog->title }}</h3>
                                     <p class="line-clamp-3 flex-1 text-sm text-forge-steel/70">{{ $blog->preview_text }}</p>
                                     @auth
-                                        <a href="{{ route('blogs.show', $blog->slug) }}" class="mt-4 inline-block text-xs uppercase tracking-widest text-primary-300 hover:text-primary-200">Read more</a>
+                                        <a href="{{ route('blogs.show', $blog->slug) }}" class="mt-4 inline-block text-xs uppercase tracking-widest text-primary-300 hover:text-primary-200">Lees meer</a>
                                     @endauth
                                 </div>
                             </x-forge.card>
@@ -241,22 +217,22 @@
     <section id="signup" class="relative overflow-hidden border-t border-primary-500/10 wood-panel py-28">
         <div class="absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-3xl px-6 text-center" x-data x-reveal>
-            <h2 class="font-display text-4xl font-bold uppercase tracking-wide text-white md:text-6xl">Claim Your Spot</h2>
+            <h2 class="font-display text-4xl font-bold uppercase tracking-wide text-white md:text-6xl">Claim Je Plek</h2>
             <p class="mx-auto mt-4 max-w-lg text-forge-steel/70">
-                {{ $activeEdition?->name ?? 'MBLAN26' }} is coming. Sign up, pick your games and get forged in the barn.
+                {{ $activeEdition?->name ?? 'MBLAN26' }} komt eraan. Meld je aan, kies je games en laat je smeden in de schuur.
             </p>
             <div class="mt-10 flex flex-wrap justify-center gap-4">
                 @auth
                     @if ($activeEdition && !auth()->user()->hasSignedUpFor($activeEdition) && $activeEdition->hasExclusiveAccess(auth()->user()))
-                        <x-forge.btn href="{{ route('editions.signup', $activeEdition->slug) }}">Sign Up for {{ $activeEdition->name }}</x-forge.btn>
+                        <x-forge.btn href="{{ route('editions.signup', $activeEdition->slug) }}">Aanmelden voor {{ $activeEdition->name }}</x-forge.btn>
                     @else
-                        <x-forge.btn href="{{ url('/dashboard') }}">Enter The Barn</x-forge.btn>
+                        <x-forge.btn href="{{ url('/dashboard') }}">Betreed De Schuur</x-forge.btn>
                     @endif
                 @else
                     @if (Route::has('register'))
-                        <x-forge.btn href="{{ route('register') }}">Create Account</x-forge.btn>
+                        <x-forge.btn href="{{ route('register') }}">Account Aanmaken</x-forge.btn>
                     @endif
-                    <x-forge.btn variant="ghost" href="{{ route('login') }}">Login</x-forge.btn>
+                    <x-forge.btn variant="ghost" href="{{ route('login') }}">Inloggen</x-forge.btn>
                 @endauth
             </div>
         </div>
@@ -266,7 +242,7 @@
     <footer class="border-t border-primary-500/10 bg-forge-black py-10">
         <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
             <span class="font-display text-lg font-bold uppercase tracking-widest text-white">MBLAN<span class="text-primary-400">26</span></span>
-            <p class="text-xs uppercase tracking-widest text-forge-steel/50">Martin and Bart LAN Party</p>
+            <p class="text-xs uppercase tracking-widest text-forge-steel/50">Martin en Bart LAN Party</p>
         </div>
     </footer>
 

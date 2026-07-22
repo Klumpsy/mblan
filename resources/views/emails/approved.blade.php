@@ -77,15 +77,15 @@
             <ul>
                 <li>🛌 Sleeping gear if you're camping</li>
                 <li>💻 A gaming-ready setup: laptop or PC, monitor/mounts, keyboard, mouse, headset</li>
-                <li>😄 A good attitude—and your best jokes!</li>
+                <li>😄 A good attitude, and your best jokes!</li>
             </ul>
 
             <h2>🧳 What can you expect:</h2>
             <ul>
                 <li>🪑 Desks and Chairs provided, but bring your own chair if you want something extra comfy</li>
                 <li>🥤 Desk-mounted beverage holders</li>
-                <li>🌐 Network cable, Wi-Fi, and power are all provided—no need to bring your own</li>
-                <li>🎸 A full Rock Band stage — team up and rock out with other guests</li>
+                <li>🌐 Network cable, Wi-Fi, and power are all provided, no need to bring your own</li>
+                <li>🎸 A full Rock Band stage ,  team up and rock out with other guests</li>
                 <li>🧊 Extra amenities in the LAN barn: refrigerator, coffee machines, and a chill-out corner</li>
                 <li>⛺ A comfortable camping field to pitch your tent and relax</li>
             </ul>

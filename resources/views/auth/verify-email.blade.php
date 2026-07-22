@@ -5,12 +5,12 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-forge-steel/80">
-            {{ __('Before continuing, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+            {{ __('Voordat je verdergaat, kun je je e-mailadres bevestigen door op de link te klikken die we je zojuist hebben gestuurd? Heb je de e-mail niet ontvangen, dan sturen we je met plezier een nieuwe.') }}
         </div>
 
         @if (session('status') == 'verification-link-sent')
             <div class="mb-4 font-medium text-sm text-primary-300">
-                {{ __('A new verification link has been sent to the email address you provided in your profile settings.') }}
+                {{ __('Er is een nieuwe verificatielink gestuurd naar het e-mailadres uit je profielinstellingen.') }}
             </div>
         @endif
 
@@ -20,7 +20,7 @@
 
                 <div>
                     <x-button type="submit">
-                        {{ __('Resend Verification Email') }}
+                        {{ __('Verificatiemail opnieuw sturen') }}
                     </x-button>
                 </div>
             </form>
@@ -30,13 +30,13 @@
                     href="{{ route('profile.show') }}"
                     class="text-sm uppercase tracking-wider text-forge-steel/70 transition hover:text-primary-300 focus:outline-none focus:text-primary-300"
                 >
-                    {{ __('Edit Profile') }}</a>
+                    {{ __('Profiel bewerken') }}</a>
 
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf
 
                     <button type="submit" class="text-sm uppercase tracking-wider text-forge-steel/70 transition hover:text-primary-300 focus:outline-none focus:text-primary-300 ms-2">
-                        {{ __('Log Out') }}
+                        {{ __('Uitloggen') }}
                     </button>
                 </form>
             </div>

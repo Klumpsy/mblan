@@ -1,10 +1,10 @@
 <div class="clip-corner metal-edge overflow-hidden">
     <h2 class="font-display text-xl font-bold uppercase tracking-wide text-white p-5 border-b border-primary-500/15 bg-primary-500/10">
         <div class="flex justify-between items-center">
-            <span>Schedule</span>
+            <span>Schema</span>
             @if ($dates->isNotEmpty())
                 <span class="font-display text-xs uppercase tracking-widest bg-primary-500 text-forge-black px-3 py-1 clip-corner">
-                    {{ $dates->count() }} {{ Str::plural('Day', $dates->count()) }}
+                    {{ $dates->count() }} {{ Str::plural('Dag', $dates->count(), 'Dagen') }}
                 </span>
             @endif
         </div>
@@ -12,7 +12,7 @@
 
     @if ($dates->isEmpty())
         <div class="p-6 text-center text-sm uppercase tracking-widest text-forge-steel/60">
-            No schedules available for this edition yet.
+            Nog geen schema beschikbaar voor deze editie.
         </div>
     @else
         <div class="border-b border-primary-500/15">
@@ -36,7 +36,7 @@
         <div class="p-5">
             @if ($schedulesForDate->isEmpty())
                 <div class="p-4 border border-dashed border-primary-500/20 clip-corner text-center text-sm uppercase tracking-widest text-forge-steel/60">
-                    No games scheduled for this day.
+                    Geen games ingepland voor deze dag.
                 </div>
             @else
                 @foreach ($schedulesForDate as $schedule)
@@ -69,7 +69,7 @@
                                     }
                                 @endphp
 
-                                <div class="group flex flex-col sm:flex-row clip-corner metal-edge overflow-hidden transition-shadow hover:shadow-glow-sm">
+                                <div x-data x-reveal class="group flex flex-col sm:flex-row clip-corner metal-edge overflow-hidden transition-shadow hover:shadow-glow-sm">
                                     <div class="flex justify-center sm:justify-start p-2 sm:p-3">
                                         <x-game-image :game="$game" />
                                     </div>
@@ -94,7 +94,7 @@
                                             <div class="mt-2 sm:mt-0">
                                                 @if ($game->pivot->is_tournament)
                                                     <span class="inline-flex items-center px-3 py-2 metal-edge font-display text-xs uppercase tracking-widest text-warning-400 clip-corner">
-                                                        Tournament
+                                                        Toernooi
                                                     </span>
                                                 @endif
                                             </div>

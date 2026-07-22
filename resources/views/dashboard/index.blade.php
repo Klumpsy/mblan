@@ -2,7 +2,7 @@
 
     <div class="mx-auto max-w-7xl px-6 pt-12">
         <x-forge.heading eyebrow="{{ $latestEdition?->name ?? 'The Barn' }}">
-            Welcome, {{ $user->name }}
+            Welkom, {{ $user->name }}
         </x-forge.heading>
     </div>
 
@@ -17,7 +17,7 @@
     @endif
 
     <div class="pt-8">
-        <div class="mx-auto max-w-7xl px-6">
+        <div class="mx-auto max-w-7xl px-6" x-data x-reveal>
             <div class="clip-corner metal-edge overflow-hidden">
                 <x-events :user="$user" :latestEdition="$latestEdition" />
             </div>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="py-12">
-        <div class="mx-auto max-w-7xl px-6">
+        <div class="mx-auto max-w-7xl px-6" x-data x-reveal.100>
             <div class="clip-corner metal-edge overflow-hidden">
                 <x-welcome />
             </div>

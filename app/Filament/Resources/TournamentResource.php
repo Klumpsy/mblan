@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
 use Filament\Actions\EditAction;
@@ -27,44 +28,105 @@ class TournamentResource extends Resource
 
     public static function form(Schema $form): Schema
     {
+        $presets = Tournament::scoringPresets();
+
         return $form
             ->schema([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Section::make('Toernooi')
+                    ->description('Basisgegevens en koppeling aan een game en speeldag.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Naam')
+                            ->required()
+                            ->maxLength(255),
 
-                Toggle::make('is_active')
-                    ->label('Active')
-                    ->onIcon('heroicon-o-check')
-                    ->default(false),
+                        Select::make('game_id')
+                            ->label('Game')
+                            ->relationship('game', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
 
-                Toggle::make('is_team_based')
-                    ->label('Team Based Tournament')
-                    ->onIcon('heroicon-o-user-group')
-                    ->offIcon('heroicon-o-user')
-                    ->default(false)
-                    ->helperText('Enable this for team-based tournaments where players compete in teams.'),
+                        Select::make('schedule_id')
+                            ->label('Speeldag')
+                            ->relationship('schedule', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
 
-                Textarea::make('description')
-                    ->rows(3),
+                        Textarea::make('description')
+                            ->label('Omschrijving')
+                            ->rows(3)
+                            ->columnSpanFull(),
 
-                TimePicker::make('time_start')
-                    ->seconds(false)
-                    ->label('Start Time')
-                    ->required(),
+                        Textarea::make('rules')
+                            ->label('Spelregels')
+                            ->helperText('Optioneel. Wordt aan spelers getoond op de toernooipagina.')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
 
-                TimePicker::make('time_end')
-                    ->seconds(false)
-                    ->label('End Time')
-                    ->required(),
+                Section::make('Scoresysteem')
+                    ->description('Bepaal hoe er gescoord wordt. Elk puntensysteem is mogelijk.')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('scoring_type')
+                            ->label('Type scoring')
+                            ->options(collect($presets)->map(fn ($p) => $p['label'])->toArray())
+                            ->default('points')
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(function ($state, callable $set) use ($presets) {
+                                if (isset($presets[$state])) {
+                                    $set('score_label', $presets[$state]['score_label']);
+                                    $set('higher_is_better', $presets[$state]['higher_is_better']);
+                                }
+                            })
+                            ->helperText('Kies een preset. Punten/kills/goals: hoogste wint. Tijd/strafpunten: laagste wint.'),
 
-                Select::make('game_id')
-                    ->relationship('game', 'name')
-                    ->required(),
+                        TextInput::make('score_label')
+                            ->label('Naam van de eenheid')
+                            ->default('Punten')
+                            ->required()
+                            ->helperText('Bijv. Punten, Seconden, Kills, Goals.'),
 
-                Select::make('schedule_id')
-                    ->relationship('schedule', 'name')
-                    ->required(),
+                        Toggle::make('higher_is_better')
+                            ->label('Hoogste score wint')
+                            ->default(true)
+                            ->helperText('Zet uit voor tijd-gebaseerde toernooien waar de laagste score wint.'),
+
+                        Toggle::make('is_team_based')
+                            ->label('Team-gebaseerd')
+                            ->onIcon('heroicon-o-user-group')
+                            ->offIcon('heroicon-o-user')
+                            ->default(false)
+                            ->helperText('Spelers strijden in teams in plaats van individueel.'),
+                    ]),
+
+                Section::make('Planning en status')
+                    ->columns(2)
+                    ->schema([
+                        TimePicker::make('time_start')
+                            ->seconds(false)
+                            ->label('Starttijd')
+                            ->required(),
+
+                        TimePicker::make('time_end')
+                            ->seconds(false)
+                            ->label('Eindtijd')
+                            ->required(),
+
+                        Toggle::make('is_active')
+                            ->label('Actief (live)')
+                            ->onIcon('heroicon-o-check')
+                            ->default(false)
+                            ->helperText('Toont dit toernooi als live op de ladder.'),
+
+                        Toggle::make('concluded')
+                            ->label('Afgerond')
+                            ->default(false),
+                    ]),
             ]);
     }
 

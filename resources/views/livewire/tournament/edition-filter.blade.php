@@ -1,32 +1,26 @@
 <div>
     <form class="flex items-center justify-end mb-4 mx-2 md:mx-0" wire:submit.prevent>
         <select wire:model="year" wire:change="loadTournaments"
-            class="block w-full md:w-40 mt-1 bg-forge-graphite border-primary-500/25 text-white clip-corner focus:border-primary-400 focus:ring-0">
+            class="block w-full md:w-40 bg:white dark:text-white dark:bg-gray-800 mt-1 rounded-md shadow-sm border-gray-300 focus:border-primary-500 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
             @foreach ($selectOptions as $option)
                 <option value="{{ $option }}">{{ $option }}</option>
             @endforeach
         </select>
     </form>
 
-    <div class="space-y-10">
-        <section class="metal-edge clip-corner p-6">
-            <div class="mb-3">
-                <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">The Arena</span>
-            </div>
-            <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-white mb-4">Active tournament</h2>
+    <div>
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-4 my-2">
+            <h2 class="text-2xl text-primary-400 mb-3">Actief toernooi</h2>
 
             @foreach ($tournaments as $tournament)
                 @if ($tournament->is_active)
                     <livewire:tournament.section :tournament="$tournament" wire:key="key-{{ $tournament->id }}" />
                 @endif
             @endforeach
-        </section>
+        </div>
 
-        <section class="metal-edge clip-corner p-6">
-            <div class="mb-3">
-                <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">Next Up</span>
-            </div>
-            <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-white mb-4">Upcoming tournaments</h2>
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-4 my-2">
+            <h2 class="text-2xl text-gray-600">Aankomende toernooien</h2>
             <div class="grid w-100 h-100 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($tournaments as $tournament)
                     @if (!$tournament->is_active && $tournament->hasYetToStart())
@@ -35,13 +29,10 @@
                     @endif
                 @endforeach
             </div>
-        </section>
+        </div>
 
-        <section class="metal-edge clip-corner p-6">
-            <div class="mb-3">
-                <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">The Legacy</span>
-            </div>
-            <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-white mb-4">Past tournaments</h2>
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-4">
+            <h2 class="text-2xl text-gray-600">Afgelopen toernooien</h2>
             <div class="grid w-100 h-100 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @foreach ($tournaments as $tournament)
                     @if (!$tournament->is_active && !$tournament->hasYetToStart())
@@ -50,6 +41,6 @@
                     @endif
                 @endforeach
             </div>
-        </section>
+        </div>
     </div>
 </div>

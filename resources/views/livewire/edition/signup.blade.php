@@ -1,10 +1,10 @@
 <div class="max-w-2xl mx-auto w-full p-2 sm:p-6">
     <div class="text-center mb-8">
         <h2 class="mb-2 font-display text-2xl font-bold uppercase tracking-wide text-white">
-            Sign up for {{ $edition->name }}
+            Aanmelden voor {{ $edition->name }}
         </h2>
         <p class="text-forge-steel/80">
-            Hello {{ $user->name }}, let's get you registered!
+            Hoi {{ $user->name }}, we melden je even aan!
         </p>
     </div>
 
@@ -53,10 +53,10 @@
             <div class="space-y-6">
                 <div>
                     <h3 class="mb-4 font-display text-lg font-semibold uppercase tracking-wide text-white">
-                        Which days would you like to participate?
+                        Op welke dagen wil je meedoen?
                     </h3>
                     <p class="text-forge-steel/70 mb-6">
-                        Select all the days you plan to attend {{ $edition->name }}.
+                        Selecteer alle dagen dat je van plan bent om bij {{ $edition->name }} te zijn.
                     </p>
                 </div>
 
@@ -81,7 +81,7 @@
                         </label>
                     @empty
                         <div class="text-center py-8 text-sm uppercase tracking-widest text-forge-steel/60">
-                            No schedules available for this edition.
+                            Geen schema beschikbaar voor deze editie.
                         </div>
                     @endforelse
                 </div>
@@ -96,10 +96,10 @@
             <div class="space-y-6">
                 <div>
                     <h3 class="mb-4 font-display text-lg font-semibold uppercase tracking-wide text-white">
-                        Your Preferences
+                        Jouw Voorkeuren
                     </h3>
                     <p class="text-forge-steel/70 mb-6">
-                        Let us know about your accommodation and dining preferences.
+                        Laat ons weten wat je voorkeuren zijn voor overnachten en eten.
                     </p>
                 </div>
 
@@ -109,10 +109,10 @@
                             class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-primary-500/40 bg-forge-panel rounded mt-1">
                         <div class="flex-1">
                             <label for="campsite" class="block font-display uppercase tracking-wide text-white cursor-pointer">
-                                Stay on campsite
+                                Overnachten op de camping
                             </label>
                             <p class="text-sm text-forge-steel/70 mt-1">
-                                I would like to stay overnight at the event campsite during {{ $edition->name }}.
+                                Ik wil graag blijven overnachten op de camping tijdens {{ $edition->name }}.
                             </p>
                         </div>
                     </div>
@@ -123,10 +123,10 @@
                                 class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-primary-500/40 bg-forge-panel rounded mt-1">
                             <div class="flex-1">
                                 <label for="pizza" class="block font-display uppercase tracking-wide text-white cursor-pointer">
-                                    Join the pizza on Friday (€{{ number_format(\App\Models\Signup::PIZZA_COST, 2) }})
+                                    Mee-eten pizza op vrijdag (€{{ number_format(\App\Models\Signup::PIZZA_COST, 2) }})
                                 </label>
                                 <p class="text-sm text-forge-steel/70 mt-1">
-                                    I would like to have a pizza ordered on Friday.
+                                    Ik wil graag dat er op vrijdag een pizza voor mij besteld wordt.
                                 </p>
                             </div>
                         </div>
@@ -139,12 +139,12 @@
                                 class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-primary-500/40 bg-forge-panel rounded mt-1">
                             <div class="flex-1">
                                 <label for="bbq" class="block font-display uppercase tracking-wide text-white cursor-pointer">
-                                    Join the barbecue on Saturday
+                                    Mee-eten barbecue op zaterdag
                                     (€{{ number_format(\App\Models\Signup::BBQ_COST, 2) }})
                                     <span />
                                 </label>
                                 <p class="text-sm text-forge-steel/70 mt-1">
-                                    I would like to participate in the group barbecue event.
+                                    Ik wil graag meedoen aan de gezamenlijke barbecue.
                                 </p>
                             </div>
                         </div>
@@ -159,10 +159,10 @@
                                 class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-primary-500/40 bg-forge-panel rounded">
                             <div class="flex-1">
                                 <label for="vegan" class="block font-display uppercase tracking-wide text-white cursor-pointer">
-                                    Are you vegan?
+                                    Ben je veganist?
                                 </label>
                                 <p class="text-sm text-forge-steel/70 mt-1">
-                                    I would like vegan options for the BBQ
+                                    Ik wil graag veganistische opties bij de BBQ
                                 </p>
                                 @error('isVegan')
                                     <p class="mt-1 text-sm text-danger-400">{{ $message }}</p>
@@ -179,10 +179,10 @@
             <div class="space-y-6">
                 <div>
                     <h3 class="mb-4 font-display text-lg font-semibold uppercase tracking-wide text-white">
-                        Beverage Preferences
+                        Drankvoorkeuren
                     </h3>
                     <p class="text-forge-steel/70 mb-6">
-                        Select your preferred beverages. This helps us plan better for the event.
+                        Selecteer je voorkeursdranken. Zo kunnen we het evenement beter voorbereiden.
                     </p>
                 </div>
 
@@ -201,14 +201,14 @@
                                 @if ($beverage->contains_alcohol)
                                     <span
                                         class="inline-flex items-center px-2 py-0.5 clip-corner text-xs font-display uppercase tracking-wider border border-warning-500/30 bg-warning-500/10 text-warning-400 mt-1">
-                                        Contains Alcohol
+                                        Bevat Alcohol
                                     </span>
                                 @endif
                             </div>
                         </label>
                     @empty
                         <div class="text-center py-8 text-sm uppercase tracking-widest text-forge-steel/60">
-                            No beverages available to select.
+                            Geen dranken beschikbaar om te kiezen.
                         </div>
                     @endforelse
                 </div>
@@ -219,11 +219,11 @@
             <div class="space-y-6">
                 <div>
                     <h3 class="mb-4 font-display text-lg font-semibold uppercase tracking-wide text-white">
-                        Get your {{ $edition->name }} T-Shirt
+                        Haal jouw {{ $edition->name }} T-Shirt
                     </h3>
                     <p class="text-forge-steel/70 mb-6">
-                        If you would like to wear {{ $edition->name }} merch, select this
-                        option. A T-Shirt costs €25 and you can customize the text to give yourself a cool LAN title!
+                        Wil je {{ $edition->name }} merch dragen? Kies dan deze
+                        optie. Een T-Shirt kost €25 en je kunt de tekst aanpassen om jezelf een gave LAN-titel te geven!
                     </p>
                 </div>
 
@@ -233,8 +233,8 @@
                         <input type="checkbox" wire:model.live="wantsTshirt"
                             class="h-4 w-4 text-primary-500 focus:ring-primary-500 border-primary-500/40 bg-forge-panel rounded">
                         <div class="flex-1">
-                            <div class="font-display uppercase tracking-wide text-white">Yes, I want a T-Shirt! (€25)</div>
-                            <div class="text-sm text-forge-steel/60">Get your personalized {{ $edition->name }} T-Shirt</div>
+                            <div class="font-display uppercase tracking-wide text-white">Ja, ik wil een T-Shirt! (€25)</div>
+                            <div class="text-sm text-forge-steel/60">Haal jouw gepersonaliseerde {{ $edition->name }} T-Shirt</div>
                         </div>
                     </label>
                 </div>
@@ -244,7 +244,7 @@
 
                         <div>
                             <label class="block font-display text-sm uppercase tracking-wide text-forge-steel mb-2">
-                                T-Shirt Size
+                                T-Shirt Maat
                             </label>
                             <select wire:model="tshirtSize"
                                 class="w-full px-3 py-2 clip-corner border border-primary-500/25 bg-forge-panel text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
@@ -259,13 +259,13 @@
 
                         <div>
                             <label class="block font-display text-sm uppercase tracking-wide text-forge-steel mb-2">
-                                Custom Text (Optional)
+                                Eigen Tekst (Optioneel)
                             </label>
                             <input type="text" wire:model.live="tshirtText"
-                                placeholder="Enter your LAN title (max 20 characters)" maxlength="20"
+                                placeholder="Vul je LAN-titel in (max 20 tekens)" maxlength="20"
                                 class="w-full px-3 py-2 clip-corner border border-primary-500/25 bg-forge-panel text-white placeholder-forge-steel/40 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
                             <p class="mt-1 text-xs text-forge-steel/50">
-                                Characters: {{ strlen($tshirtText) }}/20
+                                Tekens: {{ strlen($tshirtText) }}/20
                             </p>
                             @error('tshirtText')
                                 <p class="mt-1 text-sm text-danger-400">{{ $message }}</p>
@@ -280,49 +280,49 @@
     <div class="flex justify-between items-center mt-6">
         <button wire:click="previousStep" @if ($currentStep === 1) disabled @endif
             class="px-4 py-2.5 clip-corner metal-edge font-display text-xs uppercase tracking-widest text-forge-steel transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-40 disabled:cursor-not-allowed">
-            Previous
+            Vorige
         </button>
 
         <div class="font-display text-xs uppercase tracking-widest text-forge-steel/60">
-            Step {{ $currentStep }} of {{ $totalSteps }}
+            Stap {{ $currentStep }} van {{ $totalSteps }}
         </div>
 
         @if ($currentStep < $totalSteps)
             <button wire:key="next-step-{{ $currentStep }}" wire:click="nextStep"
                 class="px-6 py-2.5 clip-corner bg-primary-500 font-display text-xs uppercase tracking-widest text-forge-black transition-all hover:bg-primary-400 hover:shadow-glow-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
-                Next Step
+                Volgende Stap
             </button>
         @else
             <button wire:key="complete-signup-{{ $currentStep }}" wire:click="signup"
                 class="px-6 py-2.5 clip-corner bg-primary-500 font-display text-xs uppercase tracking-widest text-forge-black transition-all hover:bg-primary-400 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary-500">
-                Complete Signup
+                Aanmelding Afronden
             </button>
         @endif
     </div>
 
     <div class="mt-6 p-4 clip-corner metal-edge">
-        <h4 class="mb-2 font-display text-sm uppercase tracking-wide text-white">Summary:</h4>
+        <h4 class="mb-2 font-display text-sm uppercase tracking-wide text-white">Samenvatting:</h4>
         <div class="text-sm text-forge-steel/70 space-y-1">
             @if (!empty($selectedSchedules))
-                <div>📅 {{ implode(', ', $this->selectedScheduleNames) }}</div>
+                <div>{{ implode(', ', $this->selectedScheduleNames) }}</div>
             @endif
             @if ($joinsPizza)
-                <div>🍕 Eating pizza on Friday</div>
+                <div>Pizza eten op vrijdag</div>
             @endif
             @if ($staysOnCampsite)
-                <div>🏕️ Staying on campsite</div>
+                <div>Overnachten op de camping</div>
             @endif
             @if ($joinsBarbecue)
-                <div>🍖 Joining barbecue on Saturday @if ($isVegan)
-                        (vegan)
+                <div>Meedoen aan de barbecue op zaterdag @if ($isVegan)
+                        (veganistisch)
                     @endif
                 </div>
             @endif
             @if (!empty($selectedBeverages))
-                <div>🥤 {{ implode(', ', $this->selectedBeverageNames) }}</div>
+                <div>{{ implode(', ', $this->selectedBeverageNames) }}</div>
             @endif
             @if ($wantsTshirt)
-                <div>👕 Rocking the {{ $edition->name }} T-Shirt</div>
+                <div>Het {{ $edition->name }} T-Shirt dragen</div>
             @endif
         </div>
     </div>

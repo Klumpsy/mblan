@@ -33,9 +33,15 @@ class TournamentSeeder extends Seeder
                 $isActive = $isCurrent && $dayIndex === 1;
                 $concluded = !$isActive;
 
+                // Rotate through scoring presets so the ladders show off the range.
+                $presets = Tournament::scoringPresets();
+                $keys = array_keys($presets);
+                $presetKey = $keys[$dayIndex % count($keys)];
+                $preset = $presets[$presetKey];
+
                 $tournament = Tournament::create([
                     'name' => $game->name . ' Cup',
-                    'description' => 'The official ' . $game->name . ' bracket for ' . $edition->name . '.',
+                    'description' => 'Het officiele ' . $game->name . ' toernooi voor ' . $edition->name . '.',
                     'is_active' => $isActive,
                     'concluded' => $concluded,
                     'time_start' => '14:00:00',
@@ -43,6 +49,9 @@ class TournamentSeeder extends Seeder
                     'game_id' => $game->id,
                     'schedule_id' => $schedule->id,
                     'is_team_based' => false,
+                    'scoring_type' => $presetKey,
+                    'score_label' => $preset['score_label'],
+                    'higher_is_better' => $preset['higher_is_better'],
                 ]);
 
                 // Attach a field of players with scores, then rank them.

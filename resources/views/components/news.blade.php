@@ -2,7 +2,7 @@
 
 <div class="p-6 lg:p-8">
     <div class="mb-3">
-        <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">Latest News</span>
+        <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">Laatste Nieuws</span>
     </div>
 
     <div class="flex items-center space-x-2">
@@ -18,6 +18,6 @@
     </article>
 
     <div class="mt-6">
-        <x-forge.btn variant="ghost" href="{{ route('blogs.show', $blog->slug) }}">Read more</x-forge.btn>
+        <x-forge.btn variant="ghost" href="{{ route('blogs.show', $blog->slug) }}">Lees meer</x-forge.btn>
     </div>
 </div>

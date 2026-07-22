@@ -1,13 +1,13 @@
 <div class="p-6 lg:p-8">
     <div class="mb-3">
-        <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">Your Events</span>
+        <span class="font-display text-xs uppercase tracking-[0.3em] text-primary-400">Jouw Evenementen</span>
     </div>
     <h2 class="font-display text-2xl font-bold uppercase tracking-wide text-white">
-        Your Events
+        Jouw Evenementen
     </h2>
 
     <p class="mt-4 mb-6 text-sm text-forge-steel/80 leading-relaxed">
-        Your upcoming events are listed below. Click on an event to view more details or manage your signup.
+        Je aankomende evenementen staan hieronder. Klik op een evenement voor meer details of om je aanmelding te beheren.
     </p>
 
     {{-- Show signup button if there's a latest edition, user hasn't signed up for it, and has access --}}
@@ -17,7 +17,7 @@
             $latestEdition->hasExclusiveAccess($user))
         <div class="mb-6">
             <x-forge.btn href="{{ route('editions.signup', $latestEdition->slug) }}">
-                Sign up for {{ $latestEdition->name }}
+                Aanmelden voor {{ $latestEdition->name }}
             </x-forge.btn>
         </div>
     @endif
@@ -26,8 +26,8 @@
     @if (!$latestEdition)
         <div class="mb-6">
             <p class="text-sm text-forge-steel/70">
-                There are currently no active editions available for signup. Please check back later for upcoming
-                events.
+                Er zijn op dit moment geen actieve edities om je voor aan te melden. Kom later terug voor aankomende
+                evenementen.
             </p>
         </div>
     @endif
@@ -41,14 +41,14 @@
                         {{-- Unconfirmed signup card --}}
                         <div class="p-6 text-center">
                             <h3 class="mb-2 font-display text-lg font-bold uppercase tracking-wide text-white">
-                                Pending Confirmation
+                                In Afwachting
                             </h3>
                             <p class="mb-4 text-sm text-forge-steel/70">
-                                Your signup is being processed. We'll notify you once it's confirmed.
+                                Je aanmelding wordt verwerkt. We laten het je weten zodra deze bevestigd is.
                             </p>
                             <div class="inline-flex items-center font-display text-xs uppercase tracking-[0.2em] text-warning-400">
                                 <span class="mr-2 h-2 w-2 rounded-full bg-warning-400 animate-pulse"></span>
-                                Processing
+                                Verwerken
                             </div>
                         </div>
                     @else
@@ -67,11 +67,11 @@
                         <div class="p-6">
                             <div class="mb-3 text-sm text-primary-300">
                                 @if ($signup->has_paid)
-                                    You have paid for this event.
+                                    Je hebt voor dit evenement betaald.
                                 @else
-                                    Your average costs: €{{ number_format($signup->calculateCost(), 2) }}
-                                    <span class="text-xs text-forge-steel/60">(This may change and is calculated based on your
-                                        choices)</span>
+                                    Je gemiddelde kosten: €{{ number_format($signup->calculateCost(), 2) }}
+                                    <span class="text-xs text-forge-steel/60">(Dit kan nog wijzigen en wordt berekend op basis van je
+                                        keuzes)</span>
                                 @endif
                             </div>
 
@@ -105,7 +105,7 @@
                                     <div class="text-xs text-forge-steel/80">
                                         @if ($signup->stays_on_campsite)
                                             <span class="inline-block border-r border-primary-500/20 px-2 py-2 font-display uppercase tracking-wide text-primary-300">
-                                                CAMPSITE
+                                                KAMPEREN
                                             </span>
                                         @endif
                                         @if ($signup->joins_barbecue)
@@ -146,7 +146,7 @@
                                 <div class="flex items-start text-sm">
                                     @if ($signup->beverages->isEmpty())
                                         <span class="text-forge-steel/70">
-                                            You have no preferred beverages.
+                                            Je hebt geen voorkeursdranken opgegeven.
                                         </span>
                                     @else
                                         <div class="flex flex-wrap gap-2">
@@ -161,7 +161,7 @@
                             </div>
 
                             <x-forge.btn variant="ghost" href="/editions/{{ $signup->edition->slug }}" class="w-full">
-                                View Details
+                                Bekijk Details
                             </x-forge.btn>
 
                             <div class="mt-4 flex w-full justify-center">

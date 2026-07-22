@@ -97,7 +97,6 @@ class EditionResource extends Resource
                             ->disk('public')
                             ->directory('editions')
                             ->visibility('public')
-                            ->required()
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9'),
                     ])->columns(2),

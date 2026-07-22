@@ -5,7 +5,7 @@
         </x-slot>
 
         <div class="mb-4 text-sm text-forge-steel/80">
-            {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
+            {{ __('Wachtwoord vergeten? Geen probleem. Laat je e-mailadres achter en we sturen je een reset-link waarmee je een nieuw wachtwoord kunt kiezen.') }}
         </div>
 
         @if (session('status'))
@@ -20,13 +20,13 @@
             @csrf
 
             <div class="block">
-                <x-label for="email" value="{{ __('Email') }}" />
+                <x-label for="email" value="{{ __('E-mail') }}" />
                 <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             </div>
 
             <div class="flex items-center justify-end mt-4">
                 <x-button>
-                    {{ __('Email Password Reset Link') }}
+                    {{ __('Stuur reset-link') }}
                 </x-button>
             </div>
         </form>

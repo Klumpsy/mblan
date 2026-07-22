@@ -34,7 +34,7 @@ class UsersRelationManager extends RelationManager
                 ->where('tournament_id', $tournament->id)
                 ->whereNotNull('team_number')
                 ->groupBy('team_number', 'team_name')
-                ->orderBy('total_score', 'desc')
+                ->orderBy('total_score', $tournament->higher_is_better ? 'desc' : 'asc')
                 ->orderBy('team_number', 'asc')
                 ->get();
 
@@ -46,8 +46,9 @@ class UsersRelationManager extends RelationManager
                     ->update(['ranking' => $rank]);
             }
         } else {
+            $direction = $tournament->higher_is_better ? 'desc' : 'asc';
             $users = $tournament->usersWithScores()
-                ->orderByPivot('score', 'desc')
+                ->orderByPivot('score', $direction)
                 ->get();
 
             foreach ($users as $index => $user) {

@@ -7,7 +7,7 @@
         {{ $logo }}
     </div>
 
-    <div class="relative z-10 w-full sm:max-w-md mt-6 px-6 py-8 sm:px-8 clip-corner metal-edge overflow-hidden">
+    <div x-data x-reveal class="relative z-10 w-full sm:max-w-md mt-6 px-6 py-8 sm:px-8 clip-corner metal-edge overflow-hidden">
         <span class="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary-400/80 to-transparent"></span>
         {{ $slot }}
     </div>

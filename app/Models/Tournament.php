@@ -16,18 +16,56 @@ class Tournament extends Model
     protected $fillable = [
         'name',
         'description',
+        'rules',
         'is_active',
         'time_start',
         'time_end',
         'game_id',
         'schedule_id',
         'is_team_based',
+        'scoring_type',
+        'score_label',
+        'higher_is_better',
+        'concluded',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_team_based' => 'boolean',
+        'higher_is_better' => 'boolean',
+        'concluded' => 'boolean',
     ];
+
+    /**
+     * Scoring presets available when creating a tournament. Each preset seeds a
+     * sensible score label and sort direction; admins can still override both,
+     * so any point-scoring scheme is possible.
+     *
+     * @return array<string, array{label: string, score_label: string, higher_is_better: bool}>
+     */
+    public static function scoringPresets(): array
+    {
+        return [
+            'points' => ['label' => 'Punten (hoogste wint)', 'score_label' => 'Punten', 'higher_is_better' => true],
+            'kills' => ['label' => 'Kills / Frags', 'score_label' => 'Kills', 'higher_is_better' => true],
+            'goals' => ['label' => 'Goals / Doelpunten', 'score_label' => 'Goals', 'higher_is_better' => true],
+            'wins' => ['label' => 'Overwinningen', 'score_label' => 'Wins', 'higher_is_better' => true],
+            'rounds' => ['label' => 'Gewonnen rondes', 'score_label' => 'Rondes', 'higher_is_better' => true],
+            'time' => ['label' => 'Tijd (laagste wint)', 'score_label' => 'Seconden', 'higher_is_better' => false],
+            'penalty' => ['label' => 'Strafpunten (laagste wint)', 'score_label' => 'Strafpunten', 'higher_is_better' => false],
+            'custom' => ['label' => 'Aangepast', 'score_label' => 'Punten', 'higher_is_better' => true],
+        ];
+    }
+
+    public function scoreLabel(): string
+    {
+        return $this->score_label ?: 'Punten';
+    }
+
+    protected function sortDirection(): string
+    {
+        return $this->higher_is_better ? 'desc' : 'asc';
+    }
 
     public function game(): BelongsTo
     {
@@ -57,7 +95,7 @@ class Tournament extends Model
     {
         $users = $this->usersWithScores()
             ->withPivot('score', 'ranking')
-            ->orderByDesc('pivot_score')
+            ->orderByPivot('score', $this->sortDirection())
             ->get();
 
         $rank = 1;
@@ -100,6 +138,7 @@ class Tournament extends Model
     {
         return $this->usersWithScores()
             ->withPivot('score', 'ranking', 'team_name', 'team_number', 'team_score')
+            ->orderByRaw('CASE WHEN tournament_user.ranking IS NULL THEN 1 ELSE 0 END')
             ->orderBy('pivot_ranking')
             ->get()
             ->map(function ($user) {
