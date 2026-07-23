@@ -101,7 +101,11 @@ document.addEventListener('alpine:init', () => {
             const up = (e) => { this.keys[e.key.toLowerCase()] = false; };
             window.addEventListener('keydown', down);
             window.addEventListener('keyup', up);
-            const loop = () => { this.step(); requestAnimationFrame(loop); };
+            // The loop must never die: a stray error in one frame should not freeze the game.
+            const loop = () => {
+                try { this.step(); } catch (e) { /* keep the game alive */ console.error(e); }
+                requestAnimationFrame(loop);
+            };
             requestAnimationFrame(loop);
         },
 
@@ -139,6 +143,7 @@ document.addEventListener('alpine:init', () => {
             this.px = this.startX; this.py = this.startY;
             this.tx = this.ty = null; this.moving = false;
             this.hasAxe = false; this.chopped = false; // start the puzzle over
+            this.planted = [];                          // clear planted trees so nothing stays sealed
             this.lastSafe = { x: this.px, y: this.py };
             clearTimeout(this._caughtT);
             this._caughtT = setTimeout(() => { this.caught = false; }, 1800);
@@ -318,6 +323,12 @@ document.addEventListener('alpine:init', () => {
             const a = this.arti;
             a.ability = null; a.abilityT = 0; a.ghost = false; a.scale = 1;
             a.cooldown = 360 + Math.floor(Math.random() * 360); // 6-12s till next
+            // a ghost pass can leave Arti inside a wall; snap back onto a road
+            if (!this.artiPassable(this.cellC(a.x), this.cellR(a.y))) {
+                const snap = this.nearestPassable(this.cellC(a.x), this.cellR(a.y));
+                if (snap) { a.x = this.centerX(snap[0]); a.y = this.centerY(snap[1]); }
+                a.target = null; a.from = null;
+            }
         },
 
         teleportArti() {
@@ -339,9 +350,22 @@ document.addEventListener('alpine:init', () => {
             this.wizard = true;
             this.wizardT = 260;
             this.arti.teleFx = 30;
-            this.goal.x = this.axe.x;
-            this.goal.y = this.axe.y;
+            // reassign the whole object so Alpine re-renders the barn + win math together
+            this.goal = { x: this.axe.x, y: this.axe.y, r: this.goal.r };
             this.flash('Arti ging in TOVENAAR-modus en verplaatste de schuur!');
+        },
+
+        // nearest road cell to (c,r), searching outward
+        nearestPassable(c, r) {
+            for (let rad = 0; rad < Math.max(this.cols, this.rows); rad++) {
+                for (let dr = -rad; dr <= rad; dr++) {
+                    for (let dc = -rad; dc <= rad; dc++) {
+                        if (Math.abs(dc) !== rad && Math.abs(dr) !== rad) continue;
+                        if (this.artiPassable(c + dc, r + dr)) return [c + dc, r + dr];
+                    }
+                }
+            }
+            return null;
         },
 
         plantTree() {
@@ -353,7 +377,8 @@ document.addEventListener('alpine:init', () => {
                 if (c === this.gate.c && r === this.gate.r) continue;
                 if (this.isPlanted(c, r)) continue;
                 if (c === this.cellC(this.px) && r === this.cellR(this.py)) continue; // never trap the player's cell
-                if (this.planted.length > 30) return;
+                if (c === this.cellC(this.goal.x) && r === this.cellR(this.goal.y)) continue; // never block the barn
+                if (this.planted.length > 24) return;
                 this.planted.push({ c, r });
                 return;
             }
