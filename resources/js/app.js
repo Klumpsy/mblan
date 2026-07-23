@@ -506,9 +506,11 @@ document.addEventListener('alpine:init', () => {
                 this.wizardPrank();
             }
 
-            // reach the barn: from the safe channel, or anywhere once the wizard moved it
+            // reach the barn: you must actually step onto it, not just round the
+            // corner near it, so keep the win zone tight (about one cell wide).
+            const winR = Math.min(this.goal.r * 0.5, (100 / this.cols) * 1.1);
             if ((this.barnMoved || this.isSafeCell(this.cellC(this.px), this.cellR(this.py))) &&
-                Math.hypot(this.px - this.goal.x, this.py - this.goal.y) < this.goal.r) {
+                Math.hypot(this.px - this.goal.x, this.py - this.goal.y) < winR) {
                 this.done = true;
                 this.moving = false;
                 this.timeMs = this.startedAt ? Date.now() - this.startedAt : 0;
