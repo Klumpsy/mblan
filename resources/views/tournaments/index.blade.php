@@ -1,10 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-display text-xl font-bold uppercase tracking-wide text-white leading-tight">
-            {{ __('Toernooien') }}
-        </h2>
-    </x-slot>
-
     <div class="relative">
         <div class="pointer-events-none absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-6xl px-6 py-12">

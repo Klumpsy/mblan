@@ -506,11 +506,14 @@ document.addEventListener('alpine:init', () => {
                 this.wizardPrank();
             }
 
-            // reach the barn: you must actually step onto it, not just round the
-            // corner near it, so keep the win zone tight (about one cell wide).
-            const winR = Math.min(this.goal.r * 0.5, (100 / this.cols) * 1.1);
-            if ((this.barnMoved || this.isSafeCell(this.cellC(this.px), this.cellR(this.py))) &&
-                Math.hypot(this.px - this.goal.x, this.py - this.goal.y) < winR) {
+            // reach the barn: you "enter" by touching the barn's door. Use a
+            // door-sized footprint around the barn rather than a point, so
+            // reaching the right tile counts, even after the wizard teleports
+            // the barn into a corner, yet it does not fire from around the corner.
+            const onApproach = this.barnMoved || this.isSafeCell(this.cellC(this.px), this.cellR(this.py));
+            if (onApproach &&
+                Math.abs(this.px - this.goal.x) < 5.5 &&
+                Math.abs(this.py - this.goal.y) < 6.5) {
                 this.done = true;
                 this.moving = false;
                 this.timeMs = this.startedAt ? Date.now() - this.startedAt : 0;

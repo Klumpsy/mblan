@@ -35,13 +35,6 @@
     <div class="min-h-screen bg-forge-black/40 text-forge-steel">
         <livewire:navigation-menu />
 
-        @if (isset($header))
-            <header class="border-b border-primary-500/20 bg-forge-forest/60 backdrop-blur">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endif
         <x-flash-message />
         <main>
             {{ $slot }}
