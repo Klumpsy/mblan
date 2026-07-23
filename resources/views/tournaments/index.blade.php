@@ -47,8 +47,15 @@
                                             <span class="ml-1 font-pixel text-[7px] uppercase tracking-widest text-primary-400">jij</span>
                                         @endif
                                     </span>
-                                    <span class="shrink-0 font-display text-sm text-primary-300">
-                                        {{ $row->barn_catches }} <span class="text-[10px] uppercase tracking-wider text-forge-steel/50">x gepakt</span>
+                                    <span class="flex shrink-0 items-baseline gap-3">
+                                        <span class="font-display text-sm text-primary-300">
+                                            {{ $row->barn_catches }} <span class="text-[10px] uppercase tracking-wider text-forge-steel/50">x gepakt</span>
+                                        </span>
+                                        @if ($row->barn_time_ms)
+                                            <span class="font-pixel text-[9px] uppercase tracking-wider text-forge-steel/60">
+                                                {{ intdiv((int) floor($row->barn_time_ms / 1000), 60) }}:{{ str_pad((int) floor($row->barn_time_ms / 1000) % 60, 2, '0', STR_PAD_LEFT) }}
+                                            </span>
+                                        @endif
                                     </span>
                                 </li>
                             @endforeach

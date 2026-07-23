@@ -72,10 +72,24 @@
                 <img x-show="chopped" x-cloak src="{{ asset('images/farm/tile_0014.png') }}" alt="Stronk" class="pixel w-[65%]" />
             </div>
 
+            {{-- trees Arti plants in farmer mode (block you unless you have the axe) --}}
+            <template x-for="(t, i) in planted" :key="'pt' + i">
+                <img src="{{ asset('images/farm/tile_0015.png') }}" alt="" aria-hidden="true"
+                    class="pixel pointer-events-none absolute z-[9]"
+                    :style="'left:' + centerX(t.c) + '%; top:' + centerY(t.r) + '%; width:5%; transform: translate(-50%,-60%);' + (hasAxe ? 'opacity:.55;' : '')" />
+            </template>
+
+            {{-- teleport poof --}}
+            <template x-if="arti.teleFx > 0">
+                <div class="walk-target z-[18]" :style="'left:' + arti.x + '%; top:' + arti.y + '%'"></div>
+            </template>
+
             {{-- Arti --}}
-            <div class="pointer-events-none absolute z-[19]" :style="'left:'+arti.x+'%; top:'+arti.y+'%; width:6%; transform: translate(-50%,-88%);'">
-                <span class="absolute -top-3 left-1/2 -translate-x-1/2 font-pixel text-[6px] uppercase tracking-widest text-primary-200" style="text-shadow:0 0 6px rgb(var(--c-primary-500)/0.9);">Arti</span>
-                <img src="{{ asset('images/farm/arti.png') }}" alt="Arti" class="pixel w-full" style="animation: sprite-bob 0.3s steps(2,end) infinite;" :style="'scale:'+arti.dir+' 1;'" />
+            <div class="pointer-events-none absolute z-[19]"
+                :style="'left:'+arti.x+'%; top:'+arti.y+'%; width: calc(6% * '+arti.scale+'); transform: translate(-50%,-88%);' + (arti.ghost ? 'opacity:.5;' : '')">
+                <span class="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap font-pixel text-[6px] uppercase tracking-widest text-primary-200" style="text-shadow:0 0 6px rgb(var(--c-primary-500)/0.9);">Arti</span>
+                <img :src="wizard ? '{{ asset('images/farm/arti_wizard.png') }}' : (arti.ability === 'farmer' ? '{{ asset('images/farm/arti_farmer.png') }}' : '{{ asset('images/farm/arti.png') }}')"
+                    alt="Arti" class="pixel w-full" style="animation: sprite-bob 0.3s steps(2,end) infinite;" :style="'scale:'+arti.dir+' 1;'" />
             </div>
 
             {{-- click-to-walk marker --}}
@@ -107,9 +121,12 @@
         </div>
 
         {{-- caught HUD --}}
-        <div class="pointer-events-none absolute left-3 top-3 z-30">
+        <div class="pointer-events-none absolute left-3 top-3 z-30 flex flex-col gap-1">
             <span class="border-2 border-[#5a3d22] bg-forge-black/70 px-2 py-1 font-pixel text-[8px] uppercase tracking-wider text-primary-200">
                 Gepakt: <span x-text="caughtCount"></span>
+            </span>
+            <span class="border-2 border-[#5a3d22] bg-forge-black/70 px-2 py-1 font-pixel text-[8px] uppercase tracking-wider text-forge-steel">
+                Tijd: <span x-text="clock"></span>
             </span>
         </div>
 
@@ -148,7 +165,8 @@
                 <button type="button" @click="closeModal()" class="absolute right-3 top-3 font-pixel text-xs text-forge-steel/60 hover:text-primary-300">X</button>
                 <div class="mb-1 font-pixel text-[8px] uppercase tracking-[0.2em] text-primary-400">De schuur is open</div>
                 <h2 class="mb-2 font-display text-2xl font-bold uppercase tracking-wide text-white">Welkom bij MBLAN<span class="text-primary-400">26</span></h2>
-                <p class="mb-6 font-pixel text-[8px] uppercase tracking-wider text-forge-steel/60">Arti pakte je <span x-text="caughtCount"></span>x</p>
+                <p class="mb-6 font-pixel text-[8px] uppercase tracking-wider text-forge-steel/60"
+                    x-text="'Arti pakte je ' + caughtCount + 'x' + (timeMs > 0 ? '  ·  tijd ' + formatTime(timeMs) : '')"></p>
 
                 @auth
                     <a href="{{ route('schedule') }}" class="btn-wood clip-corner w-full text-xs">Betreed De Schuur</a>

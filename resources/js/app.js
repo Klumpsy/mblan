@@ -69,11 +69,15 @@ document.addEventListener('alpine:init', () => {
             y: maze.arti ? maze.arti[1] : 50,
             dir: -1, mode: 'patrol', target: null, from: null,
             patrol: 0.30, chase: 0.44, r: 2.6, detect: 22, distract: 0,
+            ability: null, abilityT: 0, cooldown: 480, scale: 1, ghost: false, teleFx: 0,
         },
         bones: [],
+        planted: [],
+        barnMoved: false, wizard: false, wizardT: 0,
         tx: null, ty: null, facing: 1, moving: false,
         done: false, open: false, caught: false,
         caughtCount: 0,
+        startedAt: null, timeMs: 0, clock: '0:00', _lastSec: -1,
         lastSafe: null,
         keys: {},
 
@@ -176,8 +180,32 @@ document.addEventListener('alpine:init', () => {
         moveArti() {
             const a = this.arti;
 
+            if (a.teleFx > 0) a.teleFx -= 1;
+            if (this.wizardT > 0) { this.wizardT -= 1; if (this.wizardT === 0) this.wizard = false; }
+
+            // ability lifecycle (only while the game is live)
+            if (!this.done) {
+                if (a.ability) {
+                    a.abilityT -= 1;
+                    if (a.ability === 'farmer' && a.abilityT % 55 === 0) this.plantTree();
+                    if (a.abilityT <= 0) this.endAbility();
+                } else if (a.distract === 0) {
+                    a.cooldown -= 1;
+                    if (a.cooldown <= 0) this.triggerAbility();
+                }
+            }
+
             // busy eating a bone -> stands still, not chasing
             if (a.distract > 0) { a.distract -= 1; a.mode = 'patrol'; return; }
+
+            // GHOST: glide straight through walls toward the player
+            if (a.ghost) {
+                const spd = a.chase;
+                const dx = this.px - a.x, dy = this.py - a.y, d = Math.hypot(dx, dy) || 1;
+                a.x += (dx / d) * spd; a.y += (dy / d) * spd;
+                if (Math.abs(dx) > 0.1) a.dir = dx < 0 ? -1 : 1;
+                return;
+            }
 
             // reached a bone? get distracted and respawn a fresh one elsewhere
             for (let i = 0; i < this.bones.length; i++) {
@@ -217,7 +245,8 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (a.target) {
-                const spd = a.mode === 'chase' ? a.chase : a.patrol;
+                const mul = a.ability === 'speed' ? 1.9 : 1;
+                const spd = (a.mode === 'chase' ? a.chase : a.patrol) * mul;
                 const cx = this.centerX(a.target[0]), cy = this.centerY(a.target[1]);
                 const dx = cx - a.x, dy = cy - a.y, d = Math.hypot(dx, dy) || 1;
                 a.x += (dx / d) * Math.min(spd, d);
@@ -249,6 +278,87 @@ document.addEventListener('alpine:init', () => {
             }
         },
 
+        isPlanted(c, r) { return this.planted.some(p => p.c === c && p.r === r); },
+
+        playerBlocked(x, y) {
+            if (this.isWall(x, y)) return true;
+            // planted trees block you unless you carry the axe
+            if (!this.hasAxe && this.isPlanted(this.cellC(x), this.cellR(y))) return true;
+            return false;
+        },
+
+        formatTime(ms) {
+            const s = Math.floor(ms / 1000);
+            return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+        },
+
+        // --- Arti's random funny abilities ---
+        triggerAbility() {
+            const a = this.arti;
+            const pool = ['teleport', 'giant', 'ghost', 'speed', 'farmer'];
+            const choice = pool[Math.floor(Math.random() * pool.length)];
+            a.ability = choice;
+            const msg = {
+                teleport: 'Arti ging in teleport-modus!',
+                giant: 'Arti werd GIGANTISCH!',
+                ghost: 'Arti ging in spook-modus!',
+                speed: 'Arti ging supersnel!',
+                farmer: 'Arti ging in boer-modus!',
+            };
+            this.flash(msg[choice]);
+
+            if (choice === 'teleport') { this.teleportArti(); a.abilityT = 45; }
+            else if (choice === 'giant') { a.scale = 2.1; a.abilityT = 320; }
+            else if (choice === 'ghost') { a.ghost = true; a.abilityT = 260; }
+            else if (choice === 'speed') { a.abilityT = 320; }
+            else if (choice === 'farmer') { a.abilityT = 380; }
+        },
+
+        endAbility() {
+            const a = this.arti;
+            a.ability = null; a.abilityT = 0; a.ghost = false; a.scale = 1;
+            a.cooldown = 360 + Math.floor(Math.random() * 360); // 6-12s till next
+        },
+
+        teleportArti() {
+            const a = this.arti;
+            for (let i = 0; i < 200; i++) {
+                const c = 1 + Math.floor(Math.random() * (this.cols - 2));
+                const r = 1 + Math.floor(Math.random() * (this.rows - 2));
+                if (!this.artiPassable(c, r)) continue;
+                a.x = this.centerX(c); a.y = this.centerY(r);
+                a.target = null; a.from = null; a.teleFx = 26;
+                return;
+            }
+        },
+
+        // one-time prank: the first time you almost reach the barn, wizard-Arti
+        // teleports the barn to where the axe used to be.
+        wizardPrank() {
+            this.barnMoved = true;
+            this.wizard = true;
+            this.wizardT = 260;
+            this.arti.teleFx = 30;
+            this.goal.x = this.axe.x;
+            this.goal.y = this.axe.y;
+            this.flash('Arti ging in TOVENAAR-modus en verplaatste de schuur!');
+        },
+
+        plantTree() {
+            const a = this.arti;
+            const ac = this.cellC(a.x), ar = this.cellR(a.y);
+            const cands = [[ac, ar], [ac + 1, ar], [ac - 1, ar], [ac, ar + 1], [ac, ar - 1]].sort(() => Math.random() - 0.5);
+            for (const [c, r] of cands) {
+                if (!this.artiPassable(c, r)) continue;
+                if (c === this.gate.c && r === this.gate.r) continue;
+                if (this.isPlanted(c, r)) continue;
+                if (c === this.cellC(this.px) && r === this.cellR(this.py)) continue; // never trap the player's cell
+                if (this.planted.length > 30) return;
+                this.planted.push({ c, r });
+                return;
+            }
+        },
+
         step() {
             this.moveArti();
 
@@ -270,17 +380,30 @@ document.addEventListener('alpine:init', () => {
             }
 
             if (dx || dy) {
+                if (this.startedAt === null) this.startedAt = Date.now();
                 const len = Math.hypot(dx, dy) || 1;
                 const vx = (dx / len) * speed, vy = (dy / len) * speed;
                 const nx = Math.min(98, Math.max(2, this.px + vx));
                 const ny = Math.min(98, Math.max(2, this.py + vy));
-                if (!this.isWall(nx, ny)) { this.px = nx; this.py = ny; }
-                else if (!this.isWall(nx, this.py)) { this.px = nx; }
-                else if (!this.isWall(this.px, ny)) { this.py = ny; }
+                if (!this.playerBlocked(nx, ny)) { this.px = nx; this.py = ny; }
+                else if (!this.playerBlocked(nx, this.py)) { this.px = nx; }
+                else if (!this.playerBlocked(this.px, ny)) { this.py = ny; }
+                // chop a planted tree you step onto while carrying the axe
+                if (this.hasAxe && this.planted.length) {
+                    const idx = this.planted.findIndex(p => p.c === this.cellC(this.px) && p.r === this.cellR(this.py));
+                    if (idx !== -1) this.planted.splice(idx, 1);
+                }
                 this.moving = true;
                 if (dx < 0) this.facing = -1; else if (dx > 0) this.facing = 1;
             } else {
                 this.moving = false;
+            }
+
+            // live timer
+            if (this.startedAt !== null) {
+                const el = Date.now() - this.startedAt;
+                const s = Math.floor(el / 1000);
+                if (s !== this._lastSec) { this._lastSec = s; this.clock = this.formatTime(el); }
             }
 
             const cellW = 100 / this.cols;
@@ -304,16 +427,26 @@ document.addEventListener('alpine:init', () => {
                 this.lastSafe = { x: this.px, y: this.py };
             }
 
-            if (this.arti.distract === 0 && Math.hypot(this.px - this.arti.x, this.py - this.arti.y) < this.arti.r) {
+            const catchR = this.arti.r * (this.arti.ability === 'giant' ? 2.2 : 1);
+            if (this.arti.distract === 0 && Math.hypot(this.px - this.arti.x, this.py - this.arti.y) < catchR) {
                 this.resetPlayer();
             }
 
-            // only reachable from inside the safe channel (so the maze side never triggers it)
-            if (this.isSafeCell(this.cellC(this.px), this.cellR(this.py)) &&
+            // wizard prank: almost at the barn (in the safe channel) for the first time
+            if (!this.barnMoved &&
+                this.isSafeCell(this.cellC(this.px), this.cellR(this.py)) &&
+                Math.hypot(this.px - this.goal.x, this.py - this.goal.y) < this.goal.r * 2.1) {
+                this.wizardPrank();
+            }
+
+            // reach the barn: from the safe channel, or anywhere once the wizard moved it
+            if ((this.barnMoved || this.isSafeCell(this.cellC(this.px), this.cellR(this.py))) &&
                 Math.hypot(this.px - this.goal.x, this.py - this.goal.y) < this.goal.r) {
                 this.done = true;
                 this.moving = false;
+                this.timeMs = this.startedAt ? Date.now() - this.startedAt : 0;
                 this.setCookie('mblan_done', '1');
+                if (this.timeMs > 0) this.setCookie('mblan_time', this.timeMs);
                 setTimeout(() => { this.open = true; }, 200);
             }
         },

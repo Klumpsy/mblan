@@ -59,7 +59,11 @@
             fetch('{{ route('game.sync') }}', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                body: JSON.stringify({ caught: parseInt(caught, 10) || 0, completed: c('mblan_done') === '1' }),
+                body: JSON.stringify({
+                    caught: parseInt(caught, 10) || 0,
+                    completed: c('mblan_done') === '1',
+                    time: parseInt(c('mblan_time') || '0', 10) || 0,
+                }),
             }).catch(function () {});
         })();
     </script>

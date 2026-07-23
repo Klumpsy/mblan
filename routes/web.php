@@ -32,11 +32,21 @@ Route::middleware([
     Route::post('/game/sync', function (\Illuminate\Http\Request $request) {
         $user = $request->user();
         $caught = max(0, (int) $request->input('caught', 0));
+        $completed = (bool) $user->barn_completed || $request->boolean('completed');
+
+        // Keep the best (fastest) completion time in ms.
+        $time = (int) $request->input('time', 0);
+        $bestTime = $user->barn_time_ms;
+        if ($request->boolean('completed') && $time > 0) {
+            $bestTime = $bestTime ? min($bestTime, $time) : $time;
+        }
+
         $user->forceFill([
             'barn_catches' => max((int) $user->barn_catches, $caught),
-            'barn_completed' => (bool) $user->barn_completed || $request->boolean('completed'),
+            'barn_completed' => $completed,
+            'barn_time_ms' => $bestTime,
         ])->save();
 
-        return response()->json(['ok' => true, 'barn_catches' => $user->barn_catches]);
+        return response()->json(['ok' => true]);
     })->name('game.sync');
 });

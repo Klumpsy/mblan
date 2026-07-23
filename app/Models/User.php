@@ -36,6 +36,7 @@ class User extends Authenticatable implements FilamentUser
         'discord_id',
         'barn_catches',
         'barn_completed',
+        'barn_time_ms',
     ];
 
     /**

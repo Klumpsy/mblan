@@ -13,12 +13,15 @@ class TournamentController extends Controller
     {
         $tournaments = Tournament::with(['schedule', 'game'])->get();
 
-        // The Arti Game: the hardcoded first tournament. Fewer catches = higher rank.
+        // The Arti Game: the hardcoded first tournament.
+        // Fewer catches ranks higher; ties are broken by the fastest completion time.
         $artiLeaderboard = User::where('barn_completed', true)
             ->orderBy('barn_catches')
+            ->orderByRaw('barn_time_ms IS NULL')
+            ->orderBy('barn_time_ms')
             ->orderBy('name')
             ->take(20)
-            ->get(['id', 'name', 'barn_catches']);
+            ->get(['id', 'name', 'barn_catches', 'barn_time_ms']);
 
         return view('tournaments.index', [
             'tournaments' => $tournaments,
