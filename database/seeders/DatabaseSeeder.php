@@ -29,6 +29,11 @@ class DatabaseSeeder extends Seeder
                 }
             });
 
+        // Seed some "Arti Game" scores so the leaderboard is populated.
+        User::inRandomOrder()->take(12)->get()->each(function (User $user) {
+            $user->forceFill(['barn_completed' => true, 'barn_catches' => random_int(0, 9)])->save();
+        });
+
         $this->call([
             GameSeeder::class,
             EditionSeeder::class,
