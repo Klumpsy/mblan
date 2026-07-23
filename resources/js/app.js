@@ -73,7 +73,7 @@ document.addEventListener('alpine:init', () => {
         },
         bones: [],
         planted: [],
-        barnMoved: false, wizard: false, wizardT: 0,
+        barnMoved: false, wizard: false, wizardT: 0, homeGoal: null,
         tx: null, ty: null, facing: 1, moving: false,
         done: false, open: false, caught: false,
         caughtCount: 0,
@@ -91,6 +91,7 @@ document.addEventListener('alpine:init', () => {
 
         init() {
             this.caughtCount = parseInt(this.cookie('mblan_caught') || '0', 10) || 0;
+            this.homeGoal = { x: this.goal.x, y: this.goal.y, r: this.goal.r };
             this.lastSafe = { x: this.px, y: this.py };
             this.spawnBone(); this.spawnBone();
             const down = (e) => {
@@ -137,13 +138,20 @@ document.addEventListener('alpine:init', () => {
         },
 
         resetPlayer() {
-            this.caughtCount += 1;
+            this.caughtCount += 1;              // keep the total attempts...
             this.setCookie('mblan_caught', this.caughtCount);
+            // ...and keep the running timer (startedAt), but reset the whole puzzle:
             this.caught = true;
             this.px = this.startX; this.py = this.startY;
             this.tx = this.ty = null; this.moving = false;
-            this.hasAxe = false; this.chopped = false; // start the puzzle over
-            this.planted = [];                          // clear planted trees so nothing stays sealed
+            this.hasAxe = false; this.chopped = false;   // axe + gate tree back
+            this.planted = [];                            // clear planted trees
+            this.barnMoved = false; this.wizard = false; this.wizardT = 0;
+            if (this.homeGoal) this.goal = { ...this.homeGoal };  // barn back to the top-right
+            // reset Arti's state/abilities
+            this.arti.ability = null; this.arti.abilityT = 0; this.arti.ghost = false;
+            this.arti.scale = 1; this.arti.distract = 0; this.arti.target = null;
+            this.arti.cooldown = 480;
             this.lastSafe = { x: this.px, y: this.py };
             clearTimeout(this._caughtT);
             this._caughtT = setTimeout(() => { this.caught = false; }, 1800);

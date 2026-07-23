@@ -107,14 +107,14 @@
 
         {{-- ===== viewport-fixed UI ===== --}}
         {{-- wordmark --}}
-        <div class="pointer-events-none absolute left-1/2 top-3 z-30 -translate-x-1/2 px-4 text-center">
+        <div class="pointer-events-none absolute left-1/2 top-3 z-30 flex -translate-x-1/2 flex-col items-center px-4 text-center">
             <div class="frame-wood inline-block px-4 py-2 [transform:skewX(-5deg)]">
                 <h1 class="flex items-baseline justify-center font-display font-bold leading-none tracking-tight">
                     <span class="bg-gradient-to-b from-white via-[#e7edeb] to-[#7f8f89] bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">MBLAN</span>
                     <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)]">26</span>
                 </h1>
             </div>
-            <div class="mt-5 inline-block rounded-lg bg-forge-black/70 px-4 py-2 backdrop-blur-sm">
+            <div class="mt-5 rounded-lg bg-forge-black/70 px-4 py-2 backdrop-blur-sm">
                 <p class="font-pixel text-[7px] uppercase tracking-[0.15em] text-white/90 md:text-[9px]">Bereik de schuur, maar pas op voor Arti</p>
                 <p class="mt-1 font-pixel text-[6px] uppercase tracking-[0.15em] text-white/55 md:text-[7px]">Lok Arti naar een bot om langs haar te komen</p>
             </div>
