@@ -29,21 +29,26 @@ Route::middleware([
     Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments');
 
     // Persist the barn-maze attempt stats onto the account (Arti Game leaderboard).
+    // Only a completed run counts, and we keep each player's personal best:
+    // the fewest catches and the fastest time. Replaying can only improve you.
     Route::post('/game/sync', function (\Illuminate\Http\Request $request) {
+        if (!$request->boolean('completed')) {
+            return response()->json(['ok' => true]);
+        }
+
         $user = $request->user();
         $caught = max(0, (int) $request->input('caught', 0));
-        $completed = (bool) $user->barn_completed || $request->boolean('completed');
-
-        // Keep the best (fastest) completion time in ms.
         $time = (int) $request->input('time', 0);
+
+        $bestCatches = $user->barn_completed ? min((int) $user->barn_catches, $caught) : $caught;
         $bestTime = $user->barn_time_ms;
-        if ($request->boolean('completed') && $time > 0) {
+        if ($time > 0) {
             $bestTime = $bestTime ? min($bestTime, $time) : $time;
         }
 
         $user->forceFill([
-            'barn_catches' => max((int) $user->barn_catches, $caught),
-            'barn_completed' => $completed,
+            'barn_catches' => $bestCatches,
+            'barn_completed' => true,
             'barn_time_ms' => $bestTime,
         ])->save();
 

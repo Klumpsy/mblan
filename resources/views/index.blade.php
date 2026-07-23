@@ -128,6 +128,10 @@
             <span class="border-2 border-[#5a3d22] bg-forge-black/70 px-2 py-1 font-pixel text-[8px] uppercase tracking-wider text-forge-steel">
                 Tijd: <span x-text="clock"></span>
             </span>
+            <button type="button" @click.stop="restartGame()"
+                class="pointer-events-auto border-2 border-[#5a3d22] bg-forge-black/70 px-2 py-1 text-left font-pixel text-[8px] uppercase tracking-wider text-forge-steel/70 hover:text-primary-200">
+                Opnieuw
+            </button>
         </div>
 
         {{-- login (wooden) --}}
@@ -167,6 +171,9 @@
                 <h2 class="mb-2 font-display text-2xl font-bold uppercase tracking-wide text-white">Welkom bij MBLAN<span class="text-primary-400">26</span></h2>
                 <p class="mb-6 font-pixel text-[8px] uppercase tracking-wider text-forge-steel/60"
                     x-text="'Arti pakte je ' + caughtCount + 'x' + (timeMs > 0 ? '  ·  tijd ' + formatTime(timeMs) : '')"></p>
+
+                <button type="button" x-show="done" @click="restartGame()"
+                    class="btn-wood clip-corner mb-4 w-full text-xs">Opnieuw spelen</button>
 
                 @auth
                     <a href="{{ route('schedule') }}" class="btn-wood clip-corner w-full text-xs">Betreed De Schuur</a>

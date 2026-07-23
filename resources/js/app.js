@@ -88,6 +88,9 @@ document.addEventListener('alpine:init', () => {
         setCookie(name, val) {
             document.cookie = name + '=' + encodeURIComponent(val) + '; path=/; max-age=31536000; samesite=lax';
         },
+        eraseCookie(name) {
+            document.cookie = name + '=; path=/; max-age=0; samesite=lax';
+        },
 
         init() {
             this.caughtCount = parseInt(this.cookie('mblan_caught') || '0', 10) || 0;
@@ -160,6 +163,29 @@ document.addEventListener('alpine:init', () => {
             this.lastSafe = { x: this.px, y: this.py };
             clearTimeout(this._caughtT);
             this._caughtT = setTimeout(() => { this.caught = false; }, 1800);
+        },
+
+        // Play again from scratch: wipe the timer and catch counter (and their
+        // cookies) so a fresh run can beat the player's own previous attempt.
+        restartGame() {
+            this.caughtCount = 0;
+            this.setCookie('mblan_caught', 0);
+            this.eraseCookie('mblan_done');
+            this.eraseCookie('mblan_time');
+            this.startedAt = null; this.timeMs = 0; this.clock = '0:00'; this._lastSec = -1;
+            this.done = false; this.open = false; this.caught = false;
+            this.px = this.startX; this.py = this.startY;
+            this.tx = this.ty = null; this.moving = false; this.keys = {};
+            this.hasAxe = false; this.chopped = false; this.planted = [];
+            this.barnMoved = false; this.wizard = false; this.wizardT = 0;
+            if (this.homeGoal) this.goal = { ...this.homeGoal };
+            this.arti.ability = null; this.arti.abilityT = 0; this.arti.ghost = false;
+            this.arti.scale = 1; this.arti.distract = 0; this.arti.target = null;
+            this.arti.from = null; this.arti.cooldown = 480; this.arti.teleFx = 0;
+            if (this.artiHome) { this.arti.x = this.artiHome.x; this.arti.y = this.artiHome.y; }
+            this.lastSafe = { x: this.px, y: this.py };
+            this.bones = []; this.spawnBone(); this.spawnBone();
+            clearTimeout(this._caughtT);
         },
 
         // on-screen d-pad (mobile): set/clear a movement key
