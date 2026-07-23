@@ -35,39 +35,41 @@
         <div class="absolute bottom-[20%] left-1/2 z-0 -translate-x-1/2">
             <div class="barn">
                 <div class="barn__cable"></div>
+                <div class="barn__vane"></div>
                 <div class="barn__roof"></div>
                 <div class="barn__loft"></div>
+                <div class="barn__eave"></div>
                 <div class="barn__body">
+                    <div class="barn__sign">Forged in the Barn</div>
                     <div class="barn__window barn__window--l"></div>
                     <div class="barn__window barn__window--r"></div>
                     <div class="barn__door">
                         <div class="barn__glow"></div>
                         <div class="barn__screen"></div>
                         <div class="barn__sitter"></div>
+                        <div class="barn__threshold"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- ===== Little stories: gamers walking to and from the barn ===== --}}
+        {{-- ===== Little stories: everyone walks into the barn ===== --}}
         <div class="pointer-events-none absolute inset-0 z-[5] overflow-hidden" aria-hidden="true">
-            {{-- arriving with their rig --}}
-            <div class="walker walker--arrive" style="--bottom: 20%; --dur: 16s; --delay: 0s; --scale: 1.1;">
+            {{-- arriving from the left with their rig --}}
+            <div class="walker walker--arrive" style="--bottom: 20%; --dur: 15s; --delay: 0s; --scale: 1.1;">
                 <x-forge.gamer gear />
             </div>
-            {{-- another arrival, smaller/further --}}
-            <div class="walker walker--arrive" style="--bottom: 22.5%; --dur: 21s; --delay: 7s; --scale: 0.8;">
+            <div class="walker walker--arrive" style="--bottom: 20%; --dur: 19s; --delay: 6s; --scale: 0.85;">
+                <x-forge.gamer />
+            </div>
+            <div class="walker walker--arrive" style="--bottom: 20%; --dur: 23s; --delay: 11s; --scale: 0.7;">
                 <x-forge.gamer gear />
             </div>
-            {{-- someone heading back out --}}
-            <div class="walker walker--leave" style="--bottom: 20%; --dur: 19s; --delay: 4s; --scale: 1;">
-                <x-forge.gamer />
+            {{-- arriving from the right --}}
+            <div class="walker walker--arrive-right" style="--bottom: 20%; --dur: 17s; --delay: 3s; --scale: 1;">
+                <x-forge.gamer gear />
             </div>
-            {{-- ambient passer-by strolling across --}}
-            <div class="walker" style="--bottom: 19%; --dur: 26s; --delay: 2s; --scale: 0.9;">
-                <x-forge.gamer />
-            </div>
-            <div class="walker walker--reverse" style="--bottom: 23%; --dur: 32s; --delay: 10s; --scale: 0.7;">
+            <div class="walker walker--arrive-right" style="--bottom: 20%; --dur: 21s; --delay: 9s; --scale: 0.8;">
                 <x-forge.gamer />
             </div>
         </div>

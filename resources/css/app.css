@@ -262,6 +262,73 @@
     background: linear-gradient(90deg, transparent, rgb(var(--c-primary-300)), transparent);
     animation: cable-flow 2.6s linear infinite;
 }
+/* overhang eaves with a glowing LED strip along the roofline */
+.barn__eave {
+    position: absolute;
+    top: 90px; left: -10px; right: -10px;
+    height: 6px;
+    background: linear-gradient(180deg, #1a2a22, #0c1410);
+    border: 1px solid rgb(var(--c-primary-500) / 0.5);
+    border-radius: 2px;
+    box-shadow: 0 0 12px rgb(var(--c-primary-500) / 0.35);
+}
+.barn__eave::after {
+    content: "";
+    position: absolute;
+    left: 6px; right: 6px; top: 1px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg,
+        rgb(var(--c-primary-300)) 0 3px, transparent 3px 13px);
+    filter: drop-shadow(0 0 3px rgb(var(--c-primary-400)));
+    animation: glow-pulse 3.6s ease-in-out infinite;
+}
+/* weathervane on the ridge */
+.barn__vane {
+    position: absolute;
+    top: -18px; left: 50%;
+    width: 2px; height: 18px;
+    margin-left: -1px;
+    background: rgb(var(--c-primary-400));
+    box-shadow: 0 0 8px rgb(var(--c-primary-500));
+}
+.barn__vane::before {
+    content: "";
+    position: absolute;
+    top: -1px; left: -7px;
+    width: 0; height: 0;
+    border: 5px solid transparent;
+    border-left-color: rgb(var(--c-primary-400));
+    filter: drop-shadow(0 0 4px rgb(var(--c-primary-500)));
+}
+/* illuminated "FORGED IN THE BARN" sign plaque */
+.barn__sign {
+    position: absolute;
+    top: 6px; left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 12px;
+    background: linear-gradient(180deg, #0c1712, #060d0a);
+    border: 1px solid rgb(var(--c-primary-500) / 0.7);
+    border-radius: 3px;
+    box-shadow: 0 0 14px rgb(var(--c-primary-500) / 0.4), inset 0 0 6px rgb(var(--c-primary-500) / 0.2);
+    white-space: nowrap;
+    font-family: "Chakra Petch", sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgb(var(--c-primary-200));
+    text-shadow: 0 0 8px rgb(var(--c-primary-400) / 0.9);
+}
+/* glowing threshold where the gamers step into the barn */
+.barn__threshold {
+    position: absolute;
+    bottom: -3px; left: 50%;
+    width: 128px; height: 8px;
+    margin-left: -64px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgb(var(--c-primary-400) / 0.9), transparent 70%);
+    filter: blur(1px);
+    animation: glow-pulse 3.2s ease-in-out infinite;
+}
 
 /* ---- Casual gamer avatar (headset) ---- */
 .walker {
@@ -270,6 +337,7 @@
     bottom: var(--bottom, 8%);
     width: 34px;
     height: 60px;
+    transform-origin: bottom center; /* keep feet planted when scaled */
     transform: scale(var(--scale, 1));
     animation: walk-across var(--dur, 26s) linear infinite;
     animation-delay: var(--delay, 0s);
@@ -277,6 +345,8 @@
 }
 .walker--reverse { animation-name: walk-across-rev; }
 .walker--arrive { animation-name: arrive; }
+.walker--arrive-right { animation-name: arrive-right; }
+.walker--arrive-right .gamer { scale: -1 1; } /* faces the door */
 .walker--leave  { animation-name: leave; }
 
 .gamer {
@@ -286,7 +356,7 @@
     transform-origin: bottom center;
     animation: gamer-bob 0.6s ease-in-out infinite;
 }
-.walker--reverse .gamer { transform: scaleX(-1); }
+.walker--reverse .gamer { scale: -1 1; }
 
 .gamer__head {
     position: absolute;
@@ -381,6 +451,14 @@
     92%  { transform: translateX(49vw) scale(calc(var(--scale, 1) * 0.85)); opacity: 0; }
     100% { opacity: 0; }
 }
+/* little story: walk in from the right, then vanish into the barn door */
+@keyframes arrive-right {
+    0%   { transform: translateX(102vw) scale(var(--scale, 1)); opacity: 0; }
+    8%   { opacity: 1; }
+    82%  { transform: translateX(51vw) scale(var(--scale, 1)); opacity: 1; }
+    92%  { transform: translateX(49vw) scale(calc(var(--scale, 1) * 0.85)); opacity: 0; }
+    100% { opacity: 0; }
+}
 /* little story: emerge from the barn door and walk off to the right */
 @keyframes leave {
     0%   { transform: translateX(50vw) scale(calc(var(--scale, 1) * 0.85)); opacity: 0; }
@@ -388,8 +466,8 @@
     100% { transform: translateX(112vw) scale(var(--scale, 1)); opacity: 1; }
 }
 @keyframes gamer-bob {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-2.5px); }
+    0%, 100% { translate: 0 0; }
+    50%      { translate: 0 -2.5px; }
 }
 @keyframes gamer-step {
     0%, 100% { transform: rotate(22deg); }
