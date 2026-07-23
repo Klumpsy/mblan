@@ -92,6 +92,7 @@ document.addEventListener('alpine:init', () => {
         init() {
             this.caughtCount = parseInt(this.cookie('mblan_caught') || '0', 10) || 0;
             this.homeGoal = { x: this.goal.x, y: this.goal.y, r: this.goal.r };
+            this.artiHome = { x: this.arti.x, y: this.arti.y };
             this.lastSafe = { x: this.px, y: this.py };
             this.spawnBone(); this.spawnBone();
             const down = (e) => {
@@ -138,20 +139,24 @@ document.addEventListener('alpine:init', () => {
         },
 
         resetPlayer() {
+            if (this.caught) return;            // already resetting: never stack catches
             this.caughtCount += 1;              // keep the total attempts...
             this.setCookie('mblan_caught', this.caughtCount);
             // ...and keep the running timer (startedAt), but reset the whole puzzle:
             this.caught = true;
             this.px = this.startX; this.py = this.startY;
             this.tx = this.ty = null; this.moving = false;
+            this.keys = {};                               // drop held keys so we don't walk into Arti
             this.hasAxe = false; this.chopped = false;   // axe + gate tree back
             this.planted = [];                            // clear planted trees
             this.barnMoved = false; this.wizard = false; this.wizardT = 0;
             if (this.homeGoal) this.goal = { ...this.homeGoal };  // barn back to the top-right
-            // reset Arti's state/abilities
+            // reset Arti's state/abilities AND send her back to her home spawn,
+            // so she is never sitting on top of the respawned player.
             this.arti.ability = null; this.arti.abilityT = 0; this.arti.ghost = false;
             this.arti.scale = 1; this.arti.distract = 0; this.arti.target = null;
-            this.arti.cooldown = 480;
+            this.arti.from = null; this.arti.cooldown = 480; this.arti.teleFx = 0;
+            if (this.artiHome) { this.arti.x = this.artiHome.x; this.arti.y = this.artiHome.y; }
             this.lastSafe = { x: this.px, y: this.py };
             clearTimeout(this._caughtT);
             this._caughtT = setTimeout(() => { this.caught = false; }, 1800);
@@ -192,6 +197,8 @@ document.addEventListener('alpine:init', () => {
 
         moveArti() {
             const a = this.arti;
+
+            if (this.caught) return;   // frozen at home during the reset flash window
 
             if (a.teleFx > 0) a.teleFx -= 1;
             if (this.wizardT > 0) { this.wizardT -= 1; if (this.wizardT === 0) this.wizard = false; }
@@ -461,7 +468,8 @@ document.addEventListener('alpine:init', () => {
             }
 
             const catchR = this.arti.r * (this.arti.ability === 'giant' ? 2.2 : 1);
-            if (this.arti.distract === 0 && Math.hypot(this.px - this.arti.x, this.py - this.arti.y) < catchR) {
+            if (!this.caught && this.arti.distract === 0 &&
+                Math.hypot(this.px - this.arti.x, this.py - this.arti.y) < catchR) {
                 this.resetPlayer();
             }
 
