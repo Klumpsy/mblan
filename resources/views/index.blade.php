@@ -39,9 +39,9 @@
             <img src="{{ asset('images/farm/backdrop.png') }}" alt=""
                 class="pixel absolute inset-0 h-full w-full object-cover" />
 
-            {{-- green techy blend + vignette --}}
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-forge-black/45 via-transparent to-forge-black/60"></div>
-            <div class="pointer-events-none absolute inset-0" style="box-shadow: inset 0 0 140px 30px rgba(4,8,6,0.7);"></div>
+            {{-- light green tint (keeps the pixel farm crisp, not washed out) --}}
+            <div class="pointer-events-none absolute inset-0 bg-primary-500/10 mix-blend-overlay"></div>
+            <div class="pointer-events-none absolute inset-0" style="box-shadow: inset 0 0 120px 20px rgba(4,10,7,0.4);"></div>
             <div class="pointer-events-none absolute h-[45%] w-[45%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary-500/12 blur-[60px]" :style="'left:'+goal.x+'%; top:'+goal.y+'%;'"></div>
             <x-forge.embers class="opacity-45" />
 
@@ -101,8 +101,7 @@
                     <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)]">26</span>
                 </h1>
             </div>
-            <p class="mt-2 font-pixel text-[7px] uppercase tracking-[0.15em] text-white/70 md:text-[9px]"
-                x-text="!hasAxe ? 'Bereik de schuur, maar pas op voor Arti' : (!chopped ? 'Hak de boom om met de bijl' : 'Neem het veilige pad naar de schuur')"></p>
+            <p class="mt-2 font-pixel text-[7px] uppercase tracking-[0.15em] text-white/70 md:text-[9px]">Bereik de schuur, maar pas op voor Arti</p>
             <p class="mt-1 font-pixel text-[6px] uppercase tracking-[0.15em] text-white/40 md:text-[7px]">Lok Arti naar een bot om langs haar te komen</p>
         </div>
 
@@ -143,7 +142,7 @@
 
         {{-- ===== Login modal ===== --}}
         <div x-show="open" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-6">
-            <div class="absolute inset-0 bg-forge-black/80 backdrop-blur" @click="closeModal()"></div>
+            <div class="absolute inset-0 bg-forge-black/40" @click="closeModal()"></div>
             <div x-show="open" x-transition class="frame-wood relative w-full max-w-md p-8">
                 <button type="button" @click="closeModal()" class="absolute right-3 top-3 font-pixel text-xs text-forge-steel/60 hover:text-primary-300">X</button>
                 <div class="mb-1 font-pixel text-[8px] uppercase tracking-[0.2em] text-primary-400">De schuur is open</div>
