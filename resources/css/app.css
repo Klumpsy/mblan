@@ -153,336 +153,37 @@
 }
 
 /* ===========================================================================
-   Barn LAN scene: a neon-green techy barn where little stories play out,
-   plus pure-CSS casual gamer avatars. No images, no external sprites.
+   Interactive farm map: walk your character to the barn (Kenney pixel sprites).
    =========================================================================== */
+.pixel { image-rendering: pixelated; image-rendering: crisp-edges; }
 
-/* ---- The barn ---- */
-.barn {
-    position: relative;
-    width: 340px;
-    max-width: 82vw;
-    filter: drop-shadow(0 0 22px rgb(var(--c-primary-500) / 0.28));
-}
-.barn__roof {
-    position: relative;
-    height: 92px;
-    margin: 0 -6px -1px;
-    background:
-        repeating-linear-gradient(90deg, rgb(0 0 0 / 0.35) 0 1px, transparent 1px 14px),
-        linear-gradient(180deg, #16241d, #0e1813);
-    clip-path: polygon(50% 0, 100% 100%, 0 100%);
-    border-top: 2px solid rgb(var(--c-primary-400) / 0.9);
-    filter: drop-shadow(0 0 6px rgb(var(--c-primary-500) / 0.5));
-}
-.barn__loft { /* glowing hayloft window at the apex */
+.player {
     position: absolute;
-    top: 40px; left: 50%;
-    width: 26px; height: 26px;
-    margin-left: -13px;
-    border-radius: 4px;
-    background: rgb(var(--c-primary-500) / 0.85);
-    border: 1px solid rgb(var(--c-primary-300));
-    box-shadow: 0 0 16px rgb(var(--c-primary-400) / 0.9);
-    animation: glow-pulse 3.2s ease-in-out infinite;
+    transform: translate(-50%, -100%); /* feet anchored to the point */
+    z-index: 20;
+    will-change: left, top;
 }
-.barn__body {
-    position: relative;
-    height: 190px;
-    background:
-        repeating-linear-gradient(90deg, rgb(0 0 0 / 0.35) 0 1px, transparent 1px 22px),
-        linear-gradient(180deg, #13201a, #0c1410);
-    border: 2px solid rgb(var(--c-primary-500) / 0.55);
-    border-top: none;
-    box-shadow: inset 0 0 30px rgb(0 0 0 / 0.6), 0 0 24px rgb(var(--c-primary-500) / 0.2);
-}
-.barn__door { /* the open doorway, warm green light spilling out */
-    position: absolute;
-    bottom: 0; left: 50%;
-    width: 120px; height: 150px;
-    margin-left: -60px;
-    overflow: hidden;
-    background: linear-gradient(180deg, #050a08, #08110d);
-    border: 1px solid rgb(var(--c-primary-500) / 0.4);
-    border-bottom: none;
-    border-radius: 4px 4px 0 0;
-}
-.barn__glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 78%, rgb(var(--c-primary-500) / 0.55), transparent 62%);
-    animation: glow-pulse 3.6s ease-in-out infinite;
-}
-.barn__screen { /* a monitor glowing inside */
-    position: absolute;
-    top: 54px; left: 50%;
-    width: 40px; height: 26px;
-    margin-left: -20px;
-    border-radius: 3px;
-    background: rgb(var(--c-primary-400) / 0.85);
-    box-shadow: 0 0 14px rgb(var(--c-primary-400) / 0.9);
-    animation: screen-flicker 2.4s steps(1) infinite;
-}
-.barn__sitter { /* seated player silhouette in front of the screen */
-    position: absolute;
-    bottom: 8px; left: 50%;
-    width: 26px; height: 34px;
-    margin-left: -13px;
-    border-radius: 12px 12px 0 0;
-    background: #05100b;
-    box-shadow: 0 0 0 1px rgb(var(--c-primary-500) / 0.4);
-    animation: sit-bob 3s ease-in-out infinite;
-}
-.barn__window {
-    position: absolute;
-    top: 26px;
-    width: 30px; height: 30px;
-    background: rgb(var(--c-primary-500) / 0.28);
-    border: 1px solid rgb(var(--c-primary-400) / 0.6);
-    box-shadow: 0 0 10px rgb(var(--c-primary-500) / 0.4);
-}
-.barn__window::before, .barn__window::after {
-    content: ""; position: absolute; background: rgb(var(--c-primary-300) / 0.7);
-}
-.barn__window::before { top: 50%; left: 0; right: 0; height: 1px; }
-.barn__window::after { left: 50%; top: 0; bottom: 0; width: 1px; }
-.barn__window--l { left: 22px; }
-.barn__window--r { right: 22px; }
-.barn__cable { /* power/data cable running to the barn with flowing dots */
-    position: absolute;
-    bottom: 26px; left: -46vw;
-    width: 46vw; height: 2px;
-    background: rgb(var(--c-primary-500) / 0.25);
-    overflow: hidden;
-}
-.barn__cable::after {
-    content: "";
-    position: absolute; top: -1px; left: 0;
-    width: 40px; height: 4px;
-    background: linear-gradient(90deg, transparent, rgb(var(--c-primary-300)), transparent);
-    animation: cable-flow 2.6s linear infinite;
-}
-/* overhang eaves with a glowing LED strip along the roofline */
-.barn__eave {
-    position: absolute;
-    top: 90px; left: -10px; right: -10px;
-    height: 6px;
-    background: linear-gradient(180deg, #1a2a22, #0c1410);
-    border: 1px solid rgb(var(--c-primary-500) / 0.5);
-    border-radius: 2px;
-    box-shadow: 0 0 12px rgb(var(--c-primary-500) / 0.35);
-}
-.barn__eave::after {
-    content: "";
-    position: absolute;
-    left: 6px; right: 6px; top: 1px;
-    height: 2px;
-    background: repeating-linear-gradient(90deg,
-        rgb(var(--c-primary-300)) 0 3px, transparent 3px 13px);
-    filter: drop-shadow(0 0 3px rgb(var(--c-primary-400)));
-    animation: glow-pulse 3.6s ease-in-out infinite;
-}
-/* weathervane on the ridge */
-.barn__vane {
-    position: absolute;
-    top: -18px; left: 50%;
-    width: 2px; height: 18px;
-    margin-left: -1px;
-    background: rgb(var(--c-primary-400));
-    box-shadow: 0 0 8px rgb(var(--c-primary-500));
-}
-.barn__vane::before {
-    content: "";
-    position: absolute;
-    top: -1px; left: -7px;
-    width: 0; height: 0;
-    border: 5px solid transparent;
-    border-left-color: rgb(var(--c-primary-400));
-    filter: drop-shadow(0 0 4px rgb(var(--c-primary-500)));
-}
-/* illuminated "FORGED IN THE BARN" sign plaque */
-.barn__sign {
-    position: absolute;
-    top: 6px; left: 50%;
-    transform: translateX(-50%);
-    padding: 4px 12px;
-    background: linear-gradient(180deg, #0c1712, #060d0a);
-    border: 1px solid rgb(var(--c-primary-500) / 0.7);
-    border-radius: 3px;
-    box-shadow: 0 0 14px rgb(var(--c-primary-500) / 0.4), inset 0 0 6px rgb(var(--c-primary-500) / 0.2);
-    white-space: nowrap;
-    font-family: "Chakra Petch", sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: rgb(var(--c-primary-200));
-    text-shadow: 0 0 8px rgb(var(--c-primary-400) / 0.9);
-}
-/* glowing threshold where the gamers step into the barn */
-.barn__threshold {
-    position: absolute;
-    bottom: -3px; left: 50%;
-    width: 128px; height: 8px;
-    margin-left: -64px;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgb(var(--c-primary-400) / 0.9), transparent 70%);
-    filter: blur(1px);
-    animation: glow-pulse 3.2s ease-in-out infinite;
-}
-
-/* ---- Casual gamer avatar (headset) ---- */
-.walker {
-    position: absolute;
-    left: 0;
-    bottom: var(--bottom, 8%);
-    width: 34px;
-    height: 60px;
-    transform-origin: bottom center; /* keep feet planted when scaled */
-    transform: scale(var(--scale, 1));
-    animation: walk-across var(--dur, 26s) linear infinite;
-    animation-delay: var(--delay, 0s);
-    will-change: transform;
-}
-.walker--reverse { animation-name: walk-across-rev; }
-.walker--arrive { animation-name: arrive; }
-.walker--arrive-right { animation-name: arrive-right; }
-.walker--arrive-right .gamer { scale: -1 1; } /* faces the door */
-.walker--leave  { animation-name: leave; }
-
-.gamer {
-    position: relative;
-    width: 34px;
-    height: 60px;
-    transform-origin: bottom center;
-    animation: gamer-bob 0.6s ease-in-out infinite;
-}
-.walker--reverse .gamer { scale: -1 1; }
-
-.gamer__head {
-    position: absolute;
-    top: 2px; left: 50%;
-    width: 20px; height: 20px;
-    margin-left: -10px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 36% 32%, #e9efec, #b7c3be 70%);
-}
-.gamer__head::after { /* headset band */
-    content: "";
-    position: absolute;
-    top: -3px; left: -1px; right: -1px;
-    height: 12px;
-    border: 3px solid rgb(var(--c-primary-400));
-    border-bottom: none;
-    border-radius: 12px 12px 0 0;
-    box-shadow: 0 0 6px rgb(var(--c-primary-500) / 0.6);
-}
-.gamer__head::before { /* earcup */
-    content: "";
-    position: absolute;
-    top: 7px; right: -3px;
-    width: 5px; height: 8px;
-    border-radius: 3px;
-    background: rgb(var(--c-primary-400));
-    box-shadow: 0 0 6px rgb(var(--c-primary-500));
-}
-.gamer__body { /* hoodie */
-    position: absolute;
-    top: 20px; left: 50%;
-    width: 20px; height: 20px;
-    margin-left: -10px;
-    border-radius: 7px 7px 5px 5px;
-    background: linear-gradient(160deg, #1d2c26, #121c17);
-    border: 1px solid rgb(var(--c-primary-500) / 0.5);
-}
-.gamer__body::before { /* chest light */
-    content: "";
-    position: absolute;
-    top: 6px; left: 50%;
-    width: 5px; height: 5px; margin-left: -2.5px;
-    border-radius: 50%;
-    background: rgb(var(--c-primary-300));
-    box-shadow: 0 0 6px rgb(var(--c-primary-400));
-}
-.gamer__arm {
-    position: absolute;
-    top: 22px;
-    width: 5px; height: 15px;
-    border-radius: 3px;
-    background: #24332d;
-    transform-origin: top center;
-}
-/* opposite phases via half-cycle negative delay (reverse would look identical
-   on a time-symmetric keyframe, so both limbs would swing together) */
-.gamer__arm--l { left: 3px; animation: gamer-swing 0.6s ease-in-out -0.3s infinite; }
-.gamer__arm--r { right: 3px; animation: gamer-swing 0.6s ease-in-out infinite; }
-.gamer__leg {
-    position: absolute;
-    top: 39px;
-    width: 6px; height: 18px;
-    border-radius: 3px;
-    background: #1a2721;
-    transform-origin: top center;
-}
-.gamer__leg--l { left: 8px; animation: gamer-step 0.6s ease-in-out infinite; }
-.gamer__leg--r { right: 8px; animation: gamer-step 0.6s ease-in-out -0.3s infinite; }
-
-@keyframes walk-across {
-    0%   { transform: translateX(-14vw) scale(var(--scale, 1)); }
-    100% { transform: translateX(114vw) scale(var(--scale, 1)); }
-}
-@keyframes walk-across-rev {
-    0%   { transform: translateX(114vw) scale(var(--scale, 1)); }
-    100% { transform: translateX(-14vw) scale(var(--scale, 1)); }
-}
-/* little story: walk in from the left, then vanish into the barn door */
-@keyframes arrive {
-    0%   { transform: translateX(-10vw) scale(var(--scale, 1)); opacity: 0; }
-    8%   { opacity: 1; }
-    82%  { transform: translateX(47vw) scale(var(--scale, 1)); opacity: 1; }
-    92%  { transform: translateX(49vw) scale(calc(var(--scale, 1) * 0.85)); opacity: 0; }
-    100% { opacity: 0; }
-}
-/* little story: walk in from the right, then vanish into the barn door */
-@keyframes arrive-right {
-    0%   { transform: translateX(102vw) scale(var(--scale, 1)); opacity: 0; }
-    8%   { opacity: 1; }
-    82%  { transform: translateX(51vw) scale(var(--scale, 1)); opacity: 1; }
-    92%  { transform: translateX(49vw) scale(calc(var(--scale, 1) * 0.85)); opacity: 0; }
-    100% { opacity: 0; }
-}
-/* little story: emerge from the barn door and walk off to the right */
-@keyframes leave {
-    0%   { transform: translateX(50vw) scale(calc(var(--scale, 1) * 0.85)); opacity: 0; }
-    10%  { transform: translateX(52vw) scale(var(--scale, 1)); opacity: 1; }
-    100% { transform: translateX(112vw) scale(var(--scale, 1)); opacity: 1; }
-}
-@keyframes gamer-bob {
+.player img { display: block; width: 100%; height: auto; }
+.player.is-moving img { animation: sprite-bob 0.32s steps(2, end) infinite; }
+@keyframes sprite-bob {
     0%, 100% { translate: 0 0; }
-    50%      { translate: 0 -2.5px; }
-}
-@keyframes gamer-step {
-    0%, 100% { transform: rotate(22deg); }
-    50%      { transform: rotate(-22deg); }
-}
-@keyframes gamer-swing {
-    0%, 100% { transform: rotate(-18deg); }
-    50%      { transform: rotate(18deg); }
-}
-@keyframes screen-flicker {
-    0%, 100% { opacity: 0.9; }
-    45%      { opacity: 0.6; }
-    50%      { opacity: 1; }
-    70%      { opacity: 0.75; }
-}
-@keyframes sit-bob {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-1.5px); }
-}
-@keyframes cable-flow {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(46vw); }
+    50%      { translate: 0 -9%; }
 }
 
+/* click / tap target marker */
+.walk-target {
+    position: absolute;
+    width: 26px; height: 26px;
+    border: 2px solid rgb(var(--c-primary-300) / 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgb(var(--c-primary-400) / 0.6);
+    animation: ping-out 1s ease-out infinite;
+    pointer-events: none;
+}
+@keyframes ping-out {
+    0%   { transform: translate(-50%,-50%) scale(0.4); opacity: 0.9; }
+    100% { transform: translate(-50%,-50%) scale(1.35); opacity: 0; }
+}
 @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
