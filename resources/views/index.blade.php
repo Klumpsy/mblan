@@ -100,8 +100,10 @@
                     <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)]">26</span>
                 </h1>
             </div>
-            <p class="mt-2 font-pixel text-[7px] uppercase tracking-[0.15em] text-white/70 md:text-[9px]">Bereik de schuur, maar pas op voor Arti</p>
-            <p class="mt-1 font-pixel text-[6px] uppercase tracking-[0.15em] text-white/40 md:text-[7px]">Lok Arti naar een bot om langs haar te komen</p>
+            <div class="mt-3 inline-block rounded-lg bg-forge-black/70 px-4 py-2 backdrop-blur-sm">
+                <p class="font-pixel text-[7px] uppercase tracking-[0.15em] text-white/90 md:text-[9px]">Bereik de schuur, maar pas op voor Arti</p>
+                <p class="mt-1 font-pixel text-[6px] uppercase tracking-[0.15em] text-white/55 md:text-[7px]">Lok Arti naar een bot om langs haar te komen</p>
+            </div>
         </div>
 
         {{-- caught HUD --}}

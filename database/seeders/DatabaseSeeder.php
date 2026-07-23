@@ -21,6 +21,18 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        User::updateOrCreate(
+            ['email' => 'bart@test.nl'],
+            [
+                'name' => 'Bart Test',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'email_verified_at' => now(),
+                'barn_completed' => true,
+                'barn_catches' => 3,
+            ]
+        );
+
         // A believable crowd. Give roughly half a Discord id so leaderboards populate.
         User::factory()->count(24)->create(['role' => 'user'])
             ->each(function (User $user, int $i) {
