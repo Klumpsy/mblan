@@ -14,10 +14,8 @@ abstract class AbstractDrinkBeer implements AchievementStrategy
     public function handle(User $user, Achievement $achievement): void
     {
         $currentSignup = $user->signups()
-            ->whereHas('edition', function ($query) {
-                $query->where('year', now()->year);
-            })
             ->where('confirmed', true)
+            ->latest()
             ->first();
 
         if (!$currentSignup) {

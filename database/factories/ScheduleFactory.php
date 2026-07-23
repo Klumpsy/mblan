@@ -2,7 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Edition;
 use App\Models\Schedule;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Schema;
@@ -13,18 +12,12 @@ class ScheduleFactory extends Factory
 
     public function definition()
     {
-        $attributes = [
+        return [
             'name' => 'Day ' . fake()->numberBetween(1, 5),
-            'edition_id' => Edition::factory(),
+            'date' => now()->format('Y-m-d'),
             'created_at' => now(),
             'updated_at' => now(),
         ];
-
-        if ($this->columnExists('schedules', 'date')) {
-            $attributes['date'] = now()->format('Y-m-d');
-        }
-
-        return $attributes;
     }
 
     public function forDate($date)
@@ -33,26 +26,7 @@ class ScheduleFactory extends Factory
             $date = $date->format('Y-m-d');
         }
 
-        if ($this->columnExists('schedules', 'date')) {
-            return $this->state(function (array $attributes) use ($date) {
-                return [
-                    'date' => $date,
-                ];
-            });
-        }
-
-        return $this;
-    }
-
-    public function forEdition($edition)
-    {
-        $editionId = $edition instanceof Edition ? $edition->id : $edition;
-
-        return $this->state(function (array $attributes) use ($editionId) {
-            return [
-                'edition_id' => $editionId,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['date' => $date]);
     }
 
     public function withGames($count = 3)

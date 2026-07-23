@@ -14,11 +14,5 @@ class Media extends Model
     protected $fillable = [
         'type',
         'file_path',
-        'edition_id',
     ];
-
-    public function edition()
-    {
-        return $this->belongsTo(Edition::class);
-    }
 }

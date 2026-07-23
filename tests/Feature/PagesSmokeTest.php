@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Blog;
-use App\Models\Edition;
 use App\Models\Game;
 use App\Models\Schedule;
 use App\Models\Tournament;
@@ -12,19 +11,13 @@ uses(RefreshDatabase::class);
 
 /**
  * Every primary page renders (HTTP 200) for a signed-in, verified user with a
- * realistic set of seeded content, including the live tournament ladder.
+ * realistic set of content, including the live tournament ladder.
  */
 beforeEach(function () {
     $this->user = User::factory()->create(['email_verified_at' => now()]);
 
-    $this->edition = Edition::factory()->create([
-        'is_active' => true,
-        'is_exclusive' => false,
-        'color' => '#65E59A',
-    ]);
-
     $game = Game::factory()->create();
-    $schedule = Schedule::factory()->create(['edition_id' => $this->edition->id]);
+    $schedule = Schedule::factory()->create();
     $schedule->games()->attach($game->id, [
         'start_date' => now(),
         'end_date' => now()->addHours(2),

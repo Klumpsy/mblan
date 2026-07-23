@@ -18,6 +18,18 @@
 @layer base {
     :root {
         color-scheme: dark;
+        /* Fixed Forge Green accent palette (was per-edition, now static). */
+        --c-primary-50: 243 253 247;
+        --c-primary-100: 230 251 239;
+        --c-primary-200: 206 247 223;
+        --c-primary-300: 175 241 202;
+        --c-primary-400: 138 235 178;
+        --c-primary-500: 101 229 154;
+        --c-primary-600: 89 202 136;
+        --c-primary-700: 73 165 111;
+        --c-primary-800: 57 128 86;
+        --c-primary-900: 40 92 62;
+        --c-primary-950: 26 60 40;
     }
 
     html {

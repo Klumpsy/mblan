@@ -95,25 +95,6 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(BlogComment::class, 'author_id');
     }
 
-    public function hasSignedUpFor(Edition $edition): bool
-    {
-        return $this->signups()->where('edition_id', $edition->id)->exists();
-    }
-
-    public function hasSignedUpForLatestEdition(): bool
-    {
-        $latestEdition = Edition::latest('year')->first();
-
-        if (!$latestEdition) {
-            return false;
-        }
-
-        return $this->signups()
-            ->where('edition_id', $latestEdition->id)
-            ->exists();
-    }
-
-
     public function tournamentsWithScores(): BelongsToMany
     {
         return $this->belongsToMany(Tournament::class, 'tournament_user')
@@ -139,35 +120,4 @@ class User extends Authenticatable implements FilamentUser
         return $this->role === 'admin';
     }
 
-    public function canDrinkBeer(): bool
-    {
-        $currentSignup = $this->getCurrentEditionSignup();
-
-        if (!$currentSignup || !$currentSignup->confirmed) {
-            return false;
-        }
-
-        if (!$currentSignup->last_beer_at) {
-            return true;
-        }
-
-        return $currentSignup->last_beer_at->diffInSeconds(now()) >= 60;
-    }
-
-    public function getBeerCooldownAttribute(): int
-    {
-        $currentSignup = $this->getCurrentEditionSignup();
-
-        if (!$currentSignup || !$currentSignup->last_beer_at) {
-            return 0;
-        }
-
-        return max(0, 60 - $currentSignup->last_beer_at->diffInSeconds(now()));
-    }
-
-    public function exclusiveEditions(): BelongsToMany
-    {
-        return $this->belongsToMany(Edition::class, 'edition_user_exclusive')
-            ->withTimestamps();
-    }
 }

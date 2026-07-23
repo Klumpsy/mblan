@@ -126,12 +126,11 @@ class Tournament extends Model
 
     public function hasYetToStart(): bool
     {
-        $start = Carbon::parse("{$this->schedule->date} {$this->time_start}");
+        if (!$this->schedule?->date) {
+            return false;
+        }
 
-        return (
-            (int)$this->schedule->edition->year === now()->year &&
-            now()->lt($start)
-        );
+        return now()->lt(Carbon::parse("{$this->schedule->date} {$this->time_start}"));
     }
 
     public function getLeaderboard(): Collection

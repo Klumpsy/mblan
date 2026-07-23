@@ -14,7 +14,7 @@
     <div class="relative">
         <div class="pointer-events-none absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-6xl px-6 py-12">
-            <x-forge.heading eyebrow="{{ $edition?->name ?? 'MBLAN' }}">Toernooien &amp; Ladders</x-forge.heading>
+            <x-forge.heading eyebrow="MBLAN26">Toernooien &amp; Ladders</x-forge.heading>
 
             {{-- ===== The Arti Game (hardcoded first tournament) ===== --}}
             <div class="relative mb-14" x-data x-reveal>

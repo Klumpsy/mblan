@@ -4,27 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Tournament;
 use App\Models\User;
-use App\Support\CurrentEdition;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TournamentController extends Controller
 {
-    public function index(CurrentEdition $current): View
+    public function index(): View
     {
-        $user = Auth::user();
-        $edition = $current->get();
-
-        $tournaments = Tournament::with(['schedule.edition', 'game'])
-            ->get()
-            ->filter(function ($tournament) use ($user, $edition) {
-                $tournamentEdition = $tournament->schedule?->edition;
-
-                return $tournamentEdition
-                    && (!$edition || $tournamentEdition->id === $edition->id)
-                    && $tournamentEdition->hasExclusiveAccess($user);
-            });
+        $tournaments = Tournament::with(['schedule', 'game'])->get();
 
         // The Arti Game: the hardcoded first tournament. Fewer catches = higher rank.
         $artiLeaderboard = User::where('barn_completed', true)
@@ -35,7 +22,6 @@ class TournamentController extends Controller
 
         return view('tournaments.index', [
             'tournaments' => $tournaments,
-            'edition' => $edition,
             'artiLeaderboard' => $artiLeaderboard,
         ]);
     }

@@ -30,11 +30,6 @@ class ScheduleResource extends Resource
                 TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Select::make('edition_id')
-                    ->relationship('edition', 'name')
-                    ->required()
-                    ->searchable()
-                    ->preload(),
                 DatePicker::make('date')
                     ->required()
                     ->native(false)
@@ -48,10 +43,6 @@ class ScheduleResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('edition.name')
-                    ->label('Edition')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('date')

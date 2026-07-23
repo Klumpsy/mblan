@@ -4,10 +4,8 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 
-use App\Models\Edition;
 use App\Models\Tournament;
 use App\Models\User;
-use App\Policies\EditionPolicy;
 use App\Policies\TournamentPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -21,7 +19,6 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        Edition::class => EditionPolicy::class,
         Tournament::class => TournamentPolicy::class,
         User::class => UserPolicy::class,
     ];

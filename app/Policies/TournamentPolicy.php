@@ -9,6 +9,6 @@ class TournamentPolicy
 {
     public function view(User $user, Tournament $tournament): bool
     {
-        return !$tournament->edition->signups()->where('user_id', $user->id)->exists();
+        return true;
     }
 }

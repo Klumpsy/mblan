@@ -200,11 +200,6 @@ class DiscordWebhookService
                     'inline' => false
                 ],
                 [
-                    'name' => '📊 Edition',
-                    'value' => $schedule->edition->year ?? 'N/A',
-                    'inline' => true
-                ],
-                [
                     'name' => '🗓️ Date',
                     'value' => now()->format('d/m/Y'),
                     'inline' => true

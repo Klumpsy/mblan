@@ -36,7 +36,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             GameSeeder::class,
-            EditionSeeder::class,
             ScheduleSeeder::class,
             BlogSeeder::class,
             TournamentSeeder::class,

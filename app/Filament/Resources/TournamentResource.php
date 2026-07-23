@@ -145,7 +145,6 @@ class TournamentResource extends Resource
                     ->label('Concluded'),
                 TextColumn::make('game.name')->label('Game'),
                 TextColumn::make('schedule.name')->sortable(),
-                TextColumn::make('schedule.edition.year')->sortable(),
                 TextColumn::make('time_start')->dateTime(),
                 TextColumn::make('time_end')->dateTime(),
             ])

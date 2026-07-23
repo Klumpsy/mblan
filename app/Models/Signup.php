@@ -26,7 +26,6 @@ class Signup extends Model
         'tshirt_size',
         'tshirt_text',
         'user_id',
-        'edition_id',
         'confirmed',
         'has_paid',
         'beer_count',
@@ -45,11 +44,6 @@ class Signup extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function edition(): BelongsTo
-    {
-        return $this->belongsTo(Edition::class);
     }
 
     public function schedules(): BelongsToMany

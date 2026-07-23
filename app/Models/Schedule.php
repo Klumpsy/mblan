@@ -14,14 +14,8 @@ class Schedule extends Model
 
     protected $fillable = [
         'name',
-        'edition_id',
         'date',
     ];
-
-    public function edition(): BelongsTo
-    {
-        return $this->belongsTo(Edition::class);
-    }
 
     public function games(): BelongsToMany
     {
