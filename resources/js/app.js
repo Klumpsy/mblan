@@ -506,14 +506,16 @@ document.addEventListener('alpine:init', () => {
                 this.wizardPrank();
             }
 
-            // reach the barn: you "enter" by touching the barn's door. Use a
-            // door-sized footprint around the barn rather than a point, so
-            // reaching the right tile counts, even after the wizard teleports
-            // the barn into a corner, yet it does not fire from around the corner.
+            // reach the barn: you "enter" through the door. The barn sprite is
+            // tall (48x80) and drawn shifted up, so its door sits at the sprite's
+            // horizontal centre (goal.x) a little below the anchor. Trigger only
+            // when the player is in that narrow door column, not at the barn's
+            // outer edge, so you stand in the doorway rather than beside it.
             const onApproach = this.barnMoved || this.isSafeCell(this.cellC(this.px), this.cellR(this.py));
+            const doorY = this.goal.y + 5;
             if (onApproach &&
-                Math.abs(this.px - this.goal.x) < 5.5 &&
-                Math.abs(this.py - this.goal.y) < 6.5) {
+                Math.abs(this.px - this.goal.x) < 3.2 &&
+                Math.abs(this.py - doorY) < 8) {
                 this.done = true;
                 this.moving = false;
                 this.timeMs = this.startedAt ? Date.now() - this.startedAt : 0;
