@@ -10,28 +10,31 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'bart_klumperman@live.nl'],
-            [
-                'name' => 'Bart Klumperman',
-                'password' => Hash::make('admin'),
-                'role' => 'admin',
-                'discord_id' => 'admin-discord',
-                'email_verified_at' => now(),
-            ]
-        );
+        // Static-password admin accounts are for local/testing only, never production.
+        if (app()->environment('local', 'testing')) {
+            User::updateOrCreate(
+                ['email' => 'bart_klumperman@live.nl'],
+                [
+                    'name' => 'Bart Klumperman',
+                    'password' => Hash::make('admin'),
+                    'role' => 'admin',
+                    'discord_id' => 'admin-discord',
+                    'email_verified_at' => now(),
+                ]
+            );
 
-        User::updateOrCreate(
-            ['email' => 'bart@test.nl'],
-            [
-                'name' => 'Bart Test',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'email_verified_at' => now(),
-                'barn_completed' => true,
-                'barn_catches' => 3,
-            ]
-        );
+            User::updateOrCreate(
+                ['email' => 'bart@test.nl'],
+                [
+                    'name' => 'Bart Test',
+                    'password' => Hash::make('password'),
+                    'role' => 'admin',
+                    'email_verified_at' => now(),
+                    'barn_completed' => true,
+                    'barn_catches' => 3,
+                ]
+            );
+        }
 
         // A believable crowd. Give roughly half a Discord id so leaderboards populate.
         User::factory()->count(24)->create(['role' => 'user'])

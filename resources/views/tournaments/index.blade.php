@@ -1,14 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="relative flex items-end justify-between">
-            <h2 class="font-display text-xl font-bold uppercase tracking-wide text-white leading-tight">
-                {{ __('Toernooien') }}
-            </h2>
-            {{-- playful: Arti trots along the header --}}
-            <img src="{{ asset('images/farm/arti.png') }}" alt="" aria-hidden="true"
-                class="pixel pointer-events-none absolute bottom-0 right-2 w-10"
-                style="animation: sprite-bob .35s steps(2,end) infinite;" />
-        </div>
+        <h2 class="font-display text-xl font-bold uppercase tracking-wide text-white leading-tight">
+            {{ __('Toernooien') }}
+        </h2>
     </x-slot>
 
     <div class="relative">
