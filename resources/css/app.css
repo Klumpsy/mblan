@@ -411,8 +411,10 @@
     background: #24332d;
     transform-origin: top center;
 }
-.gamer__arm--l { left: 3px; animation: gamer-swing 0.6s ease-in-out infinite; }
-.gamer__arm--r { right: 3px; animation: gamer-swing 0.6s ease-in-out infinite reverse; }
+/* opposite phases via half-cycle negative delay (reverse would look identical
+   on a time-symmetric keyframe, so both limbs would swing together) */
+.gamer__arm--l { left: 3px; animation: gamer-swing 0.6s ease-in-out -0.3s infinite; }
+.gamer__arm--r { right: 3px; animation: gamer-swing 0.6s ease-in-out infinite; }
 .gamer__leg {
     position: absolute;
     top: 39px;
@@ -422,18 +424,7 @@
     transform-origin: top center;
 }
 .gamer__leg--l { left: 8px; animation: gamer-step 0.6s ease-in-out infinite; }
-.gamer__leg--r { right: 8px; animation: gamer-step 0.6s ease-in-out infinite reverse; }
-
-/* a gamer carrying a PC/monitor (little story: arriving with gear) */
-.gamer__gear {
-    position: absolute;
-    top: 24px; left: -13px;
-    width: 12px; height: 12px;
-    border-radius: 2px;
-    background: #101a15;
-    border: 1px solid rgb(var(--c-primary-400) / 0.8);
-    box-shadow: 0 0 8px rgb(var(--c-primary-500) / 0.5);
-}
+.gamer__leg--r { right: 8px; animation: gamer-step 0.6s ease-in-out -0.3s infinite; }
 
 @keyframes walk-across {
     0%   { transform: translateX(-14vw) scale(var(--scale, 1)); }

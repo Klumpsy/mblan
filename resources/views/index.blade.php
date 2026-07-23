@@ -55,19 +55,19 @@
 
         {{-- ===== Little stories: everyone walks into the barn ===== --}}
         <div class="pointer-events-none absolute inset-0 z-[5] overflow-hidden" aria-hidden="true">
-            {{-- arriving from the left with their rig --}}
+            {{-- arriving from the left --}}
             <div class="walker walker--arrive" style="--bottom: 20%; --dur: 15s; --delay: 0s; --scale: 1.1;">
-                <x-forge.gamer gear />
+                <x-forge.gamer />
             </div>
             <div class="walker walker--arrive" style="--bottom: 20%; --dur: 19s; --delay: 6s; --scale: 0.85;">
                 <x-forge.gamer />
             </div>
             <div class="walker walker--arrive" style="--bottom: 20%; --dur: 23s; --delay: 11s; --scale: 0.7;">
-                <x-forge.gamer gear />
+                <x-forge.gamer />
             </div>
             {{-- arriving from the right --}}
             <div class="walker walker--arrive-right" style="--bottom: 20%; --dur: 17s; --delay: 3s; --scale: 1;">
-                <x-forge.gamer gear />
+                <x-forge.gamer />
             </div>
             <div class="walker walker--arrive-right" style="--bottom: 20%; --dur: 21s; --delay: 9s; --scale: 0.8;">
                 <x-forge.gamer />
