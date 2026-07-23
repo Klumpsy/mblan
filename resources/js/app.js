@@ -46,6 +46,8 @@ document.addEventListener('alpine:init', () => {
     // barnGame: walk a character across the farm map to the barn; reaching it
     // opens the login modal. Keyboard (WASD/arrows) + click/tap-to-walk.
     Alpine.data('barnGame', (opts = {}) => ({
+        startX: opts.startX ?? 10,
+        startY: opts.startY ?? 84,
         px: opts.startX ?? 10,
         py: opts.startY ?? 84,
         tx: null,
@@ -54,9 +56,14 @@ document.addEventListener('alpine:init', () => {
         moving: false,
         done: false,
         open: false,
+        caught: false,
         keys: {},
         // barn goal centre + trigger radius (all in map %)
-        goal: { x: opts.barnX ?? 80, y: opts.barnY ?? 30, r: opts.radius ?? 10 },
+        goal: { x: opts.barnX ?? 80, y: opts.barnY ?? 27, r: opts.radius ?? 11 },
+        // big rock obstacle you have to walk around
+        rock: { x: opts.rockX ?? 49, y: opts.rockY ?? 54, r: opts.rockR ?? 8.5 },
+        // Arti the dog: patrols horizontally guarding the approach
+        arti: { x: 45, y: 42, dir: 1, min: 40, max: 88, speed: 0.34, r: 6 },
 
         init() {
             const down = (e) => {
@@ -67,7 +74,7 @@ document.addEventListener('alpine:init', () => {
             const up = (e) => { this.keys[e.key.toLowerCase()] = false; };
             window.addEventListener('keydown', down);
             window.addEventListener('keyup', up);
-            const loop = () => { if (!this.done) this.step(); requestAnimationFrame(loop); };
+            const loop = () => { this.step(); requestAnimationFrame(loop); };
             requestAnimationFrame(loop);
         },
 
@@ -78,39 +85,77 @@ document.addEventListener('alpine:init', () => {
             this.ty = ((e.clientY - r.top) / r.height) * 100;
         },
 
+        // player would collide with the rock at (nx,ny)?
+        blocked(nx, ny) {
+            return Math.hypot(nx - this.rock.x, ny - this.rock.y) < this.rock.r;
+        },
+
+        resetPlayer() {
+            this.caught = true;
+            this.px = this.startX; this.py = this.startY;
+            this.tx = this.ty = null; this.moving = false;
+            setTimeout(() => { this.caught = false; }, 600);
+        },
+
+        closeModal() {
+            this.open = false;
+            // step back out of the barn so you can roam free again
+            this.done = false;
+            this.py = Math.min(93, this.goal.y + this.goal.r + 7);
+            this.tx = this.ty = null;
+        },
+
         step() {
-            const speed = 0.5;
-            let dx = 0, dy = 0;
-            const k = this.keys;
-            if (k['arrowleft'] || k['a']) dx -= 1;
-            if (k['arrowright'] || k['d']) dx += 1;
-            if (k['arrowup'] || k['w']) dy -= 1;
-            if (k['arrowdown'] || k['s']) dy += 1;
+            // Arti patrols regardless
+            this.arti.x += this.arti.dir * this.arti.speed;
+            if (this.arti.x > this.arti.max) { this.arti.x = this.arti.max; this.arti.dir = -1; }
+            if (this.arti.x < this.arti.min) { this.arti.x = this.arti.min; this.arti.dir = 1; }
 
-            if (dx || dy) { this.tx = this.ty = null; }
-            else if (this.tx !== null) {
-                const ax = this.tx - this.px, ay = this.ty - this.py;
-                const d = Math.hypot(ax, ay);
-                if (d > 0.8) { dx = ax / d; dy = ay / d; }
-                else { this.tx = this.ty = null; }
-            }
+            if (!this.done) {
+                const speed = 0.5;
+                let dx = 0, dy = 0;
+                const k = this.keys;
+                if (k['arrowleft'] || k['a']) dx -= 1;
+                if (k['arrowright'] || k['d']) dx += 1;
+                if (k['arrowup'] || k['w']) dy -= 1;
+                if (k['arrowdown'] || k['s']) dy += 1;
 
-            if (dx || dy) {
-                const len = Math.hypot(dx, dy) || 1;
-                this.px = Math.min(96, Math.max(3, this.px + (dx / len) * speed));
-                this.py = Math.min(93, Math.max(8, this.py + (dy / len) * speed));
-                this.moving = true;
-                if (dx < 0) this.facing = -1; else if (dx > 0) this.facing = 1;
-            } else {
-                this.moving = false;
-            }
+                if (dx || dy) { this.tx = this.ty = null; }
+                else if (this.tx !== null) {
+                    const ax = this.tx - this.px, ay = this.ty - this.py;
+                    const d = Math.hypot(ax, ay);
+                    if (d > 0.8) { dx = ax / d; dy = ay / d; }
+                    else { this.tx = this.ty = null; }
+                }
 
-            if (Math.hypot(this.px - this.goal.x, this.py - this.goal.y) < this.goal.r) {
-                this.done = true;
-                this.moving = false;
-                this.px = this.goal.x;
-                this.py = this.goal.y + this.goal.r * 0.6;
-                setTimeout(() => { this.open = true; }, 220);
+                if (dx || dy) {
+                    const len = Math.hypot(dx, dy) || 1;
+                    const vx = (dx / len) * speed, vy = (dy / len) * speed;
+                    let nx = Math.min(96, Math.max(3, this.px + vx));
+                    let ny = Math.min(93, Math.max(8, this.py + vy));
+                    // rock collision with slide (try full, then x-only, then y-only)
+                    if (!this.blocked(nx, ny)) { this.px = nx; this.py = ny; }
+                    else if (!this.blocked(nx, this.py)) { this.px = nx; }
+                    else if (!this.blocked(this.px, ny)) { this.py = ny; }
+                    this.moving = true;
+                    if (dx < 0) this.facing = -1; else if (dx > 0) this.facing = 1;
+                } else {
+                    this.moving = false;
+                }
+
+                // caught by Arti -> back to start
+                if (Math.hypot(this.px - this.arti.x, this.py - this.arti.y) < this.arti.r) {
+                    this.resetPlayer();
+                }
+
+                // reached the barn
+                if (Math.hypot(this.px - this.goal.x, this.py - this.goal.y) < this.goal.r) {
+                    this.done = true;
+                    this.moving = false;
+                    this.px = this.goal.x;
+                    this.py = this.goal.y + this.goal.r * 0.55;
+                    setTimeout(() => { this.open = true; }, 200);
+                }
             }
         },
     }));

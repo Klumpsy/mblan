@@ -16,6 +16,7 @@ export default {
             fontFamily: {
                 sans: ["Montserrat", ...defaultTheme.fontFamily.sans],
                 display: ["'Chakra Petch'", ...defaultTheme.fontFamily.sans],
+                pixel: ["'Press Start 2P'", "'Chakra Petch'", "monospace"],
             },
             colors: {
                 // Driven by CSS variables emitted per active edition (see <x-theme-vars>).
