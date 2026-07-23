@@ -19,22 +19,15 @@ function admin(): User
     return User::factory()->create(['role' => 'admin']);
 }
 
+// The panel is intentionally minimal: games, game schedules, tournaments, users.
 $resources = [
-    'achievements',
-    'beverages',
-    'blogs',
-    'editions',
     'games',
     'schedules',
-    'signups',
-    'tags',
     'tournaments',
     'users',
 ];
 
-// Signups are only created through the public sign-up flow, so the admin
-// resource intentionally exposes no create page (index + edit only).
-$creatableResources = array_values(array_filter($resources, fn ($r) => $r !== 'signups'));
+$creatableResources = $resources;
 
 test('admin dashboard renders with its widgets', function () {
     $this->actingAs(admin())
