@@ -4,9 +4,9 @@
     'type' => 'button',
 ])
 @php
-    $base = 'relative overflow-hidden inline-flex items-center justify-center gap-2 font-display font-semibold uppercase tracking-wider text-sm px-7 py-3.5 clip-corner transition-all duration-300 shine';
+    $base = 'relative overflow-hidden inline-flex items-center justify-center gap-2 font-pixel uppercase tracking-wider text-[10px] leading-none px-6 py-3.5 transition-all duration-200 shine';
     $variants = [
-        'primary' => 'bg-primary-500 text-forge-black hover:bg-primary-400 hover:shadow-glow hover:-translate-y-0.5',
+        'primary' => 'text-forge-black bg-primary-500 border-2 border-[#1f3a2c] hover:bg-primary-400 hover:-translate-y-0.5 [box-shadow:inset_0_2px_0_rgb(255_255_255/0.4),0_3px_0_#1f3a2c]',
         'ghost' => 'metal-edge text-primary-300 hover:text-white hover:shadow-glow-sm hover:-translate-y-0.5',
         'anvil' => 'bg-forge-graphite text-forge-steel border border-primary-500/30 hover:text-white hover:border-primary-400 hover:shadow-glow-sm',
     ];

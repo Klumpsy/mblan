@@ -10,7 +10,7 @@
     <link rel="preload" href="{{ asset('images/logo.svg') }}" as="image">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=chakra-petch:400,500,600,700|montserrat:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=chakra-petch:400,500,600,700|montserrat:400,500,600,700|press-start-2p:400&display=swap" rel="stylesheet" />
 
     <x-theme-vars />
 
@@ -23,7 +23,17 @@
 <body class="font-sans antialiased">
     <x-banner />
 
-    <div class="min-h-screen bg-forge-black text-forge-steel">
+    {{-- farm + green ambiance so the app matches the landing --}}
+    <div class="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
+        <div class="absolute inset-0 bg-gradient-to-b from-forge-forest/35 via-forge-black to-forge-black"></div>
+        <div class="absolute inset-0 bg-grid opacity-[0.06]"></div>
+        <div class="absolute left-1/2 top-0 h-[40vmax] w-[40vmax] -translate-x-1/2 -translate-y-1/3 rounded-full bg-primary-500/10 blur-[130px]"></div>
+        <img src="{{ asset('images/farm/backdrop.png') }}" alt=""
+            class="pixel absolute inset-x-0 bottom-0 h-48 w-full object-cover opacity-[0.18]"
+            style="-webkit-mask-image: linear-gradient(to top, #000, transparent); mask-image: linear-gradient(to top, #000, transparent);" />
+    </div>
+
+    <div class="min-h-screen bg-forge-black/40 text-forge-steel">
         <livewire:navigation-menu />
 
         @if (isset($header))
@@ -40,6 +50,20 @@
     </div>
 
     @stack('modals')
+
+    {{-- sync the barn-maze attempt stats (from the guest cookie) onto the account --}}
+    <script>
+        (function () {
+            function c(n) { var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)'); return m ? decodeURIComponent(m[1]) : null; }
+            var caught = c('mblan_caught');
+            if (caught === null) return;
+            fetch('{{ route('game.sync') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: JSON.stringify({ caught: parseInt(caught, 10) || 0, completed: c('mblan_done') === '1' }),
+            }).catch(function () {});
+        })();
+    </script>
 
     @livewireScripts
 </body>
