@@ -16,6 +16,9 @@
                     <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')" class="whitespace-nowrap">
                         {{ __('Toernooien') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')" class="whitespace-nowrap">
+                        {{ __('Nieuws') }}
+                    </x-nav-link>
                     <x-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')" class="whitespace-nowrap">
                         {{ __('Live') }}
                     </x-nav-link>
@@ -100,6 +103,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
                 {{ __('Toernooien') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')">
+                {{ __('Nieuws') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')">
                 {{ __('Live') }}

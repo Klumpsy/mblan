@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Game;
+use App\Models\News;
 use App\Models\Tournament;
 use App\Models\User;
 use Carbon\Carbon;
@@ -163,11 +164,32 @@ class DiscordWebhookService
     }
 
     /**
+     * A news item was published.
+     */
+    public function announceNews(News $news): bool
+    {
+        $body = $news->preview_text
+            ?: \Illuminate\Support\Str::limit(trim(strip_tags($news->content)), 300);
+
+        $fields = $news->author
+            ? [['name' => 'Door', 'value' => $news->author->name, 'inline' => true]]
+            : [];
+
+        return $this->sendEmbed(
+            $news->title,
+            $body !== '' ? $body : 'Nieuw bericht op de site.',
+            $fields,
+            $news->image ? asset('storage/'.$news->image) : null,
+            route('news.show', $news),
+        );
+    }
+
+    /**
      * Build a single-embed payload and post it.
      *
      * @param  array<int, array{name: string, value: string, inline: bool}>  $fields
      */
-    private function sendEmbed(string $title, string $description, array $fields = []): bool
+    private function sendEmbed(string $title, string $description, array $fields = [], ?string $image = null, ?string $url = null): bool
     {
         $embed = [
             'title' => $title,
@@ -179,6 +201,12 @@ class DiscordWebhookService
 
         if ($fields !== []) {
             $embed['fields'] = $fields;
+        }
+        if ($url) {
+            $embed['url'] = $url;
+        }
+        if ($image) {
+            $embed['image'] = ['url' => $image];
         }
 
         return $this->sendWebhook(['embeds' => [$embed]]);

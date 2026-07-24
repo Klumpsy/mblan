@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Blog;
 use App\Models\Game;
+use App\Models\News;
 use App\Models\Schedule;
 use App\Models\Tournament;
 use App\Models\User;
@@ -33,7 +33,7 @@ beforeEach(function () {
     $tournament->usersWithScores()->attach($this->user->id, ['score' => 42]);
     $tournament->updateRankings();
 
-    Blog::factory()->create(['published' => true, 'published_at' => now()]);
+    $this->news = News::factory()->create(['published' => true, 'published_at' => now()]);
 });
 
 test('landing page renders with ladder', function () {
@@ -54,6 +54,14 @@ test('tournaments page renders the ladder', function () {
 
 test('profile page renders', function () {
     $this->actingAs($this->user)->get(route('profile.show'))->assertOk();
+});
+
+test('news index renders', function () {
+    $this->actingAs($this->user)->get(route('news.index'))->assertOk();
+});
+
+test('news detail renders', function () {
+    $this->actingAs($this->user)->get(route('news.show', $this->news))->assertOk();
 });
 
 test('guests are redirected to login from protected pages', function () {

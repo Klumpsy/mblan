@@ -107,7 +107,7 @@
 
             <!-- Stats -->
             <div class="grid grid-cols-2 gap-4 mb-6">
-                @foreach ([['label' => 'Achievements', 'count' => $user->achievements_count ?? 0], ['label' => 'Tournaments', 'count' => $user->tournaments_count ?? 0], ['label' => 'Comments', 'count' => $user->blog_comments_count ?? 0], ['label' => 'Liked Games', 'count' => $user->liked_games_count ?? 0]] as $stat)
+                @foreach ([['label' => 'Achievements', 'count' => $user->achievements_count ?? 0], ['label' => 'Tournaments', 'count' => $user->tournaments_count ?? 0], ['label' => 'Liked Games', 'count' => $user->liked_games_count ?? 0]] as $stat)
                     <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
                         <div class="text-2xl font-bold text-primary-400">{{ $stat['count'] }}</div>
                         <div class="text-sm text-gray-600 dark:text-gray-300">{{ $stat['label'] }}</div>

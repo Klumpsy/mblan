@@ -57,11 +57,10 @@ class DatabaseSeeder extends Seeder
         $this->call([
             GameSeeder::class,
             ScheduleSeeder::class,
-            BlogSeeder::class,
+            NewsSeeder::class,
             TournamentSeeder::class,
             SignupSeeder::class,
             AchievementSeeder::class,
-            BlogCommentSeeder::class,
         ]);
     }
 }

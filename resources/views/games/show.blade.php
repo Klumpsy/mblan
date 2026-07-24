@@ -45,7 +45,9 @@
                     <h1 class="font-display text-3xl font-bold uppercase tracking-wide text-white md:text-5xl">{{ $game->name }}</h1>
 
                     @if ($game->short_description)
-                        <p class="mt-4 text-forge-steel/80">{{ $game->short_description }}</p>
+                        <div class="prose prose-invert mt-4 max-w-none prose-p:text-forge-steel/80 prose-a:text-primary-400 prose-strong:text-white prose-li:text-forge-steel/80">
+                            {!! $game->short_description !!}
+                        </div>
                     @endif
 
                     <div class="mt-6 flex flex-wrap items-center gap-3">
@@ -76,7 +78,9 @@
                 <div class="mt-12 space-y-6">
                     @foreach ($textBlocks as $block)
                         <x-forge.card>
-                            <p class="whitespace-pre-line leading-relaxed text-forge-steel/80">{{ $block }}</p>
+                            <div class="prose prose-invert max-w-none prose-headings:font-display prose-headings:uppercase prose-headings:tracking-wide prose-a:text-primary-400 prose-strong:text-white prose-p:text-forge-steel/80 prose-li:text-forge-steel/80">
+                                {!! $block !!}
+                            </div>
                         </x-forge.card>
                     @endforeach
                 </div>
@@ -89,7 +93,9 @@
                         <span class="font-pixel text-[9px] uppercase tracking-[0.2em] text-primary-400 md:text-[10px]">Installatie</span>
                     </div>
                     <x-forge.card>
-                        <p class="whitespace-pre-line leading-relaxed text-forge-steel/80">{{ $game->installation_instructions }}</p>
+                        <div class="prose prose-invert max-w-none prose-headings:font-display prose-headings:uppercase prose-headings:tracking-wide prose-a:text-primary-400 prose-strong:text-white prose-p:text-forge-steel/80 prose-li:text-forge-steel/80">
+                            {!! $game->installation_instructions !!}
+                        </div>
                     </x-forge.card>
                 </div>
             @endif

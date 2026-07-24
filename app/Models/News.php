@@ -2,16 +2,16 @@
 
 namespace App\Models;
 
-use App\Traits\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
-class Blog extends Model
+class News extends Model
 {
-    /** @use HasFactory<\Database\Factories\BlogFactory> */
-    use HasFactory, Taggable;
+    use HasFactory;
+
+    protected $table = 'news';
 
     protected $fillable = [
         'title',
@@ -22,19 +22,34 @@ class Blog extends Model
         'slug',
         'published',
         'published_at',
-        'is_featured',
     ];
 
     protected $casts = [
         'published' => 'boolean',
         'published_at' => 'datetime',
-        'is_featured' => 'boolean',
     ];
 
-
-    public function comments(): HasMany
+    protected static function booted(): void
     {
-        return $this->hasMany(BlogComment::class)->orderBy('created_at', 'desc');
+        // Auto-fill a unique slug from the title when none is set.
+        static::saving(function (News $news) {
+            if (blank($news->slug)) {
+                $news->slug = static::uniqueSlug($news->title);
+            }
+        });
+    }
+
+    public static function uniqueSlug(string $title): string
+    {
+        $base = Str::slug($title) ?: 'nieuws';
+        $slug = $base;
+        $i = 1;
+
+        while (static::where('slug', $slug)->exists()) {
+            $slug = $base.'-'.(++$i);
+        }
+
+        return $slug;
     }
 
     public function author(): BelongsTo
@@ -47,7 +62,7 @@ class Blog extends Model
         return $query->where('published', true);
     }
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'slug';
     }

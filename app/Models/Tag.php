@@ -47,11 +47,6 @@ class Tag extends Model
         return $this->morphedByMany(Game::class, 'taggable');
     }
 
-    public function blogs(): MorphToMany
-    {
-        return $this->morphedByMany(Blog::class, 'taggable');
-    }
-
     public function media(): MorphToMany
     {
         return $this->morphedByMany(Media::class, 'taggable');
