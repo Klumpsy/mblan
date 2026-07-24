@@ -31,4 +31,12 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'discord' => [
+        'client_id' => env('DISCORD_CLIENT_ID'),
+        'client_secret' => env('DISCORD_CLIENT_SECRET'),
+        // Leave unset to derive from APP_URL via the named route; override only
+        // if the Discord app registers a different callback URL.
+        'redirect' => env('DISCORD_REDIRECT_URI'),
+    ],
+
 ];

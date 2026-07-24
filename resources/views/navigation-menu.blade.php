@@ -16,6 +16,9 @@
                     <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')" class="whitespace-nowrap">
                         {{ __('Toernooien') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')" class="whitespace-nowrap">
+                        {{ __('Live') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -97,6 +100,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
                 {{ __('Toernooien') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')">
+                {{ __('Live') }}
             </x-responsive-nav-link>
         </div>
 

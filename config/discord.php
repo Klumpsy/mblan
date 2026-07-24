@@ -11,7 +11,7 @@ return [
     | Discord server settings under Integrations > Webhooks.
     |
     */
-    'webhook_url' => env('DISCORD_WEBHOOK_URL_LOBBY'),
+    'webhook_url' => env('DISCORD_WEBHOOK_URL', env('DISCORD_WEBHOOK_URL_LOBBY')),
 
     /*
     |--------------------------------------------------------------------------
@@ -22,7 +22,8 @@ return [
     | Queueing is recommended for production to avoid blocking requests.
     |
     */
-    'queue_announcements' => env('DISCORD_QUEUE_ANNOUNCEMENTS', true),
+    // Default to sending synchronously so no queue worker is required.
+    'queue_announcements' => env('DISCORD_QUEUE_ANNOUNCEMENTS', false),
 
     /*
     |--------------------------------------------------------------------------

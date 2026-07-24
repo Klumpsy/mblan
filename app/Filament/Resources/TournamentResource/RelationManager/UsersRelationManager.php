@@ -28,6 +28,12 @@ class UsersRelationManager extends RelationManager
     {
         $tournament = $this->getOwnerRecord();
 
+        // Remember who was on top so we can announce a change of leader below.
+        $previousLeaderId = $tournament->usersWithScores()
+            ->wherePivot('ranking', 1)
+            ->orderByPivot('score', $tournament->higher_is_better ? 'desc' : 'asc')
+            ->first()?->id;
+
         if ($tournament->is_team_based) {
             $teamScores = DB::table('tournament_user')
                 ->select('team_number', 'team_name', DB::raw('MAX(team_score) as total_score'))
@@ -57,6 +63,28 @@ class UsersRelationManager extends RelationManager
                 ]);
             }
         }
+
+        $this->announceLeaderChange($tournament, $previousLeaderId);
+    }
+
+    /**
+     * Post to Discord when the number one on the ladder actually changes,
+     * so the channel sees the exciting moments without a message per edit.
+     */
+    protected function announceLeaderChange(\App\Models\Tournament $tournament, ?int $previousLeaderId): void
+    {
+        $leader = $tournament->usersWithScores()
+            ->wherePivot('ranking', 1)
+            ->orderByPivot('score', $tournament->higher_is_better ? 'desc' : 'asc')
+            ->withPivot('score')
+            ->first();
+
+        if (! $leader || $leader->id === $previousLeaderId) {
+            return;
+        }
+
+        app(\App\Services\DiscordWebhookService::class)
+            ->announceLadderLeaderChange($tournament, $leader, (int) $leader->pivot->score);
     }
 
     /**

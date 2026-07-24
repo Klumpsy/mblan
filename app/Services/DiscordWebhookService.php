@@ -3,280 +3,174 @@
 namespace App\Services;
 
 use App\Models\Tournament;
+use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Posts LAN-party updates to a Discord channel via an incoming webhook.
+ *
+ * House style: Dutch, sober, no decorative emoji. The only colour is the embed
+ * side-bar, which uses the MBLAN green. When no webhook URL is configured the
+ * service is a silent no-op, so local/test environments never make HTTP calls.
+ */
 class DiscordWebhookService
 {
-    private string $webhookUrl;
+    /** MBLAN green, used for the embed side-bar. */
+    private const COLOR = 0x65E59A;
+
+    private ?string $webhookUrl;
 
     public function __construct()
     {
         $this->webhookUrl = config('discord.webhook_url');
     }
 
-    public function announceTournament($tournament): bool
+    /**
+     * A tournament has opened for signups / gone active.
+     */
+    public function announceTournament(Tournament $tournament): bool
     {
-        $embed = [
-            'title' => '🏆 Tournament Now Active!',
-            'description' => "**{$tournament->name}** has started!",
-            'color' => 0x00ff00, // Green color
-            'fields' => [
-                [
-                    'name' => '🎮 Game',
-                    'value' => $tournament->game->name,
-                    'inline' => true
-                ],
-                [
-                    'name' => '⏰ Start Time',
-                    'value' => $tournament->time_start,
-                    'inline' => true
-                ],
-                [
-                    'name' => '⏱️ End Time',
-                    'value' => $tournament->time_end,
-                    'inline' => true
-                ],
-                [
-                    'name' => '📅 Schedule',
-                    'value' => $tournament->schedule->name,
-                    'inline' => false
-                ]
-            ],
-            'footer' => [
-                'text' => 'Good luck to all participants!'
-            ],
-            'timestamp' => now()->toISOString()
-        ];
+        $fields = array_values(array_filter([
+            $tournament->game?->name ? ['name' => 'Game', 'value' => $tournament->game->name, 'inline' => true] : null,
+            $tournament->schedule?->name ? ['name' => 'Onderdeel', 'value' => $tournament->schedule->name, 'inline' => true] : null,
+            $tournament->time_start ? ['name' => 'Aanvang', 'value' => (string) $tournament->time_start, 'inline' => true] : null,
+            $tournament->description ? ['name' => 'Toelichting', 'value' => $tournament->description, 'inline' => false] : null,
+        ]));
 
-        // Add description if available
-        if ($tournament->description) {
-            $embed['fields'][] = [
-                'name' => '📝 Description',
-                'value' => $tournament->description,
-                'inline' => false
-            ];
-        }
-
-        $payload = [
-            'content' => '@everyone A new tournament is starting! 🎉',
-            'embeds' => [$embed]
-        ];
-
-        return $this->sendWebhook($payload);
+        return $this->sendEmbed(
+            'Nieuw toernooi geopend',
+            "{$tournament->name} staat klaar. Schrijf je in en pak de eerste plek.",
+            $fields,
+        );
     }
 
+    /**
+     * A tournament has been closed / concluded.
+     */
     public function announceTournamentEnd(Tournament $tournament): bool
     {
-        $embed = [
-            'title' => '🏁 Tournament Ended',
-            'description' => "**{$tournament->name}** has concluded!",
-            'color' => 0xff9900, // Orange color
-            'fields' => [
-                [
-                    'name' => '🎮 Game',
-                    'value' => $tournament->game->name,
-                    'inline' => true
-                ],
-                [
-                    'name' => '👥 Participants',
-                    'value' => $tournament->usersWithScores()->count(),
-                    'inline' => true
-                ],
-                [
-                    'name' => '⏱️ Duration',
-                    'value' => $tournament->time_start . ' - ' . $tournament->time_end,
-                    'inline' => true
-                ]
-            ],
-            'footer' => [
-                'text' => 'Thanks for participating!'
-            ],
-            'timestamp' => now()->toISOString()
-        ];
-
-        $payload = [
-            'content' => '🎉 Tournament has ended!',
-            'embeds' => [$embed]
-        ];
-
-        return $this->sendWebhook($payload);
+        return $this->sendEmbed(
+            'Toernooi afgelopen',
+            "{$tournament->name} is afgerond. De eindstand volgt.",
+            array_values(array_filter([
+                $tournament->game?->name ? ['name' => 'Game', 'value' => $tournament->game->name, 'inline' => true] : null,
+                ['name' => 'Deelnemers', 'value' => (string) $tournament->usersWithScores()->count(), 'inline' => true],
+            ])),
+        );
     }
 
-
-    public function sendTournamentResults($tournament): bool
+    /**
+     * The final ladder for a concluded tournament.
+     */
+    public function sendTournamentResults(Tournament $tournament): bool
     {
-        $users = $tournament->usersWithScores()->orderBy('ranking')->get();
+        $users = $tournament->usersWithScores()->withPivot('score', 'ranking')->orderBy('pivot_ranking')->get();
+        $label = $tournament->scoreLabel();
 
-        $leaderboard = '';
+        $ladder = '';
         foreach ($users->take(10) as $index => $user) {
-            $medal = match ($index) {
-                0 => '🥇',
-                1 => '🥈',
-                2 => '🥉',
-                default => ($index + 1) . '.'
-            };
-
-            $leaderboard .= "{$medal} {$user->name} - {$user->pivot->score} points\n";
+            $pos = ($index + 1).'.';
+            $ladder .= "{$pos} {$user->name} - {$user->pivot->score} {$label}\n";
         }
 
-        $embed = [
-            'title' => '🏆 Tournament Results',
-            'description' => "Final results for **{$tournament->name}**",
-            'color' => 0xffd700,
-            'fields' => [
-                [
-                    'name' => '🎮 Game',
-                    'value' => $tournament->game->name,
-                    'inline' => true
-                ],
-                [
-                    'name' => '👥 Total Participants',
-                    'value' => $users->count(),
-                    'inline' => true
-                ],
-                [
-                    'name' => '📊 Final Leaderboard',
-                    'value' => $leaderboard ?: 'No results available',
-                    'inline' => false
-                ]
-            ],
-            'footer' => [
-                'text' => 'Congratulations to all participants!'
-            ],
-            'timestamp' => now()->toISOString()
-        ];
-
-        $payload = [
-            'content' => '🎉 Tournament results are in!',
-            'embeds' => [$embed]
-        ];
-
-        return $this->sendWebhook($payload);
+        return $this->sendEmbed(
+            'Eindstand '.$tournament->name,
+            $ladder !== '' ? $ladder : 'Geen deelnemers met een score.',
+        );
     }
 
-    public function sendCustomAnnouncement($title, $message, $color = 0x5865f2, $pingEveryone = false): bool
+    /**
+     * The top of a ladder changed during play: someone took first place.
+     */
+    public function announceLadderLeaderChange(Tournament $tournament, User $leader, int $score): bool
+    {
+        return $this->sendEmbed(
+            'Nieuwe koploper',
+            "{$leader->name} staat nu bovenaan bij {$tournament->name} met {$score} {$tournament->scoreLabel()}.",
+        );
+    }
+
+    /**
+     * Someone set a new best on the Arti Game leaderboard.
+     */
+    public function announceArtiRecord(User $user, int $catches, ?int $timeMs): bool
+    {
+        $time = $timeMs ? $this->formatTime($timeMs) : null;
+        $body = "{$user->name} bereikte de schuur met {$catches}x gepakt"
+            .($time ? " in {$time}" : '')
+            .'. Wie doet het beter?';
+
+        return $this->sendEmbed('Nieuw record in Het Arti Spel', $body);
+    }
+
+    /**
+     * A user unlocked an achievement.
+     */
+    public function sendAchievementNotification(User $user, $achievement): bool
+    {
+        return $this->sendEmbed(
+            'Prestatie behaald',
+            "{$user->name} verdiende: {$achievement->name}.",
+            $achievement->description ? [['name' => 'Toelichting', 'value' => $achievement->description, 'inline' => false]] : [],
+        );
+    }
+
+    /**
+     * Build a single-embed payload and post it.
+     *
+     * @param  array<int, array{name: string, value: string, inline: bool}>  $fields
+     */
+    private function sendEmbed(string $title, string $description, array $fields = []): bool
     {
         $embed = [
             'title' => $title,
-            'description' => $message,
-            'color' => $color,
-            'footer' => [
-                'text' => 'Tournament System Announcement'
-            ],
-            'timestamp' => now()->toISOString()
+            'description' => $description,
+            'color' => self::COLOR,
+            'footer' => ['text' => 'MBLAN26'],
+            'timestamp' => now()->toISOString(),
         ];
 
-        $payload = [
-            'embeds' => [$embed]
-        ];
-
-        if ($pingEveryone) {
-            $payload['content'] = '@everyone';
+        if ($fields !== []) {
+            $embed['fields'] = $fields;
         }
 
-        return $this->sendWebhook($payload);
+        return $this->sendWebhook(['embeds' => [$embed]]);
     }
 
-    public function announceSchedule($schedule): bool
+    private function formatTime(int $ms): string
     {
-        $tournaments = $schedule->tournaments()->with('game')->get();
+        $seconds = intdiv($ms, 1000);
 
-        $tournamentList = '';
-        foreach ($tournaments as $tournament) {
-            $status = $tournament->is_active ? '🟢 Active' : '⚪ Scheduled';
-            $tournamentList .= "**{$tournament->name}** ({$tournament->game->name}) - {$status}\n";
-            $tournamentList .= "⏰ {$tournament->time_start->format('H:i')} - {$tournament->time_end->format('H:i')}\n\n";
-        }
-
-        $embed = [
-            'title' => '📅 Schedule Active',
-            'description' => "**{$schedule->name}** is now live!",
-            'color' => 0x0099ff, // Blue color
-            'fields' => [
-                [
-                    'name' => '🎮 Tournaments Today',
-                    'value' => $tournamentList ?: 'No tournaments scheduled',
-                    'inline' => false
-                ],
-                [
-                    'name' => '🗓️ Date',
-                    'value' => now()->format('d/m/Y'),
-                    'inline' => true
-                ]
-            ],
-            'footer' => [
-                'text' => 'Check the schedule for more details!'
-            ],
-            'timestamp' => now()->toISOString()
-        ];
-
-        $payload = [
-            'content' => '@everyone Today\'s gaming schedule is live! 🎮',
-            'embeds' => [$embed]
-        ];
-
-        return $this->sendWebhook($payload);
+        return intdiv($seconds, 60).':'.str_pad((string) ($seconds % 60), 2, '0', STR_PAD_LEFT);
     }
 
-    private function sendWebhook($payload): bool
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private function sendWebhook(array $payload): bool
     {
+        // No webhook configured -> silently do nothing (local, testing, or not set up yet).
         if (empty($this->webhookUrl)) {
-            Log::error('Discord webhook URL not configured');
             return false;
         }
 
         try {
-            $response = Http::timeout(10)->post($this->webhookUrl, $payload);
+            $response = Http::timeout((int) config('discord.webhook_timeout', 10))
+                ->retry((int) config('discord.webhook_retry_times', 3), 200)
+                ->post($this->webhookUrl, $payload);
 
             if ($response->successful()) {
-                Log::info('Discord webhook sent successfully');
                 return true;
             }
 
-            Log::error('Discord webhook failed', [
-                'status' => $response->status(),
-                'response' => $response->body()
-            ]);
+            Log::warning('Discord webhook failed', ['status' => $response->status()]);
+
             return false;
-        } catch (\Exception $e) {
-            Log::error('Discord webhook error: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            Log::warning('Discord webhook error: '.$e->getMessage());
+
             return false;
         }
-    }
-
-    public function sendAchievementNotification($user, $achievement): bool
-    {
-        $embed = [
-            'title' => '🏆 Achievement Unlocked!',
-            'description' => "**{$user->name}** has earned a new achievement!",
-            'color' => 0xffd700,
-            'fields' => [
-                [
-                    'name' => '🎖️ Achievement',
-                    'value' => $achievement->name,
-                    'inline' => false
-                ]
-            ],
-            'footer' => [
-                'text' => 'Keep up the great work!'
-            ],
-            'timestamp' => now()->toISOString()
-        ];
-
-        if (!empty($achievement->description)) {
-            $embed['fields'][] = [
-                'name' => '📝 Description',
-                'value' => $achievement->description,
-                'inline' => false
-            ];
-        }
-
-        $payload = [
-            'content' => "🎉 Congratulations **{$user->name}**!",
-            'embeds' => [$embed]
-        ];
-
-        return $this->sendWebhook($payload);
     }
 }
