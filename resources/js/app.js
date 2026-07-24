@@ -93,7 +93,17 @@ document.addEventListener('alpine:init', () => {
         },
 
         init() {
-            this.caughtCount = parseInt(this.cookie('mblan_caught') || '0', 10) || 0;
+            // Every visit is a brand-new attempt: start from zero catches and a
+            // fresh timer, never inheriting a previous run. The mblan_* cookies
+            // are only a one-way handoff to the sync on the next logged-in page
+            // load, so we clear any stale result here. This is what makes "Speel
+            // opnieuw" (a plain link back to /) a true reset instead of piling
+            // catches onto the old total.
+            this.caughtCount = 0;
+            this.setCookie('mblan_caught', 0);
+            this.eraseCookie('mblan_done');
+            this.eraseCookie('mblan_time');
+            this.startedAt = null; this.timeMs = 0; this.clock = '0:00'; this._lastSec = -1;
             this.homeGoal = { x: this.goal.x, y: this.goal.y, r: this.goal.r };
             this.artiHome = { x: this.arti.x, y: this.arti.y };
             this.lastSafe = { x: this.px, y: this.py };
