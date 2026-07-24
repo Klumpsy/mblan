@@ -7,9 +7,10 @@ uses(RefreshDatabase::class);
 
 /**
  * The /game/sync endpoint persists the guest-cookie Arti Game stats onto the
- * signed-in account. Only a completed run counts, and it keeps the player's
- * personal best: fewest catches and fastest time, so replaying can only improve
- * their standing (and incomplete runs never pollute the leaderboard).
+ * signed-in account. Only a completed run counts, and each completed run is
+ * authoritative: the latest attempt overwrites the stored catches and time, so
+ * hitting "Opnieuw" and replaying truly resets the recorded count (incomplete
+ * runs never pollute the leaderboard).
  */
 
 test('guests cannot sync game stats', function () {
@@ -53,14 +54,14 @@ test('a better completed run lowers the recorded catch count', function () {
     expect($user->refresh()->barn_catches)->toBe(3);
 });
 
-test('a worse completed run does not raise the recorded catch count', function () {
+test('a later completed run overwrites the recorded catch count, even when worse', function () {
     $user = User::factory()->create(['barn_catches' => 2, 'barn_completed' => true]);
 
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 9, 'completed' => true])
         ->assertOk();
 
-    expect($user->refresh()->barn_catches)->toBe(2);
+    expect($user->refresh()->barn_catches)->toBe(9);
 });
 
 test('completion is sticky once achieved', function () {
@@ -73,16 +74,16 @@ test('completion is sticky once achieved', function () {
     expect((bool) $user->refresh()->barn_completed)->toBeTrue();
 });
 
-test('only the fastest completion time is kept', function () {
+test('the latest completion time is stored', function () {
     $user = User::factory()->create(['barn_time_ms' => 30000, 'barn_completed' => true, 'barn_catches' => 3]);
 
-    // A slower run must not overwrite the record.
+    // A slower run is the latest attempt, so it overwrites the record.
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 3, 'completed' => true, 'time' => 45000])
         ->assertOk();
-    expect($user->refresh()->barn_time_ms)->toBe(30000);
+    expect($user->refresh()->barn_time_ms)->toBe(45000);
 
-    // A faster run does.
+    // A faster run does the same.
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 3, 'completed' => true, 'time' => 21000])
         ->assertOk();

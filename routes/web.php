@@ -37,8 +37,9 @@ Route::middleware([
     Route::view('/live', 'live.index')->name('live');
 
     // Persist the barn-maze attempt stats onto the account (Arti Game leaderboard).
-    // Only a completed run counts, and we keep each player's personal best:
-    // the fewest catches and the fastest time. Replaying can only improve you.
+    // Only a completed run counts, and each completed run is authoritative: the
+    // latest attempt overwrites the stored catches and time, so hitting "Opnieuw"
+    // and replaying truly resets the recorded count.
     Route::post('/game/sync', function (\Illuminate\Http\Request $request) {
         if (!$request->boolean('completed')) {
             return response()->json(['ok' => true]);
@@ -47,23 +48,27 @@ Route::middleware([
         $user = $request->user();
         $caught = max(0, (int) $request->input('caught', 0));
         $time = (int) $request->input('time', 0);
+        $newTime = $time > 0 ? $time : null;
 
+        // A genuine personal improvement (used only to gate the Discord record
+        // announcement): a first completion, fewer catches, or the same catches
+        // in a faster time. Captured before the stats are overwritten below.
         $wasCompleted = (bool) $user->barn_completed;
-        $bestCatches = $wasCompleted ? min((int) $user->barn_catches, $caught) : $caught;
-        $bestTime = $user->barn_time_ms;
-        if ($time > 0) {
-            $bestTime = $bestTime ? min($bestTime, $time) : $time;
-        }
-
-        // Did this run actually improve the player's stored record?
+        $prevCatches = (int) $user->barn_catches;
+        $prevTime = $user->barn_time_ms;
         $improved = ! $wasCompleted
-            || $bestCatches < (int) $user->barn_catches
-            || ($bestTime !== null && $bestTime !== $user->barn_time_ms);
+            || $caught < $prevCatches
+            || ($caught === $prevCatches
+                && $newTime !== null
+                && ($prevTime === null || $newTime < $prevTime));
 
+        // Each completed run is authoritative: the latest attempt overwrites the
+        // stored stats, so hitting "Opnieuw" and replaying truly resets the
+        // recorded catch count instead of keeping an older personal best.
         $user->forceFill([
-            'barn_catches' => $bestCatches,
+            'barn_catches' => $caught,
             'barn_completed' => true,
-            'barn_time_ms' => $bestTime,
+            'barn_time_ms' => $newTime,
         ])->save();
 
         // Announce to Discord only when a genuine improvement makes this player
@@ -78,7 +83,7 @@ Route::middleware([
 
             if ($leader && $leader->id === $user->id) {
                 app(\App\Services\DiscordWebhookService::class)
-                    ->announceArtiRecord($user, $bestCatches, $bestTime);
+                    ->announceArtiRecord($user, $caught, $newTime);
             }
         }
 
