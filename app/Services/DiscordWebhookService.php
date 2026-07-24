@@ -201,6 +201,12 @@ class DiscordWebhookService
             return false;
         }
 
+        // Always post under a fixed display name, so messages read as one sender
+        // regardless of how the underlying webhook happens to be named.
+        if ($name = config('discord.webhook_name')) {
+            $payload['username'] = $name;
+        }
+
         try {
             $response = Http::timeout((int) config('discord.webhook_timeout', 10))
                 ->retry((int) config('discord.webhook_retry_times', 3), 200)

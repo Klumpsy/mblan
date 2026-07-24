@@ -35,6 +35,8 @@ return [
     */
     'webhook_timeout' => env('DISCORD_WEBHOOK_TIMEOUT', 10), // seconds
     'webhook_retry_times' => env('DISCORD_WEBHOOK_RETRY_TIMES', 3),
+    // Display name shown on webhook messages, regardless of the webhook's own name.
+    'webhook_name' => env('DISCORD_WEBHOOK_NAME', 'Announcer bot'),
 
     /*
     |--------------------------------------------------------------------------
