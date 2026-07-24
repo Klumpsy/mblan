@@ -12,7 +12,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Discord: nudge just before each schedule item starts.
+        $schedule->command('discord:schedule-reminders')->everyMinute()->withoutOverlapping();
+
+        // Discord: post the day programme each morning of the event.
+        $schedule->command('discord:daily-digest')->dailyAt('08:00');
+
+        // Discord: keep the guild scheduled events in sync with the speelschema.
+        $schedule->command('discord:sync-events')->hourly()->withoutOverlapping();
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Game;
 use App\Models\Tournament;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -102,6 +104,50 @@ class DiscordWebhookService
             .'. Wie doet het beter?';
 
         return $this->sendEmbed('Nieuw record in Het Arti Spel', $body);
+    }
+
+    /**
+     * A scheduled item is about to start.
+     */
+    public function announceScheduleReminder(string $name, Carbon $start, ?string $scheduleName, bool $isTournament, ?string $url = null): bool
+    {
+        $minutes = max(0, now()->diffInMinutes($start, false));
+        $when = $minutes <= 1 ? 'begint zo' : "begint over {$minutes} minuten";
+        $lead = $isTournament ? 'Toernooi' : 'Onderdeel';
+
+        $fields = array_values(array_filter([
+            $scheduleName ? ['name' => 'Onderdeel', 'value' => $scheduleName, 'inline' => true] : null,
+            ['name' => 'Aanvang', 'value' => $start->format('H:i'), 'inline' => true],
+            $url ? ['name' => 'Meer', 'value' => $url, 'inline' => false] : null,
+        ]));
+
+        return $this->sendEmbed("{$lead}: {$name} {$when}", "Zet je klaar. {$name} {$when} om {$start->format('H:i')}.", $fields);
+    }
+
+    /**
+     * The programme for a single day.
+     *
+     * @param  array<int, string>  $lines
+     */
+    public function sendDailyDigest(Carbon $date, array $lines): bool
+    {
+        $body = $lines !== [] ? implode("\n", $lines) : 'Nog niets ingepland voor vandaag.';
+
+        return $this->sendEmbed(
+            'Programma '.$date->translatedFormat('l d F'),
+            $body,
+        );
+    }
+
+    /**
+     * A game reached a like milestone.
+     */
+    public function announceGameLikeMilestone(Game $game, int $count): bool
+    {
+        return $this->sendEmbed(
+            'Game in de smaak',
+            "{$game->name} heeft {$count} likes. Stem ook op je favorieten in het speelschema.",
+        );
     }
 
     /**

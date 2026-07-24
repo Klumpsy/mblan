@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
+use App\Services\DiscordApiService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -92,6 +93,9 @@ class DiscordController extends Controller
         }
 
         Auth::login($user, remember: true);
+
+        // Grant the MBLAN member role on the Discord server (no-op if not configured).
+        app(DiscordApiService::class)->addMemberRole($discordId);
 
         return redirect()->intended(RouteServiceProvider::HOME);
     }

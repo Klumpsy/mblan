@@ -35,13 +35,52 @@ return [
     */
     'webhook_timeout' => env('DISCORD_WEBHOOK_TIMEOUT', 10), // seconds
     'webhook_retry_times' => env('DISCORD_WEBHOOK_RETRY_TIMES', 3),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Bot / Application API
+    |--------------------------------------------------------------------------
+    |
+    | Used by the richer integrations (Guild Scheduled Events, role sync,
+    | slash commands and RSVP buttons). Every feature that needs one of these
+    | is a silent no-op while the value is unset, so the app runs fine without
+    | any of this configured.
+    |
+    */
+    'bot_token' => env('DISCORD_BOT_TOKEN'),
+    'application_id' => env('DISCORD_APPLICATION_ID'),
+    'guild_id' => env('DISCORD_GUILD_ID'),
+    // Ed25519 public key from the Discord app "General Information" page,
+    // used to verify incoming interaction requests (slash commands, buttons).
+    'public_key' => env('DISCORD_PUBLIC_KEY'),
+    // Role handed to members when they log in with Discord.
+    'member_role_id' => env('DISCORD_MEMBER_ROLE_ID'),
+    // Channel the bot posts to (e.g. the RSVP message).
+    'channel_id' => env('DISCORD_CHANNEL_ID'),
+    // Physical location shown on the Discord scheduled events.
+    'event_location' => env('DISCORD_EVENT_LOCATION', 'MBLAN26'),
+
+    // How many minutes before a schedule item starts we post a reminder.
+    'reminder_lead_minutes' => (int) env('DISCORD_REMINDER_LEAD_MINUTES', 15),
+    // Per-game like counts that trigger a milestone announcement.
+    'like_milestones' => [10, 25, 50, 100],
 ];
 
 // Add these lines to your .env file:
 /*
+# Webhook announcements (already in use)
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your-webhook-url
 DISCORD_QUEUE_ANNOUNCEMENTS=true
-DISCORD_ANNOUNCE_CREATION=false
 DISCORD_WEBHOOK_TIMEOUT=10
 DISCORD_WEBHOOK_RETRY_TIMES=3
+DISCORD_REMINDER_LEAD_MINUTES=15
+
+# Bot / application (scheduled events, role sync, slash commands, RSVP)
+DISCORD_BOT_TOKEN=
+DISCORD_APPLICATION_ID=
+DISCORD_GUILD_ID=
+DISCORD_PUBLIC_KEY=
+DISCORD_MEMBER_ROLE_ID=
+DISCORD_CHANNEL_ID=
+DISCORD_EVENT_LOCATION=MBLAN26
 */

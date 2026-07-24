@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\DiscordController;
+use App\Http\Controllers\DiscordInteractionController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TournamentController;
@@ -23,6 +24,12 @@ Route::get('/', function () {
 // Login met Discord (OAuth).
 Route::get('/auth/discord', [DiscordController::class, 'redirect'])->name('discord.redirect');
 Route::get('/auth/discord/callback', [DiscordController::class, 'callback'])->name('discord.callback');
+
+// Discord interaction callback (slash commands + RSVP buttons). Public, but
+// every request is authenticated by its Ed25519 signature via middleware.
+Route::post('/discord/interactions', [DiscordInteractionController::class, 'handle'])
+    ->middleware('discord.signature')
+    ->name('discord.interactions');
 
 Route::middleware([
     'auth:sanctum',
