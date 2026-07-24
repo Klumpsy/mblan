@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\DiscordController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\TournamentController;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,7 @@ Route::middleware([
     Route::redirect('/dashboard', '/schedule')->name('dashboard');
 
     Route::get('/schedule', [ScheduleController::class, 'index'])->name('schedule');
+    Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
     Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments');
     Route::view('/live', 'live.index')->name('live');
 

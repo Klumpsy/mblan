@@ -53,6 +53,7 @@
                                     @php
                                         $items = $schedule->games->map(fn ($game) => (object) [
                                             'type' => 'game',
+                                            'id' => $game->id,
                                             'name' => $game->name,
                                             'image' => $game->image,
                                             'is_tournament' => (bool) $game->pivot->is_tournament,
@@ -60,6 +61,7 @@
                                             'end' => $game->pivot->end_date,
                                         ])->concat($schedule->blocks->map(fn ($block) => (object) [
                                             'type' => 'block',
+                                            'id' => null,
                                             'name' => $block->title,
                                             'image' => null,
                                             'is_tournament' => false,
@@ -72,34 +74,49 @@
 
                                     <ul class="space-y-3">
                                         @forelse ($items as $item)
-                                            <li class="flex items-center gap-4 border-t border-primary-500/10 pt-3">
+                                            <li class="border-t border-primary-500/10 pt-3">
                                                 @if ($item->type === 'game')
-                                                    <div class="h-12 w-16 shrink-0 overflow-hidden clip-corner bg-forge-graphite">
-                                                        @if ($item->image)
-                                                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="h-full w-full object-cover" loading="lazy" />
-                                                        @endif
-                                                    </div>
+                                                    <a href="{{ route('games.show', $item->id) }}" class="group flex items-center gap-4 transition">
+                                                        <div class="h-12 w-16 shrink-0 overflow-hidden clip-corner bg-forge-graphite transition group-hover:shadow-glow-sm">
+                                                            @if ($item->image)
+                                                                <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="h-full w-full object-cover" loading="lazy" />
+                                                            @endif
+                                                        </div>
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="font-display text-sm uppercase tracking-wide text-white transition group-hover:text-primary-300">{{ $item->name }}</span>
+                                                                @if ($item->is_tournament)
+                                                                    <span class="font-pixel text-[7px] uppercase tracking-widest text-warning-400">Toernooi</span>
+                                                                @endif
+                                                            </div>
+                                                            @if ($item->start)
+                                                                <p class="mt-0.5 text-xs uppercase tracking-widest text-forge-steel/60">
+                                                                    {{ \Illuminate\Support\Carbon::parse($item->start)->format('H:i') }}
+                                                                    @if ($item->end) &ndash; {{ \Illuminate\Support\Carbon::parse($item->end)->format('H:i') }} @endif
+                                                                </p>
+                                                            @endif
+                                                        </div>
+                                                        <span class="font-pixel text-[10px] text-forge-steel/30 transition group-hover:text-primary-300" aria-hidden="true">&rarr;</span>
+                                                    </a>
                                                 @else
-                                                    <div class="flex h-12 w-16 shrink-0 items-center justify-center clip-corner bg-forge-graphite/40">
-                                                        <span class="h-6 w-px bg-primary-500/40"></span>
+                                                    <div class="flex items-center gap-4">
+                                                        <div class="flex h-12 w-16 shrink-0 items-center justify-center clip-corner bg-forge-graphite/40">
+                                                            <span class="h-6 w-px bg-primary-500/40"></span>
+                                                        </div>
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="font-display text-sm uppercase tracking-wide text-forge-steel">{{ $item->name }}</span>
+                                                                <span class="font-pixel text-[7px] uppercase tracking-widest text-forge-steel/40">Vrij</span>
+                                                            </div>
+                                                            @if ($item->start)
+                                                                <p class="mt-0.5 text-xs uppercase tracking-widest text-forge-steel/60">
+                                                                    {{ \Illuminate\Support\Carbon::parse($item->start)->format('H:i') }}
+                                                                    @if ($item->end) &ndash; {{ \Illuminate\Support\Carbon::parse($item->end)->format('H:i') }} @endif
+                                                                </p>
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 @endif
-                                                <div class="min-w-0 flex-1">
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="font-display text-sm uppercase tracking-wide {{ $item->type === 'game' ? 'text-white' : 'text-forge-steel' }}">{{ $item->name }}</span>
-                                                        @if ($item->is_tournament)
-                                                            <span class="font-pixel text-[7px] uppercase tracking-widest text-warning-400">Toernooi</span>
-                                                        @elseif ($item->type === 'block')
-                                                            <span class="font-pixel text-[7px] uppercase tracking-widest text-forge-steel/40">Vrij</span>
-                                                        @endif
-                                                    </div>
-                                                    @if ($item->start)
-                                                        <p class="mt-0.5 text-xs uppercase tracking-widest text-forge-steel/60">
-                                                            {{ \Illuminate\Support\Carbon::parse($item->start)->format('H:i') }}
-                                                            @if ($item->end) &ndash; {{ \Illuminate\Support\Carbon::parse($item->end)->format('H:i') }} @endif
-                                                        </p>
-                                                    @endif
-                                                </div>
                                             </li>
                                         @empty
                                             <li class="text-sm text-forge-steel/50">Nog geen games ingepland.</li>
