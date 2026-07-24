@@ -24,6 +24,11 @@ class Schedule extends Model
             ->withTimestamps();
     }
 
+    public function blocks(): HasMany
+    {
+        return $this->hasMany(ScheduleBlock::class);
+    }
+
     public function tournaments(): HasMany
     {
         return $this->hasMany(Tournament::class);

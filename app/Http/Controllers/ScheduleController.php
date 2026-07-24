@@ -9,7 +9,10 @@ class ScheduleController extends Controller
 {
     public function index(): View
     {
-        $schedules = Schedule::with(['games' => fn ($q) => $q->orderByPivot('start_date')])
+        $schedules = Schedule::with([
+                'games' => fn ($q) => $q->orderByPivot('start_date'),
+                'blocks' => fn ($q) => $q->orderBy('start_date'),
+            ])
             ->orderBy('date')
             ->get();
 

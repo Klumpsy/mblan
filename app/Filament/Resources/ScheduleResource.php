@@ -16,6 +16,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Resources\ScheduleResource\RelationManager\GamesRelationManager;
+use App\Filament\Resources\ScheduleResource\RelationManager\BlocksRelationManager;
 
 class ScheduleResource extends Resource
 {
@@ -71,6 +72,7 @@ class ScheduleResource extends Resource
     {
         return [
             GamesRelationManager::class,
+            BlocksRelationManager::class,
         ];
     }
 

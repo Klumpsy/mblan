@@ -50,25 +50,53 @@
                                         @endif
                                     </div>
 
+                                    @php
+                                        $items = $schedule->games->map(fn ($game) => (object) [
+                                            'type' => 'game',
+                                            'name' => $game->name,
+                                            'image' => $game->image,
+                                            'is_tournament' => (bool) $game->pivot->is_tournament,
+                                            'start' => $game->pivot->start_date,
+                                            'end' => $game->pivot->end_date,
+                                        ])->concat($schedule->blocks->map(fn ($block) => (object) [
+                                            'type' => 'block',
+                                            'name' => $block->title,
+                                            'image' => null,
+                                            'is_tournament' => false,
+                                            'start' => $block->start_date,
+                                            'end' => $block->end_date,
+                                        ]))->sortBy(fn ($item) => $item->start
+                                            ? \Illuminate\Support\Carbon::parse($item->start)->timestamp
+                                            : PHP_INT_MAX)->values();
+                                    @endphp
+
                                     <ul class="space-y-3">
-                                        @forelse ($schedule->games as $game)
+                                        @forelse ($items as $item)
                                             <li class="flex items-center gap-4 border-t border-primary-500/10 pt-3">
-                                                <div class="h-12 w-16 shrink-0 overflow-hidden clip-corner bg-forge-graphite">
-                                                    @if ($game->image)
-                                                        <img src="{{ asset('storage/' . $game->image) }}" alt="{{ $game->name }}" class="h-full w-full object-cover" loading="lazy" />
-                                                    @endif
-                                                </div>
-                                                <div class="min-w-0 flex-1">
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="font-display text-sm uppercase tracking-wide text-white">{{ $game->name }}</span>
-                                                        @if ($game->pivot->is_tournament)
-                                                            <span class="font-pixel text-[7px] uppercase tracking-widest text-warning-400">Toernooi</span>
+                                                @if ($item->type === 'game')
+                                                    <div class="h-12 w-16 shrink-0 overflow-hidden clip-corner bg-forge-graphite">
+                                                        @if ($item->image)
+                                                            <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->name }}" class="h-full w-full object-cover" loading="lazy" />
                                                         @endif
                                                     </div>
-                                                    @if ($game->pivot->start_date)
+                                                @else
+                                                    <div class="flex h-12 w-16 shrink-0 items-center justify-center clip-corner bg-forge-graphite/40">
+                                                        <span class="h-6 w-px bg-primary-500/40"></span>
+                                                    </div>
+                                                @endif
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="font-display text-sm uppercase tracking-wide {{ $item->type === 'game' ? 'text-white' : 'text-forge-steel' }}">{{ $item->name }}</span>
+                                                        @if ($item->is_tournament)
+                                                            <span class="font-pixel text-[7px] uppercase tracking-widest text-warning-400">Toernooi</span>
+                                                        @elseif ($item->type === 'block')
+                                                            <span class="font-pixel text-[7px] uppercase tracking-widest text-forge-steel/40">Vrij</span>
+                                                        @endif
+                                                    </div>
+                                                    @if ($item->start)
                                                         <p class="mt-0.5 text-xs uppercase tracking-widest text-forge-steel/60">
-                                                            {{ \Illuminate\Support\Carbon::parse($game->pivot->start_date)->format('H:i') }}
-                                                            @if ($game->pivot->end_date) &ndash; {{ \Illuminate\Support\Carbon::parse($game->pivot->end_date)->format('H:i') }} @endif
+                                                            {{ \Illuminate\Support\Carbon::parse($item->start)->format('H:i') }}
+                                                            @if ($item->end) &ndash; {{ \Illuminate\Support\Carbon::parse($item->end)->format('H:i') }} @endif
                                                         </p>
                                                     @endif
                                                 </div>
