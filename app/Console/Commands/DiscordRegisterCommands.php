@@ -27,6 +27,7 @@ class DiscordRegisterCommands extends Command
             ['name' => 'schema', 'description' => 'Toon het programma van vandaag', 'type' => 1],
             ['name' => 'klassement', 'description' => 'Toon de standen van de actieve toernooien', 'type' => 1],
             ['name' => 'volgende', 'description' => 'Wat staat er als eerstvolgende op het programma?', 'type' => 1],
+            ['name' => 'next', 'description' => 'Toon de eerstvolgende game met afbeelding en omschrijving', 'type' => 1],
         ];
 
         $ok = $discord->registerGuildCommands($commands);

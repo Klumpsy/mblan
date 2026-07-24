@@ -43,6 +43,7 @@ class DiscordInteractionController extends Controller
             'schema' => $this->reply($this->scheduleEmbed(now())),
             'klassement' => $this->reply($this->standingsEmbed()),
             'volgende' => $this->reply($this->nextEmbed()),
+            'next' => $this->reply($this->nextGameEmbed()),
             default => $this->reply(['title' => 'Onbekend commando', 'description' => 'Dit commando ken ik niet.']),
         };
     }
@@ -144,6 +145,52 @@ class DiscordInteractionController extends Controller
             'title' => 'Volgende: '.$next->name,
             'description' => 'Begint om '.$next->start->format('H:i').' op '.$next->start->translatedFormat('l d F').'.',
         ];
+    }
+
+    /**
+     * The next upcoming game (skips free-time blocks), with its image, title
+     * and short description. Ordered by absolute start (day + time).
+     *
+     * @return array<string, mixed>
+     */
+    private function nextGameEmbed(): array
+    {
+        $now = now();
+        $next = null;
+
+        foreach (Schedule::with(['games', 'blocks'])->get() as $schedule) {
+            foreach (ScheduleTimeline::forSchedule($schedule) as $item) {
+                if ($item->type !== 'game' || ! $item->start) {
+                    continue;
+                }
+                if ($item->start->gt($now) && (! $next || $item->start->lt($next->start))) {
+                    $next = $item;
+                }
+            }
+        }
+
+        if (! $next) {
+            return ['title' => 'Volgende game', 'description' => 'Er staat geen game meer op het programma.'];
+        }
+
+        $when = 'Begint om '.$next->start->format('H:i').' op '.$next->start->translatedFormat('l d F').'.';
+        $description = $next->short_description
+            ? $next->short_description."\n\n".$when
+            : $when;
+
+        $embed = [
+            'title' => $next->is_tournament ? 'Toernooi: '.$next->name : $next->name,
+            'description' => $description,
+        ];
+
+        if ($next->game_id) {
+            $embed['url'] = route('games.show', $next->game_id);
+        }
+        if ($next->image) {
+            $embed['image'] = ['url' => asset('storage/'.$next->image)];
+        }
+
+        return $embed;
     }
 
     /**

@@ -26,6 +26,8 @@ class ScheduleTimeline
             'end' => $game->pivot->end_date ? Carbon::parse($game->pivot->end_date) : null,
             'is_tournament' => (bool) $game->pivot->is_tournament,
             'game_id' => $game->id,
+            'image' => $game->image,
+            'short_description' => $game->short_description,
             'schedule_name' => $schedule->name,
         ]);
 
@@ -36,6 +38,8 @@ class ScheduleTimeline
             'end' => $block->end_date ? Carbon::parse($block->end_date) : null,
             'is_tournament' => false,
             'game_id' => null,
+            'image' => null,
+            'short_description' => null,
             'schedule_name' => $schedule->name,
         ]);
 
