@@ -18,6 +18,7 @@ class DiscordController extends Controller
     {
         return Socialite::driver('discord')
             ->redirectUrl($this->callbackUrl())
+            ->scopes(['identify', 'email'])
             ->redirect();
     }
 
@@ -45,26 +46,46 @@ class DiscordController extends Controller
             ]);
         }
 
-        // Match on the Discord id first, then fall back to a matching email so
-        // an existing account gets linked instead of duplicated.
-        $user = User::where('discord_id', $discordUser->getId())->first();
+        $discordId = $discordUser->getId();
+        $email = $discordUser->getEmail();
+        // Discord tells us whether the account's e-mail is verified. We only ever
+        // trust the e-mail when it is, otherwise an attacker could register a
+        // Discord account on someone else's e-mail and hijack their site account.
+        $emailVerified = (bool) ($discordUser->user['verified'] ?? false);
 
-        if (! $user && $discordUser->getEmail()) {
-            $user = User::where('email', $discordUser->getEmail())->first();
+        // 1. Strong match: an account already linked to this exact Discord id.
+        $user = User::where('discord_id', $discordId)->first();
+
+        // 2. Link an existing account by e-mail ONLY when Discord verified it,
+        //    and never take over an account already tied to another Discord.
+        if (! $user && $email && $emailVerified) {
+            $candidate = User::where('email', $email)->first();
+
+            if ($candidate && $candidate->discord_id && $candidate->discord_id !== $discordId) {
+                return redirect()->route('login')->withErrors([
+                    'email' => 'Dit account is al aan een andere Discord gekoppeld.',
+                ]);
+            }
+
+            $user = $candidate;
         }
 
         if ($user) {
             $user->forceFill([
-                'discord_id' => $discordUser->getId(),
+                'discord_id' => $discordId,
                 'email_verified_at' => $user->email_verified_at ?? now(),
             ])->save();
         } else {
-            // email_verified_at is not mass-assignable, so build then force-fill.
+            // New account. Only store the Discord e-mail when it is verified;
+            // otherwise use a non-colliding placeholder so we can never occupy
+            // (and later hand over) an e-mail the visitor has not proven they own.
+            $safeEmail = ($email && $emailVerified) ? $email : $discordId.'@discord.local';
+
             $user = (new User())->forceFill([
                 'name' => $discordUser->getNickname() ?: $discordUser->getName() ?: 'Speler',
-                'email' => $discordUser->getEmail() ?: $discordUser->getId().'@discord.local',
+                'email' => $safeEmail,
                 'password' => bcrypt(Str::random(40)),
-                'discord_id' => $discordUser->getId(),
+                'discord_id' => $discordId,
                 'email_verified_at' => now(),
             ]);
             $user->save();
