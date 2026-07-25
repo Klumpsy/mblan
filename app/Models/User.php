@@ -98,6 +98,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             ->withTimestamps();
     }
 
+    public function tournamentRegistrations(): BelongsToMany
+    {
+        return $this->belongsToMany(Tournament::class, 'tournament_registrations')
+            ->withTimestamps();
+    }
+
     public function achievements()
     {
         return $this->belongsToMany(Achievement::class)

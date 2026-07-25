@@ -3,6 +3,7 @@
 namespace App\Livewire\Tournament;
 
 use App\Models\Tournament;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 /**
@@ -19,6 +20,25 @@ class Ladder extends Component
         return $this->tournament->is_active ? '5s' : '30s';
     }
 
+    /**
+     * Sign the current player up for this tournament, or withdraw again.
+     * Registration is closed once a tournament is concluded.
+     */
+    public function toggleRegister(): void
+    {
+        if (! Auth::check() || $this->tournament->concluded) {
+            return;
+        }
+
+        $userId = Auth::id();
+
+        if ($this->tournament->registrations()->whereKey($userId)->exists()) {
+            $this->tournament->registrations()->detach($userId);
+        } else {
+            $this->tournament->registrations()->syncWithoutDetaching([$userId]);
+        }
+    }
+
     public function render()
     {
         $tournament = $this->tournament->fresh();
@@ -32,6 +52,8 @@ class Ladder extends Component
             'rest' => $rows->slice(3),
             'topScore' => max(1, (int) $rows->max('score')),
             'scoreLabel' => $tournament->scoreLabel(),
+            'isRegistered' => Auth::check() && $tournament->isRegistered(Auth::user()),
+            'registrationCount' => $tournament->registrations()->count(),
         ]);
     }
 }

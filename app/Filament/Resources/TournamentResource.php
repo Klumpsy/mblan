@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TournamentResource\Pages;
+use App\Filament\Resources\TournamentResource\RelationManager\RegistrationsRelationManager;
 use App\Filament\Resources\TournamentResource\RelationManager\UsersRelationManager;
 use App\Models\Tournament;
 use Filament\Forms\Components\Select;
@@ -143,6 +144,11 @@ class TournamentResource extends Resource
                     ->offIcon('heroicon-o-user'),
                 ToggleColumn::make('concluded')
                     ->label('Concluded'),
+                TextColumn::make('registrations_count')
+                    ->counts('registrations')
+                    ->label('Aanmeldingen')
+                    ->badge()
+                    ->color('primary'),
                 TextColumn::make('game.name')->label('Game'),
                 TextColumn::make('schedule.name')->sortable(),
                 TextColumn::make('time_start')->dateTime(),
@@ -161,6 +167,7 @@ class TournamentResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RegistrationsRelationManager::class,
             UsersRelationManager::class,
         ];
     }

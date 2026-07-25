@@ -21,6 +21,26 @@
                 <span class="font-display text-xs uppercase tracking-widest text-forge-steel/50">Afgerond</span>
             @endif
         </div>
+
+        {{-- Sign-up: reserve a spot to play. Closes once the tournament is concluded. --}}
+        <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-primary-500/10 pt-4">
+            <span class="font-pixel text-[9px] uppercase tracking-[0.2em] text-forge-steel/60">
+                {{ $registrationCount }} {{ $registrationCount === 1 ? 'aanmelding' : 'aanmeldingen' }}
+            </span>
+
+            @if (! $t->concluded)
+                <button type="button" wire:click="toggleRegister" wire:loading.attr="disabled"
+                    @class([
+                        'clip-corner px-4 py-2 font-display text-xs uppercase tracking-widest transition disabled:opacity-50',
+                        'metal-edge text-forge-steel hover:text-white' => $isRegistered,
+                        'btn-wood' => ! $isRegistered,
+                    ])>
+                    {{ $isRegistered ? 'Afmelden' : 'Meld je aan' }}
+                </button>
+            @else
+                <span class="font-pixel text-[8px] uppercase tracking-widest text-forge-steel/40">Aanmelden gesloten</span>
+            @endif
+        </div>
     </div>
 
     @if ($rows->isEmpty())

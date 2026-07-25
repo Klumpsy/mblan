@@ -77,6 +77,25 @@ class Tournament extends Model
         return $this->belongsTo(Schedule::class);
     }
 
+    /**
+     * Players who signed up for this tournament. Separate from usersWithScores:
+     * registering only reserves a spot, scoring happens on the ladder pivot.
+     */
+    public function registrations(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'tournament_registrations')
+            ->withTimestamps();
+    }
+
+    public function isRegistered(?User $user): bool
+    {
+        if (! $user) {
+            return false;
+        }
+
+        return $this->registrations()->whereKey($user->id)->exists();
+    }
+
     public function usersWithScores(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'tournament_user')
