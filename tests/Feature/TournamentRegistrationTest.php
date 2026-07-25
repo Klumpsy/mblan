@@ -16,7 +16,9 @@ test('a player can sign up for a tournament and withdraw again', function () {
 
     Livewire::test(Ladder::class, ['tournament' => $tournament])
         ->assertSet('tournament.id', $tournament->id)
-        ->call('toggleRegister');
+        ->call('toggleRegister')
+        ->assertSee('1 aanmelding')
+        ->assertSee($user->name);
 
     expect($tournament->registrations()->whereKey($user->id)->exists())->toBeTrue();
 

@@ -23,22 +23,40 @@
         </div>
 
         {{-- Sign-up: reserve a spot to play. Closes once the tournament is concluded. --}}
-        <div class="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-primary-500/10 pt-4">
-            <span class="font-pixel text-[9px] uppercase tracking-[0.2em] text-forge-steel/60">
-                {{ $registrationCount }} {{ $registrationCount === 1 ? 'aanmelding' : 'aanmeldingen' }}
-            </span>
+        <div class="mt-5 border-t border-primary-500/10 pt-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <span class="font-pixel text-[9px] uppercase tracking-[0.2em] text-forge-steel/60">
+                    {{ $registrationCount }} {{ $registrationCount === 1 ? 'aanmelding' : 'aanmeldingen' }}
+                </span>
 
-            @if (! $t->concluded)
-                <button type="button" wire:click="toggleRegister" wire:loading.attr="disabled"
-                    @class([
-                        'clip-corner px-4 py-2 font-display text-xs uppercase tracking-widest transition disabled:opacity-50',
-                        'metal-edge text-forge-steel hover:text-white' => $isRegistered,
-                        'btn-wood' => ! $isRegistered,
-                    ])>
-                    {{ $isRegistered ? 'Afmelden' : 'Meld je aan' }}
-                </button>
-            @else
-                <span class="font-pixel text-[8px] uppercase tracking-widest text-forge-steel/40">Aanmelden gesloten</span>
+                @if (! $t->concluded)
+                    <button type="button" wire:click="toggleRegister" wire:loading.attr="disabled"
+                        @class([
+                            'clip-corner px-4 py-2 font-display text-xs uppercase tracking-widest transition disabled:opacity-50',
+                            'metal-edge text-forge-steel hover:text-white' => $isRegistered,
+                            'btn-wood' => ! $isRegistered,
+                        ])>
+                        {{ $isRegistered ? 'Afmelden' : 'Meld je aan' }}
+                    </button>
+                @else
+                    <span class="font-pixel text-[8px] uppercase tracking-widest text-forge-steel/40">Aanmelden gesloten</span>
+                @endif
+            </div>
+
+            {{-- Wie hebben zich ingeschreven --}}
+            @if ($registrationCount > 0)
+                @php $shown = $registrants->take(14); @endphp
+                <div class="mt-4 flex items-center -space-x-2">
+                    @foreach ($shown as $registrant)
+                        <img src="{{ $registrant->profile_photo_url }}" alt="{{ $registrant->name }}" title="{{ $registrant->name }}"
+                            class="h-8 w-8 rounded-full object-cover ring-2 ring-forge-graphite {{ $registrant->id === auth()->id() ? 'ring-primary-400' : '' }}" />
+                    @endforeach
+                    @if ($registrationCount > $shown->count())
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-forge-graphite ring-2 ring-forge-graphite font-display text-[10px] text-forge-steel">
+                            +{{ $registrationCount - $shown->count() }}
+                        </span>
+                    @endif
+                </div>
             @endif
         </div>
     </div>

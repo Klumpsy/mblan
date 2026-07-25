@@ -45,6 +45,8 @@ class Ladder extends Component
 
         $rows = $tournament->getLeaderboard();
 
+        $registrants = $tournament->registrations()->orderBy('name')->get();
+
         return view('livewire.tournament.ladder', [
             't' => $tournament,
             'rows' => $rows,
@@ -52,8 +54,9 @@ class Ladder extends Component
             'rest' => $rows->slice(3),
             'topScore' => max(1, (int) $rows->max('score')),
             'scoreLabel' => $tournament->scoreLabel(),
-            'isRegistered' => Auth::check() && $tournament->isRegistered(Auth::user()),
-            'registrationCount' => $tournament->registrations()->count(),
+            'isRegistered' => Auth::check() && $registrants->contains('id', Auth::id()),
+            'registrants' => $registrants,
+            'registrationCount' => $registrants->count(),
         ]);
     }
 }
