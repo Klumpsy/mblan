@@ -45,15 +45,27 @@
 
             {{-- Wie hebben zich ingeschreven --}}
             @if ($registrationCount > 0)
-                @php $shown = $registrants->take(14); @endphp
-                <div class="mt-4 flex items-center -space-x-2">
+                @php $shown = $registrants->take(16); @endphp
+                <div class="mt-4 flex flex-wrap items-center gap-2">
                     @foreach ($shown as $registrant)
-                        <img src="{{ $registrant->profile_photo_url }}" alt="{{ $registrant->name }}" title="{{ $registrant->name }}"
-                            class="h-8 w-8 rounded-full object-cover ring-2 ring-forge-graphite {{ $registrant->id === auth()->id() ? 'ring-primary-400' : '' }}" />
+                        <span @class([
+                            'inline-flex items-center gap-2 rounded-full py-1 pl-1 pr-3 ring-1',
+                            'bg-primary-500/10 ring-primary-500/40' => $registrant->id === auth()->id(),
+                            'bg-forge-graphite/60 ring-primary-500/10' => $registrant->id !== auth()->id(),
+                        ])>
+                            <img src="{{ $registrant->profile_photo_url }}" alt="{{ $registrant->name }}"
+                                class="h-6 w-6 rounded-full object-cover" />
+                            <span class="text-xs text-forge-steel">
+                                {{ $registrant->name }}
+                                @if ($registrant->id === auth()->id())
+                                    <span class="ml-0.5 font-pixel text-[7px] uppercase tracking-widest text-primary-400">jij</span>
+                                @endif
+                            </span>
+                        </span>
                     @endforeach
                     @if ($registrationCount > $shown->count())
-                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-forge-graphite ring-2 ring-forge-graphite font-display text-[10px] text-forge-steel">
-                            +{{ $registrationCount - $shown->count() }}
+                        <span class="inline-flex items-center rounded-full bg-forge-graphite/60 px-3 py-1.5 font-display text-[10px] uppercase tracking-widest text-forge-steel/70 ring-1 ring-primary-500/10">
+                            +{{ $registrationCount - $shown->count() }} meer
                         </span>
                     @endif
                 </div>
