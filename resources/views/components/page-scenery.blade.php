@@ -1,31 +1,46 @@
 @props(['variant' => 'default'])
 
 {{--
-    Per-page pixel-farm accents. A plain dark fade carries the base look; big,
-    clearly visible sprites from the game's sprite library float over it — a row
-    of tiles down each side gutter (shown only from lg up, where the centred
-    content leaves room), plus the barn and Arti the dog in the bottom corners.
-    No tiled farm field, so it reads as decorative sprites on a clean gradient
-    rather than a game map. Each section gets its own tiles so pages stay
-    distinct. Fixed, behind everything (-z-10), pointer-events-none, and kept
-    clear of the readable content column.
+    Per-page pixel-farm scene with depth. A plain dark fade is the base; over it
+    sit curated farm sprites arranged in three parallax layers:
+      back  — distant trees/bushes, small + faint, drift slowly on scroll
+      mid   — props & crops, medium
+      front — animals + the barn + Arti, big + bright, drift most
+    Fixed slot positions in the side gutters keep sprites from overlapping each
+    other, and each section fills them with its own mix so pages stay distinct.
+    Side sprites show from lg up (where the centred content leaves gutters); the
+    barn + Arti anchor the bottom corners from sm up. Behind everything (-z-10),
+    pointer-events-none, and parallax is disabled under prefers-reduced-motion.
 --}}
 @php
-    // Six gutter tiles per variant: [left-top, left-mid, left-bottom, right-top, right-mid, right-bottom].
+    // Slots: [x-position class, top%, layer]. Tuned so sprites never overlap.
+    $slots = [
+        ['left-[1%]',  '9%',  'back'],  ['right-[1%]', '15%', 'back'],
+        ['left-[5%]',  '35%', 'mid'],   ['right-[4%]', '29%', 'mid'],
+        ['left-[2%]',  '57%', 'front'], ['right-[2%]', '51%', 'front'],
+        ['left-[6%]',  '77%', 'mid'],   ['right-[6%]', '73%', 'mid'],
+    ];
+
+    // Per-layer look + parallax speed (fraction of scroll it drifts).
+    $layer = [
+        'back'  => ['size' => 'w-14 xl:w-16', 'op' => '0.35', 'spd' => '0.05'],
+        'mid'   => ['size' => 'w-20 xl:w-28', 'op' => '0.50', 'spd' => '0.11'],
+        'front' => ['size' => 'w-28 xl:w-36', 'op' => '0.70', 'spd' => '0.18'],
+    ];
+
+    // Eight sprites per section, one per slot — a varied, sensible farm mix.
+    // tiles: 0003/0015/0027 trees · 0039/0078 bushes · 0032 corn · 0044 tomato
+    // 0068 carrot · 0083 sunflower · 0059 lettuce crate · 0085 barrel · 0076 crate
+    // 0089 rock · 0096 hay bale · 0097 haystack · 0108/0109 farmers · 0120 sheep
+    // 0121 cow · 0122 chicken
     $scenes = [
-        'timeline'    => ['0003', '0015', '0040', '0052', '0039', '0027'],
-        'tournaments' => ['0009', '0120', '0042', '0072', '0027', '0064'],
-        'news'        => ['0088', '0056', '0075', '0027', '0040', '0123'],
-        'profile'     => ['0015', '0053', '0085', '0123', '0052', '0078'],
-        'default'     => ['0003', '0027', '0078', '0064', '0039', '0042'],
+        'timeline'    => ['0027', '0083', '0121', '0044', '0122', '0096', '0039', '0068'],
+        'tournaments' => ['0015', '0078', '0120', '0085', '0109', '0076', '0003', '0032'],
+        'news'        => ['0003', '0083', '0122', '0089', '0108', '0097', '0039', '0044'],
+        'profile'     => ['0027', '0068', '0121', '0059', '0120', '0085', '0015', '0083'],
+        'default'     => ['0003', '0027', '0120', '0096', '0122', '0076', '0039', '0032'],
     ];
     $tiles = $scenes[$variant] ?? $scenes['default'];
-
-    // Gutter slots — hug the far edges so nothing crosses the content column.
-    $slots = [
-        'left-[1%] top-[13%]',   'left-[3%] top-[43%]',   'left-[0%] top-[72%]',
-        'right-[1%] top-[15%]',  'right-[3%] top-[45%]',  'right-[0%] top-[70%]',
-    ];
 @endphp
 
 <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
@@ -34,17 +49,41 @@
     <div class="absolute inset-0 bg-grid opacity-[0.05]"></div>
     <div class="absolute left-1/2 top-0 h-[45vmax] w-[45vmax] -translate-x-1/2 -translate-y-1/3 rounded-full bg-primary-500/12 blur-[130px]"></div>
 
-    {{-- big side-gutter tiles (lg+ only, where the content column leaves room) --}}
-    @foreach ($tiles as $i => $tile)
-        <img src="{{ asset('images/farm/tile_'.$tile.'.png') }}" alt=""
-            class="pixel absolute {{ $slots[$i] }} hidden w-44 opacity-[0.45] drop-shadow-[0_0_18px_rgba(101,229,154,0.25)] lg:block xl:w-52 2xl:w-60"
-            style="transform: translateX(-50%);" />
+    {{-- gutter sprites, layered for parallax depth (lg+ where gutters exist) --}}
+    @foreach ($slots as $i => [$x, $top, $lyr])
+        @php $L = $layer[$lyr]; @endphp
+        <img data-parallax="{{ $L['spd'] }}"
+            src="{{ asset('images/farm/tile_'.$tiles[$i].'.png') }}" alt=""
+            class="pixel absolute {{ $x }} {{ $L['size'] }} hidden lg:block {{ $lyr === 'front' ? 'drop-shadow-[0_0_16px_rgba(101,229,154,0.25)]' : '' }}"
+            style="top: {{ $top }}; opacity: {{ $L['op'] }}; will-change: transform;" />
     @endforeach
 
-    {{-- bottom-corner anchors: barn + Arti floating on the fade (no tiled field) --}}
-    <img src="{{ asset('images/farm/barn.png') }}" alt=""
-        class="pixel absolute bottom-[6%] right-[3%] w-28 opacity-[0.40] drop-shadow-[0_0_26px_rgba(101,229,154,0.30)] sm:w-40 lg:w-52" />
-
-    <img src="{{ asset('images/farm/arti.png') }}" alt=""
-        class="pixel absolute bottom-[8%] left-[4%] w-20 opacity-[0.50] sm:w-28 lg:w-36" />
+    {{-- bottom-corner anchors: the barn + Arti the dog (front layer) --}}
+    <img data-parallax="0.18" src="{{ asset('images/farm/barn.png') }}" alt=""
+        class="pixel absolute bottom-[6%] right-[2%] w-28 opacity-[0.60] drop-shadow-[0_0_26px_rgba(101,229,154,0.30)] sm:w-40 lg:w-52"
+        style="will-change: transform;" />
+    <img data-parallax="0.18" src="{{ asset('images/farm/arti.png') }}" alt=""
+        class="pixel absolute bottom-[8%] left-[3%] w-20 opacity-[0.65] sm:w-28 lg:w-36"
+        style="will-change: transform;" />
 </div>
+
+<script>
+    (function () {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        var els = document.querySelectorAll('[data-parallax]');
+        if (!els.length) return;
+        var ticking = false;
+        function update() {
+            var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+            for (var i = 0; i < els.length; i++) {
+                var s = parseFloat(els[i].getAttribute('data-parallax')) || 0;
+                els[i].style.transform = 'translate3d(0,' + (-y * s).toFixed(1) + 'px,0)';
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', function () {
+            if (!ticking) { window.requestAnimationFrame(update); ticking = true; }
+        }, { passive: true });
+        update();
+    })();
+</script>
