@@ -62,7 +62,11 @@ class NewsResource extends Resource
                         ->visibility('public')
                         ->image()
                         ->imageResizeMode('cover')
-                        ->imageCropAspectRatio('16:9'),
+                        ->imageCropAspectRatio('16:9')
+                        // Downscale in the browser before upload so multi-megapixel
+                        // phone photos do not exceed the server's PHP upload limit.
+                        ->imageResizeTargetWidth('1920')
+                        ->imageResizeTargetHeight('1080'),
                     Textarea::make('preview_text')
                         ->label('Korte samenvatting')
                         ->helperText('Wordt getoond in het overzicht. Laat leeg om automatisch af te leiden.')

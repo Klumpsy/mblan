@@ -74,7 +74,11 @@ class GameResource extends Resource
                         ->visibility('public')
                         ->required()
                         ->imageResizeMode('cover')
-                        ->imageCropAspectRatio('16:9'),
+                        ->imageCropAspectRatio('16:9')
+                        // Downscale in the browser before upload so multi-megapixel
+                        // phone photos do not exceed the server's PHP upload limit.
+                        ->imageResizeTargetWidth('1920')
+                        ->imageResizeTargetHeight('1080'),
                     RichEditor::make('short_description')
                         ->required()
                         ->toolbarButtons(self::$textEditorSettings),
