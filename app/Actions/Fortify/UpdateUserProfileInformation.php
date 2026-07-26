@@ -21,11 +21,10 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'name' => ['required', 'string', 'max:255'],
             'discord_id' => ['nullable', 'string', 'max:100', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            // Photos are downscaled and re-encoded to JPEG in the browser before
-            // upload (see update-profile-information-form.blade.php), so the file
-            // that arrives here is small. The 2 MB ceiling is defensive headroom
-            // for the rare case the client-side step is bypassed.
-            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:2048'],
+            // 12 MB matches the photo timeline; phone photos are a few MB. The
+            // OptimizesImages trait on the User model downscales/recompresses the
+            // stored file afterwards, so a large upload does not bloat the disk.
+            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:12288'],
         ])->validateWithBag('updateProfileInformation');
 
         if (isset($input['photo'])) {

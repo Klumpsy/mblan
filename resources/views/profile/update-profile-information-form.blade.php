@@ -10,73 +10,17 @@
     <x-slot name="form">
         <!-- Profile Photo -->
         @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-            <div class="col-span-6 sm:col-span-4" x-data="{
-                photoName: null,
-                photoPreview: null,
-                processing: false,
-
-                async handleSelect(event) {
-                    const file = event.target.files[0];
-                    if (! file) return;
-
-                    this.processing = true;
-                    let upload = file;
-                    try {
-                        upload = await this.compress(file);
-                    } catch (e) {
-                        upload = file; // undecodable format -> let the server rules decide
-                    }
-
-                    this.photoName = upload.name;
-                    this.photoPreview = URL.createObjectURL(upload);
-
-                    this.$wire.upload('photo', upload,
-                        () => { this.processing = false; },
-                        () => { this.processing = false; },
-                    );
-                },
-
-                async compress(file) {
-                    if (! file.type.startsWith('image/')) return file;
-
-                    const dataUrl = await new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                    });
-
-                    const image = await new Promise((resolve, reject) => {
-                        const img = new Image();
-                        img.onload = () => resolve(img);
-                        img.onerror = reject;
-                        img.src = dataUrl;
-                    });
-
-                    const maxDim = 1024;
-                    let width = image.width;
-                    let height = image.height;
-                    if (width > maxDim || height > maxDim) {
-                        const scale = Math.min(maxDim / width, maxDim / height);
-                        width = Math.round(width * scale);
-                        height = Math.round(height * scale);
-                    }
-
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    canvas.getContext('2d').drawImage(image, 0, 0, width, height);
-
-                    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.8));
-                    if (! blob) return file; // toBlob unsupported -> fall back to original
-
-                    const base = file.name.replace(/\.[^.]+$/, '') || 'foto';
-                    return new File([blob], base + '.jpg', { type: 'image/jpeg', lastModified: Date.now() });
-                },
-            }">
+            <div x-data="{ photoName: null, photoPreview: null }" class="col-span-6 sm:col-span-4">
                 <!-- Profile Photo File Input -->
-                <input type="file" id="photo" class="hidden" x-ref="photo" accept="image/*"
-                    x-on:change="handleSelect($event)" />
+                <input type="file" id="photo" class="hidden" wire:model.live="photo" x-ref="photo"
+                    x-on:change="
+                                    photoName = $refs.photo.files[0].name;
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                        photoPreview = e.target.result;
+                                    };
+                                    reader.readAsDataURL($refs.photo.files[0]);
+                            " />
 
                 <x-label for="photo" value="{{ __('Foto') }}" />
 
@@ -102,10 +46,6 @@
                         {{ __('Foto verwijderen') }}
                     </x-secondary-button>
                 @endif
-
-                <p class="mt-2 text-sm text-forge-steel/80" x-show="processing" style="display: none;">
-                    {{ __('Foto wordt verwerkt...') }}
-                </p>
 
                 <x-input-error for="photo" class="mt-2" />
             </div>

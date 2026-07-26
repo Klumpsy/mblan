@@ -9,27 +9,27 @@ use Illuminate\Validation\ValidationException;
 
 uses(RefreshDatabase::class);
 
-test('a lightly compressed phone photo above the old 1MB limit is accepted', function () {
+test('a multi-megabyte phone photo is accepted', function () {
     Storage::fake('public');
     $user = User::factory()->create();
 
     (new UpdateUserProfileInformation())->update($user, [
         'name' => $user->name,
         'email' => $user->email,
-        'photo' => UploadedFile::fake()->image('IMG_1234.jpg')->size(1800), // ~1.8 MB, was rejected by max:1024
+        'photo' => UploadedFile::fake()->image('IMG_1234.jpg')->size(4000), // ~4 MB, was rejected by the old 1 MB rule
     ]);
 
     expect($user->fresh()->profile_photo_path)->not->toBeNull();
 });
 
-test('an unreasonably large upload is still rejected', function () {
+test('an upload beyond the 12MB ceiling is rejected', function () {
     Storage::fake('public');
     $user = User::factory()->create();
 
     (new UpdateUserProfileInformation())->update($user, [
         'name' => $user->name,
         'email' => $user->email,
-        'photo' => UploadedFile::fake()->image('huge.jpg')->size(5000), // ~5 MB
+        'photo' => UploadedFile::fake()->image('huge.jpg')->size(15000), // ~15 MB
     ]);
 })->throws(ValidationException::class);
 
