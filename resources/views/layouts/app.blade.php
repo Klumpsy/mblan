@@ -33,7 +33,7 @@
     @endphp
     <x-page-scenery :variant="$sceneryVariant" />
 
-    <div class="min-h-screen bg-forge-black/40 text-forge-steel">
+    <div class="min-h-screen text-forge-steel">
         <livewire:navigation-menu />
 
         <x-flash-message />

@@ -1,36 +1,53 @@
 @props(['variant' => 'default'])
 
 {{--
-    Per-page pixel-farm backdrop. Uses the game's tile sprite library, scattered
-    large and faded in the corners so each page feels distinct while staying
-    clean and readable. Fixed, behind everything, and pointer-events-none.
-    Mobile keeps smaller sprites; the gradient + silhouette carry the base look.
+    Per-page pixel-farm backdrop. Big, clearly visible sprites from the game's
+    sprite library frame the page: a row of tiles down each side gutter (shown
+    only from lg up, where the centred content leaves room), plus a grounded
+    farm scene along the bottom — a treeline silhouette with the barn and Arti
+    the dog. Each section gets its own tiles so pages stay distinct. Fixed,
+    behind everything (-z-10), pointer-events-none, and kept clear of the
+    readable content column.
 --}}
 @php
-    // [tile number, top%, left%] — placed toward the edges, away from centred text.
+    // Six gutter tiles per variant: [left-top, left-mid, left-bottom, right-top, right-mid, right-bottom].
     $scenes = [
-        'timeline' => [['0003', '14%', '5%'], ['0015', '80%', '6%'], ['0040', '20%', '93%'], ['0052', '52%', '95%'], ['0039', '86%', '90%']],
-        'tournaments' => [['0009', '15%', '6%'], ['0120', '82%', '7%'], ['0042', '20%', '92%'], ['0072', '84%', '91%'], ['0027', '48%', '95%']],
-        'news' => [['0088', '16%', '6%'], ['0027', '82%', '6%'], ['0075', '80%', '92%'], ['0056', '20%', '93%'], ['0040', '50%', '95%']],
-        'profile' => [['0015', '16%', '6%'], ['0053', '82%', '8%'], ['0085', '22%', '93%'], ['0123', '84%', '90%'], ['0052', '50%', '95%']],
-        'default' => [['0003', '15%', '5%'], ['0027', '82%', '7%'], ['0078', '22%', '92%'], ['0064', '84%', '90%'], ['0039', '50%', '95%']],
+        'timeline'    => ['0003', '0015', '0040', '0052', '0039', '0027'],
+        'tournaments' => ['0009', '0120', '0042', '0072', '0027', '0064'],
+        'news'        => ['0088', '0056', '0075', '0027', '0040', '0123'],
+        'profile'     => ['0015', '0053', '0085', '0123', '0052', '0078'],
+        'default'     => ['0003', '0027', '0078', '0064', '0039', '0042'],
     ];
-    $sprites = $scenes[$variant] ?? $scenes['default'];
+    $tiles = $scenes[$variant] ?? $scenes['default'];
+
+    // Gutter slots — hug the far edges so nothing crosses the content column.
+    $slots = [
+        'left-[1%] top-[13%]',   'left-[3%] top-[43%]',   'left-[0%] top-[72%]',
+        'right-[1%] top-[15%]',  'right-[3%] top-[45%]',  'right-[0%] top-[70%]',
+    ];
 @endphp
 
 <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
-    <div class="absolute inset-0 bg-gradient-to-b from-forge-forest/60 via-forge-black to-forge-black"></div>
-    <div class="absolute inset-0 bg-primary-900/15"></div>
-    <div class="absolute inset-0 bg-grid opacity-[0.08]"></div>
+    {{-- base wash: dark forge gradient keeps the centre readable --}}
+    <div class="absolute inset-0 bg-gradient-to-b from-forge-forest/50 via-forge-black to-forge-black"></div>
+    <div class="absolute inset-0 bg-grid opacity-[0.10]"></div>
     <div class="absolute left-1/2 top-0 h-[45vmax] w-[45vmax] -translate-x-1/2 -translate-y-1/3 rounded-full bg-primary-500/12 blur-[130px]"></div>
 
-    @foreach ($sprites as [$tile, $top, $left])
+    {{-- big side-gutter tiles (lg+ only, where the content column leaves room) --}}
+    @foreach ($tiles as $i => $tile)
         <img src="{{ asset('images/farm/tile_'.$tile.'.png') }}" alt=""
-            class="pixel absolute w-14 opacity-[0.09] sm:w-24"
-            style="top: {{ $top }}; left: {{ $left }}; transform: translate(-50%, -50%);" />
+            class="pixel absolute {{ $slots[$i] }} hidden w-44 opacity-[0.45] drop-shadow-[0_0_18px_rgba(101,229,154,0.25)] lg:block xl:w-52 2xl:w-60"
+            style="transform: translateX(-50%);" />
     @endforeach
 
+    {{-- grounded bottom scene: treeline + barn + Arti, clearly visible --}}
     <img src="{{ asset('images/farm/backdrop.png') }}" alt=""
-        class="pixel absolute inset-x-0 bottom-0 h-40 w-full object-cover opacity-[0.20] sm:h-56"
-        style="-webkit-mask-image: linear-gradient(to top, #000, transparent); mask-image: linear-gradient(to top, #000, transparent);" />
+        class="pixel absolute inset-x-0 bottom-0 h-56 w-full object-cover opacity-[0.35] sm:h-72"
+        style="-webkit-mask-image: linear-gradient(to top, #000 30%, transparent); mask-image: linear-gradient(to top, #000 30%, transparent);" />
+
+    <img src="{{ asset('images/farm/barn.png') }}" alt=""
+        class="pixel absolute bottom-0 right-[2%] w-28 opacity-[0.55] drop-shadow-[0_0_26px_rgba(101,229,154,0.35)] sm:w-40 lg:w-52" />
+
+    <img src="{{ asset('images/farm/arti.png') }}" alt=""
+        class="pixel absolute bottom-2 left-[3%] w-20 opacity-[0.65] sm:w-28 lg:w-36" />
 </div>
