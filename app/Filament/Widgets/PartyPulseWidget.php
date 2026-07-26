@@ -3,7 +3,6 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Photo;
-use App\Models\Signup;
 use App\Models\Tournament;
 use App\Models\User;
 use App\Models\UserAchievement;
@@ -31,9 +30,6 @@ class PartyPulseWidget extends StatsOverviewWidget
             Stat::make('Spelers', User::count())
                 ->description('Geregistreerde accounts')
                 ->color('success'),
-
-            Stat::make('Aanmeldingen', Signup::count())
-                ->description('Aanmeldingen voor de LAN'),
 
             Stat::make('Komt (Discord)', $coming)
                 ->description('Bevestigd via /rsvp')

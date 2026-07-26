@@ -3,9 +3,7 @@
 use App\Filament\Widgets\ArtiLeaderboardWidget;
 use App\Filament\Widgets\DiscordCommandUsageWidget;
 use App\Filament\Widgets\PartyPulseWidget;
-use App\Filament\Widgets\SignupsOverTimeWidget;
 use App\Models\DiscordCommandLog;
-use App\Models\Signup;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -18,12 +16,11 @@ beforeEach(function () {
 
 test('the party pulse widget renders with the current counts', function () {
     User::factory()->count(3)->create();
-    Signup::factory()->count(2)->create();
 
     Livewire::test(PartyPulseWidget::class)
         ->assertOk()
         ->assertSee('Spelers')
-        ->assertSee('Aanmeldingen');
+        ->assertSee('Prestaties');
 });
 
 test('the command usage widget renders and reflects logged commands', function () {
@@ -38,12 +35,6 @@ test('the command usage widget renders and reflects logged commands', function (
     expect(array_sum($data['datasets'][0]['data']))->toBe(3);
 
     Livewire::test(DiscordCommandUsageWidget::class)->assertOk();
-});
-
-test('the signups-over-time widget renders', function () {
-    Signup::factory()->create();
-
-    Livewire::test(SignupsOverTimeWidget::class)->assertOk();
 });
 
 test('the Arti leaderboard widget lists finishers fastest first', function () {
