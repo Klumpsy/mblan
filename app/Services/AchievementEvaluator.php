@@ -22,11 +22,12 @@ class AchievementEvaluator
 
     /**
      * Sync every automatic achievement for one user. Returns the achievements
-     * that were newly unlocked during this run.
+     * that were newly unlocked during this run. Pass $notify = false for bulk
+     * backfills so hundreds of historical unlocks don't flood Discord.
      *
      * @return array<int, Achievement>
      */
-    public function sync(User $user): array
+    public function sync(User $user, bool $notify = true): array
     {
         $newlyUnlocked = [];
 
@@ -54,6 +55,14 @@ class AchievementEvaluator
                 $wasAchieved = $existing && $existing->pivot->achieved_at;
 
                 if (! $existing) {
+                    // Don't store empty rows: a locked achievement with no
+                    // progress yet is represented by the absence of a pivot
+                    // (the UI defaults it to 0/threshold). Keeps the table lean
+                    // and makes backfills fast.
+                    if ($progress <= 0 && ! $unlocked) {
+                        continue;
+                    }
+
                     $user->achievements()->attach($achievement->id, [
                         'progress' => $progress,
                         'achieved_at' => $unlocked ? now() : null,
@@ -78,8 +87,10 @@ class AchievementEvaluator
             return $newlyUnlocked;
         }
 
-        foreach ($newlyUnlocked as $achievement) {
-            $this->notify($user, $achievement);
+        if ($notify) {
+            foreach ($newlyUnlocked as $achievement) {
+                $this->notify($user, $achievement);
+            }
         }
 
         return $newlyUnlocked;

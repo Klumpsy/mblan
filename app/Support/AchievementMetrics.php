@@ -5,6 +5,7 @@ namespace App\Support;
 use App\Models\Photo;
 use App\Models\Reaction;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 /**
  * The live values automatic achievements can be measured against. Each metric
@@ -56,6 +57,38 @@ class AchievementMetrics
             'discord_linked' => [
                 'label' => 'Discord gekoppeld (ja/nee)',
                 'resolve' => fn (User $u) => $u->discord_id ? 1 : 0,
+            ],
+
+            // --- Aanmeldingen / edities ---
+            'signups' => [
+                'label' => 'Aanmeldingen (bevestigd)',
+                'resolve' => fn (User $u) => $u->signups()->where('confirmed', true)->count(),
+            ],
+            'camping' => [
+                'label' => 'Blijft slapen op de camping (ja/nee)',
+                'resolve' => fn (User $u) => $u->signups()->where('confirmed', true)->where('stays_on_campsite', true)->exists() ? 1 : 0,
+            ],
+            'barbecue' => [
+                'label' => 'Sluit aan bij de barbecue (ja/nee)',
+                'resolve' => fn (User $u) => $u->signups()->where('confirmed', true)->where('joins_barbecue', true)->exists() ? 1 : 0,
+            ],
+            'tshirt' => [
+                'label' => 'Bestelt een MBLAN-shirt (ja/nee)',
+                'resolve' => fn (User $u) => $u->signups()->where('confirmed', true)->where('wants_tshirt', true)->exists() ? 1 : 0,
+            ],
+
+            // --- Toernooien ---
+            'tournaments_played' => [
+                'label' => 'Toernooien gespeeld (met score)',
+                'resolve' => fn (User $u) => DB::table('tournament_user')->where('user_id', $u->id)->count(),
+            ],
+            'tournaments_won' => [
+                'label' => 'Toernooien gewonnen (1e plek)',
+                'resolve' => fn (User $u) => DB::table('tournament_user')->where('user_id', $u->id)->where('ranking', 1)->count(),
+            ],
+            'tournament_podiums' => [
+                'label' => 'Podiumplekken in toernooien (top 3)',
+                'resolve' => fn (User $u) => DB::table('tournament_user')->where('user_id', $u->id)->whereBetween('ranking', [1, 3])->count(),
             ],
         ];
     }
