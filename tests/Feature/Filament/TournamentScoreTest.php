@@ -5,6 +5,7 @@ use App\Filament\Resources\TournamentResource\RelationManager\UsersRelationManag
 use App\Models\Tournament;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -63,4 +64,65 @@ test('only signed-up players who are not yet scored can be given a score', funct
         ->toContain($registeredUnscored->id)   // signed up, no score yet
         ->not->toContain($registeredScored->id) // already on the scoreboard
         ->not->toContain($notRegistered->id);   // never signed up
+});
+
+test('time-based scores are added as minutes, seconds and milliseconds', function () {
+    $tournament = Tournament::factory()->create([
+        'scoring_type' => 'time',
+        'higher_is_better' => false,
+        'score_label' => 'Tijd',
+        'is_team_based' => false,
+    ]);
+    $player = User::factory()->create();
+    $tournament->usersWithScores()->attach($player->id, ['score' => 0, 'ranking' => 1]);
+
+    Livewire::test(UsersRelationManager::class, [
+        'ownerRecord' => $tournament,
+        'pageClass' => EditTournament::class,
+    ])
+        ->callTableAction('addScore', $player, data: ['minutes' => 1, 'seconds' => 30, 'milliseconds' => 500])
+        ->assertHasNoTableActionErrors();
+
+    // 1:30.500 -> 90500 ms, added to a starting 0.
+    expect((int) $tournament->usersWithScores()->where('users.id', $player->id)->first()->pivot->score)->toBe(90500);
+});
+
+test('creating teams posts the line-up to Discord when the toggle is on', function () {
+    config(['discord.webhook_url' => 'https://discord.test/webhook']);
+    Http::fake(['discord.test/*' => Http::response('', 204)]);
+
+    $tournament = Tournament::factory()->create(['is_team_based' => true, 'name' => 'Team Cup']);
+    User::factory()->count(4)->create()->each(
+        fn ($u) => $tournament->usersWithScores()->attach($u->id, ['score' => 0])
+    );
+
+    Livewire::test(UsersRelationManager::class, [
+        'ownerRecord' => $tournament,
+        'pageClass' => EditTournament::class,
+    ])
+        ->callTableAction('create_teams', data: ['team_size' => 2, 'post_to_discord' => true])
+        ->assertHasNoTableActionErrors();
+
+    Http::assertSent(fn ($r) => str_contains($r['embeds'][0]['title'] ?? '', 'Teams'));
+});
+
+test('creating teams does not post to Discord when the toggle is off', function () {
+    config(['discord.webhook_url' => 'https://discord.test/webhook']);
+    Http::fake(['discord.test/*' => Http::response('', 204)]);
+
+    $tournament = Tournament::factory()->create(['is_team_based' => true]);
+    User::factory()->count(4)->create()->each(
+        fn ($u) => $tournament->usersWithScores()->attach($u->id, ['score' => 0])
+    );
+
+    Livewire::test(UsersRelationManager::class, [
+        'ownerRecord' => $tournament,
+        'pageClass' => EditTournament::class,
+    ])
+        ->callTableAction('create_teams', data: ['team_size' => 2, 'post_to_discord' => false])
+        ->assertHasNoTableActionErrors();
+
+    // A leader-change webhook may fire from ranking recalculation; what must NOT
+    // happen is the team line-up being posted.
+    Http::assertNotSent(fn ($r) => str_contains($r['embeds'][0]['title'] ?? '', 'Teams'));
 });

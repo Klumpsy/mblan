@@ -185,6 +185,31 @@ class DiscordWebhookService
     }
 
     /**
+     * The team line-up for a tournament: each team and its members.
+     */
+    public function announceTeams(Tournament $tournament): bool
+    {
+        $members = $tournament->usersWithScores()->get();
+
+        $teams = $members
+            ->filter(fn ($user) => ! is_null($user->pivot->team_number))
+            ->groupBy(fn ($user) => $user->pivot->team_number)
+            ->sortKeys();
+
+        if ($teams->isEmpty()) {
+            return $this->sendEmbed('Teams '.$tournament->name, 'Er zijn nog geen teams ingedeeld.');
+        }
+
+        $blocks = [];
+        foreach ($teams as $number => $group) {
+            $name = $group->first()->pivot->team_name ?: "Team {$number}";
+            $blocks[] = "**{$name}**\n".$group->pluck('name')->implode(', ');
+        }
+
+        return $this->sendEmbed('Teams '.$tournament->name, implode("\n\n", $blocks));
+    }
+
+    /**
      * Build a single-embed payload and post it.
      *
      * @param  array<int, array{name: string, value: string, inline: bool}>  $fields

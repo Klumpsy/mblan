@@ -62,6 +62,15 @@ class Tournament extends Model
         return $this->score_label ?: 'Punten';
     }
 
+    /**
+     * Time-based tournaments store their score as milliseconds and are edited
+     * with minutes/seconds/milliseconds inputs (lowest time wins).
+     */
+    public function isTimeBased(): bool
+    {
+        return $this->scoring_type === 'time';
+    }
+
     protected function sortDirection(): string
     {
         return $this->higher_is_better ? 'desc' : 'asc';

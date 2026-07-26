@@ -62,3 +62,25 @@ test('a slower, non-improving run does not post to Discord', function () {
 
     Http::assertNothingSent();
 });
+
+test('the team announcement lists each team and its members', function () {
+    $tournament = \App\Models\Tournament::factory()->create(['name' => 'CS Cup', 'is_team_based' => true]);
+    $ann = User::factory()->create(['name' => 'Ann']);
+    $bob = User::factory()->create(['name' => 'Bob']);
+    $cor = User::factory()->create(['name' => 'Cor']);
+
+    $tournament->usersWithScores()->attach($ann->id, ['team_name' => 'Alpha', 'team_number' => 1]);
+    $tournament->usersWithScores()->attach($bob->id, ['team_name' => 'Alpha', 'team_number' => 1]);
+    $tournament->usersWithScores()->attach($cor->id, ['team_name' => 'Bravo', 'team_number' => 2]);
+
+    (new DiscordWebhookService())->announceTeams($tournament);
+
+    Http::assertSent(function ($request) {
+        $description = $request['embeds'][0]['description'];
+        expect($description)
+            ->toContain('Alpha')->toContain('Bravo')
+            ->toContain('Ann')->toContain('Bob')->toContain('Cor');
+
+        return true;
+    });
+});

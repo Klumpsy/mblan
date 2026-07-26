@@ -36,19 +36,19 @@ class TournamentResource extends Resource
         return $form
             ->schema([
                 Section::make('Zo houd je scores bij')
-                    ->description('Korte handleiding — klik om te openen')
+                    ->description('Korte handleiding')
                     ->icon('heroicon-o-information-circle')
                     ->collapsible()
-                    ->collapsed()
                     ->schema([
                         Placeholder::make('handleiding')
                             ->hiddenLabel()
                             ->content(new HtmlString(<<<'HTML'
                                 <ol class="list-decimal space-y-2 ps-5 text-sm leading-relaxed">
                                     <li>Spelers melden zich aan via de site. Je ziet ze op het tabblad <strong>Aanmeldingen</strong> onderaan deze pagina.</li>
-                                    <li>Kies onder <strong>Scoresysteem</strong> hoe er gescoord wordt (punten, kills, tijd in seconden, ...). Bij tijd zet je "Hoogste score wint" uit, zodat de laagste tijd wint.</li>
+                                    <li>Kies onder <strong>Scoresysteem</strong> hoe er gescoord wordt: punten/kills (hoogste wint) of <strong>tijd</strong> (laagste wint). Voor tijd kies je het "Tijd"-preset; scores voer je dan in als <strong>minuten, seconden en milliseconden</strong>.</li>
                                     <li>Ga naar het tabblad <strong>Scores</strong> en voeg een <strong>aangemelde</strong> speler toe. Alleen spelers die zich hebben aangemeld kun je kiezen.</li>
-                                    <li>Werk tijdens het spelen bij met <strong>Score toevoegen</strong>: typ de punten of seconden van de laatste ronde, ze worden opgeteld bij het totaal. Voor een correctie gebruik je <strong>Score bijwerken</strong>.</li>
+                                    <li>Werk tijdens het spelen bij met <strong>Score toevoegen</strong>: typ de punten/seconden van de laatste ronde, ze worden opgeteld bij het totaal. Voor een correctie gebruik je <strong>Score bijwerken</strong>.</li>
+                                    <li>Bij teamtoernooien maak je met <strong>Teams maken</strong> automatisch teams van een instelbare grootte. Zet daar de toggle aan om de indeling meteen in <strong>Discord</strong> te posten.</li>
                                     <li>De <strong>ranking</strong> rekent zichzelf uit: hoogste score bovenaan, of de laagste tijd bij tijd-toernooien.</li>
                                     <li>Zet onderaan <strong>Afgerond</strong> aan als het klaar is. De eindstand verschijnt dan op de site en in Discord.</li>
                                 </ol>

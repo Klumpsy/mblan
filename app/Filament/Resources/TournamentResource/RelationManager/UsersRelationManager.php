@@ -3,8 +3,11 @@
 namespace App\Filament\Resources\TournamentResource\RelationManager;
 
 use App\Models\User;
+use App\Services\DiscordWebhookService;
+use App\Support\TimeScore;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Actions\AttachAction;
@@ -64,6 +67,49 @@ class UsersRelationManager extends RelationManager
         }
 
         $this->recalculateRanking();
+    }
+
+    /**
+     * The form fields for entering a score. Time tournaments get minutes /
+     * seconds / milliseconds inputs; everything else gets a single number under
+     * $numberField ('amount' for adding, 'score' for setting an absolute total).
+     *
+     * @return array<int, TextInput>
+     */
+    private function scoreFields(string $numberField): array
+    {
+        $tournament = $this->getOwnerRecord();
+
+        if ($tournament->isTimeBased()) {
+            return [
+                TextInput::make('minutes')->label('Minuten')->numeric()->default(0)->minValue(0)->required(),
+                TextInput::make('seconds')->label('Seconden')->numeric()->default(0)->minValue(0)->maxValue(59)->required(),
+                TextInput::make('milliseconds')->label('Milliseconden')->numeric()->default(0)->minValue(0)->maxValue(999)->required(),
+            ];
+        }
+
+        return [
+            TextInput::make($numberField)
+                ->label($tournament->scoreLabel())
+                ->numeric()
+                ->required(),
+        ];
+    }
+
+    /**
+     * Read a score (or delta) value out of submitted form data.
+     */
+    private function scoreFromData(array $data, string $numberField): int
+    {
+        if ($this->getOwnerRecord()->isTimeBased()) {
+            return TimeScore::toMilliseconds(
+                (int) ($data['minutes'] ?? 0),
+                (int) ($data['seconds'] ?? 0),
+                (int) ($data['milliseconds'] ?? 0),
+            );
+        }
+
+        return (int) ($data[$numberField] ?? 0);
     }
 
     protected function recalculateRanking(): void
@@ -204,6 +250,7 @@ class UsersRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         $tournament = $this->getOwnerRecord();
+        $scoreLabel = $tournament->scoreLabel();
 
         $columns = [
             TextColumn::make('name')
@@ -221,7 +268,8 @@ class UsersRelationManager extends RelationManager
                 ->sortable()
                 ->placeholder('-');
             $columns[] = TextColumn::make('pivot.team_score')
-                ->label('Team Score')
+                ->label($tournament->isTimeBased() ? 'Teamtijd' : 'Team Score')
+                ->formatStateUsing(fn ($state) => $tournament->isTimeBased() && $state !== null ? TimeScore::format((int) $state) : $state)
                 ->sortable(
                     query: fn($query, $direction) =>
                     $query->orderBy('tournament_user.team_score', $direction)
@@ -229,7 +277,8 @@ class UsersRelationManager extends RelationManager
                 ->placeholder('-');
         } else {
             $columns[] = TextColumn::make('pivot.score')
-                ->label('Score')
+                ->label($scoreLabel)
+                ->formatStateUsing(fn ($state) => $tournament->isTimeBased() && $state !== null ? TimeScore::format((int) $state) : $state)
                 ->sortable(
                     query: fn($query, $direction) =>
                     $query->orderBy('tournament_user.score', $direction)
@@ -276,24 +325,32 @@ class UsersRelationManager extends RelationManager
 
         if ($tournament->is_team_based) {
             $headerActions[] = Action::make('create_teams')
-                ->label('Create Teams')
+                ->label('Teams maken')
                 ->icon('heroicon-o-user-group')
                 ->color('success')
                 ->form([
                     TextInput::make('team_size')
-                        ->label('Team Size')
+                        ->label('Teamgrootte')
                         ->numeric()
                         ->required()
                         ->minValue(2)
                         ->maxValue(10)
                         ->default(2)
-                        ->helperText('Number of players per team'),
+                        ->helperText('Aantal spelers per team.'),
+                    Toggle::make('post_to_discord')
+                        ->label('Teams naar Discord posten')
+                        ->helperText('Plaatst de teamindeling meteen in het Discord-kanaal.')
+                        ->default(false),
                 ])
                 ->action(function (array $data): void {
-                    $this->createTeams($data['team_size']);
+                    $this->createTeams((int) $data['team_size']);
+
+                    if (! empty($data['post_to_discord'])) {
+                        app(DiscordWebhookService::class)->announceTeams($this->getOwnerRecord());
+                    }
                 })
                 ->requiresConfirmation()
-                ->modalDescription('This will automatically create teams from users who are not currently on a team.');
+                ->modalDescription('Maakt automatisch teams van spelers die nog geen team hebben.');
 
             $headerActions[] = Action::make('shuffle_teams')
                 ->label('Shuffle Teams')
@@ -366,8 +423,6 @@ class UsersRelationManager extends RelationManager
         }
 
         // --- Row actions ---
-        $scoreLabel = $tournament->scoreLabel();
-
         $actions = [
             // Primary, one-field quick add: type the points/seconds from the last
             // round and they are added to the running total. This is the fast path
@@ -377,16 +432,10 @@ class UsersRelationManager extends RelationManager
                 ->modalHeading(fn ($record) => "{$scoreLabel} toevoegen voor {$record->name}")
                 ->icon('heroicon-o-plus')
                 ->color('success')
-                ->form([
-                    TextInput::make('amount')
-                        ->label($scoreLabel)
-                        ->numeric()
-                        ->required()
-                        ->helperText('Wordt opgeteld bij de huidige score. Gebruik een negatief getal om af te trekken.'),
-                ])
+                ->form($this->scoreFields('amount'))
                 ->action(function (array $data, $record): void {
                     $current = (int) ($record->pivot->score ?? 0);
-                    $this->setScore($record, $current + (int) $data['amount']);
+                    $this->setScore($record, $current + $this->scoreFromData($data, 'amount'));
                     Notification::make()->title('Score bijgewerkt')->success()->send();
                 }),
 
@@ -398,16 +447,17 @@ class UsersRelationManager extends RelationManager
                 // Prefill the player's current score from the pivot so the admin
                 // sees and edits the real value (the score lives on the pivot,
                 // not on the user, so the default fill would come up empty).
-                ->fillForm(fn ($record) => [
-                    'score' => $record->pivot->score ?? 0,
-                    'team_name' => $record->pivot->team_name ?? null,
-                ])
+                ->fillForm(function ($record) use ($tournament) {
+                    $base = ['team_name' => $record->pivot->team_name ?? null];
+
+                    if ($tournament->isTimeBased()) {
+                        return array_merge($base, TimeScore::toParts((int) ($record->pivot->score ?? 0)));
+                    }
+
+                    return array_merge($base, ['score' => $record->pivot->score ?? 0]);
+                })
                 ->form(array_values(array_filter([
-                    TextInput::make('score')
-                        ->label($scoreLabel)
-                        ->numeric()
-                        ->required()
-                        ->helperText('De totale score van deze speler in dit toernooi.'),
+                    ...$this->scoreFields('score'),
                     $tournament->is_team_based
                         ? TextInput::make('team_name')
                             ->label('Teamnaam')
@@ -419,7 +469,7 @@ class UsersRelationManager extends RelationManager
                         $tournament->usersWithScores()->updateExistingPivot($record->id, ['team_name' => $data['team_name']]);
                     }
 
-                    $this->setScore($record, (int) $data['score']);
+                    $this->setScore($record, $this->scoreFromData($data, 'score'));
 
                     Notification::make()->title('Score bijgewerkt')->success()->send();
                 }),
