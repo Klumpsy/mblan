@@ -1,13 +1,14 @@
 @props(['variant' => 'default'])
 
 {{--
-    Per-page pixel-farm backdrop. Big, clearly visible sprites from the game's
-    sprite library frame the page: a row of tiles down each side gutter (shown
-    only from lg up, where the centred content leaves room), plus a grounded
-    farm scene along the bottom — a treeline silhouette with the barn and Arti
-    the dog. Each section gets its own tiles so pages stay distinct. Fixed,
-    behind everything (-z-10), pointer-events-none, and kept clear of the
-    readable content column.
+    Per-page pixel-farm accents. A plain dark fade carries the base look; big,
+    clearly visible sprites from the game's sprite library float over it — a row
+    of tiles down each side gutter (shown only from lg up, where the centred
+    content leaves room), plus the barn and Arti the dog in the bottom corners.
+    No tiled farm field, so it reads as decorative sprites on a clean gradient
+    rather than a game map. Each section gets its own tiles so pages stay
+    distinct. Fixed, behind everything (-z-10), pointer-events-none, and kept
+    clear of the readable content column.
 --}}
 @php
     // Six gutter tiles per variant: [left-top, left-mid, left-bottom, right-top, right-mid, right-bottom].
@@ -30,7 +31,7 @@
 <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden" aria-hidden="true">
     {{-- base wash: dark forge gradient keeps the centre readable --}}
     <div class="absolute inset-0 bg-gradient-to-b from-forge-forest/50 via-forge-black to-forge-black"></div>
-    <div class="absolute inset-0 bg-grid opacity-[0.10]"></div>
+    <div class="absolute inset-0 bg-grid opacity-[0.05]"></div>
     <div class="absolute left-1/2 top-0 h-[45vmax] w-[45vmax] -translate-x-1/2 -translate-y-1/3 rounded-full bg-primary-500/12 blur-[130px]"></div>
 
     {{-- big side-gutter tiles (lg+ only, where the content column leaves room) --}}
@@ -40,14 +41,10 @@
             style="transform: translateX(-50%);" />
     @endforeach
 
-    {{-- grounded bottom scene: treeline + barn + Arti, clearly visible --}}
-    <img src="{{ asset('images/farm/backdrop.png') }}" alt=""
-        class="pixel absolute inset-x-0 bottom-0 h-56 w-full object-cover opacity-[0.35] sm:h-72"
-        style="-webkit-mask-image: linear-gradient(to top, #000 30%, transparent); mask-image: linear-gradient(to top, #000 30%, transparent);" />
-
+    {{-- bottom-corner anchors: barn + Arti floating on the fade (no tiled field) --}}
     <img src="{{ asset('images/farm/barn.png') }}" alt=""
-        class="pixel absolute bottom-0 right-[2%] w-28 opacity-[0.55] drop-shadow-[0_0_26px_rgba(101,229,154,0.35)] sm:w-40 lg:w-52" />
+        class="pixel absolute bottom-[6%] right-[3%] w-28 opacity-[0.40] drop-shadow-[0_0_26px_rgba(101,229,154,0.30)] sm:w-40 lg:w-52" />
 
     <img src="{{ asset('images/farm/arti.png') }}" alt=""
-        class="pixel absolute bottom-2 left-[3%] w-20 opacity-[0.65] sm:w-28 lg:w-36" />
+        class="pixel absolute bottom-[8%] left-[4%] w-20 opacity-[0.50] sm:w-28 lg:w-36" />
 </div>
