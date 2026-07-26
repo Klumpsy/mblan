@@ -22,35 +22,38 @@
         'barn', 'arti',
     ];
 
-    // Just four sprites — two big (near, parallax fast) and two small (far,
-    // parallax slow), one tucked in each corner so they stay well scattered
-    // and never overlap. [width classes, opacity, parallax speed].
+    // Six sprites across three depth tiers for a nice parallax: big = near =
+    // fast, small = far = slow. [width classes, opacity, parallax speed].
     $big   = ['w' => 'w-40 sm:w-52', 'op' => '0.70', 'spd' => '0.34'];
+    $med   = ['w' => 'w-24 sm:w-28', 'op' => '0.54', 'spd' => '0.22'];
     $small = ['w' => 'w-12 sm:w-16', 'op' => '0.42', 'spd' => '0.10'];
 
-    // Four corner anchors in the gutters, hugging the edges (jittered).
-    $quads = [
-        [mt_rand(0, 3),   mt_rand(8, 20)],   // top-left
-        [mt_rand(90, 97), mt_rand(8, 20)],   // top-right
-        [mt_rand(0, 3),   mt_rand(66, 82)],  // bottom-left
-        [mt_rand(88, 96), mt_rand(66, 82)],  // bottom-right
+    // Six anchors hugging the side gutters (top / middle / bottom, both sides),
+    // spaced so sprites never overlap and never reach the centred content.
+    $slots = [
+        [mt_rand(0, 3),   mt_rand(9, 16)],   // top-left
+        [mt_rand(90, 97), mt_rand(9, 16)],   // top-right
+        [mt_rand(0, 3),   mt_rand(44, 52)],  // middle-left
+        [mt_rand(90, 97), mt_rand(44, 52)],  // middle-right
+        [mt_rand(0, 3),   mt_rand(76, 85)],  // bottom-left
+        [mt_rand(88, 96), mt_rand(76, 85)],  // bottom-right
     ];
 
-    // Pick four distinct sprites and randomly make two of the corners big.
+    // Pick six distinct sprites; two big, two medium, two small, shuffled onto
+    // the slots so sizes land in random corners each request.
     $picks = $pool;
     shuffle($picks);
-    $picks = array_slice($picks, 0, 4);
-    $order = [0, 1, 2, 3];
-    shuffle($order);
-    $bigCorners = array_slice($order, 0, 2);
+    $picks = array_slice($picks, 0, 6);
+    $sizeBag = [$big, $big, $med, $med, $small, $small];
+    shuffle($sizeBag);
 
     $placements = [];
-    foreach ($quads as $i => [$lx, $ly]) {
+    foreach ($slots as $i => [$lx, $ly]) {
         $placements[] = [
             'src'  => $picks[$i].'.png',
             'left' => $lx,
             'top'  => $ly,
-            's'    => in_array($i, $bigCorners, true) ? $big : $small,
+            's'    => $sizeBag[$i],
         ];
     }
 @endphp
