@@ -225,6 +225,10 @@ class DiscordInteractionController extends Controller
         }
 
         $count = $user->drinkBeer();
+
+        // System-award any beer/Discord achievements this unlocks (notifies Discord).
+        app(\App\Services\AchievementEvaluator::class)->sync($user);
+
         $name = $request->input('member.user.global_name')
             ?? $request->input('member.user.username')
             ?? $user->name;

@@ -10,8 +10,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TournamentController extends Controller
 {
-    public function index(UserLeaderboards $leaderboards): View
+    public function index(?UserLeaderboards $leaderboards = null): View
     {
+        $leaderboards ??= app(UserLeaderboards::class);
+
         $tournaments = Tournament::with(['schedule', 'game'])->get();
 
         // The Arti Game: the hardcoded first tournament.
