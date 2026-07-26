@@ -1,5 +1,6 @@
 import './bootstrap';
 import { initEmbers } from './forge/embers';
+import { imageUpload } from './image-upload';
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -28,6 +29,11 @@ const revealObserver = prefersReducedMotion
  */
 document.addEventListener('alpine:init', () => {
     const Alpine = window.Alpine;
+
+    // imageUpload: convert (HEIC->JPEG) and downscale a chosen photo in the
+    // browser, then hand it to Livewire. Shared by the profile photo field and
+    // the photo timeline. See resources/js/image-upload.js.
+    Alpine.data('imageUpload', imageUpload);
 
     // x-reveal: fade/slide a section in when it scrolls into view.
     // Optional modifier for stagger delay: x-reveal.150

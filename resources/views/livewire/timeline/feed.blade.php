@@ -13,8 +13,10 @@
         <div class="grid gap-5 md:grid-cols-2">
             {{-- Photo picker + preview --}}
             <div>
-                <label class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden clip-corner border border-dashed border-primary-500/25 bg-forge-graphite/40 transition hover:border-primary-500/50">
-                    <input type="file" accept="image/*" wire:model="photo" class="hidden" />
+                <label x-data="imageUpload('photo')" class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden clip-corner border border-dashed border-primary-500/25 bg-forge-graphite/40 transition hover:border-primary-500/50">
+                    {{-- Converted (HEIC->JPEG) and downscaled in the browser before
+                         upload; see resources/js/image-upload.js. --}}
+                    <input type="file" accept="image/*" x-on:change="handleSelect($event)" class="hidden" />
 
                     @if ($photo && ! $errors->has('photo'))
                         <img src="{{ $photo->temporaryUrl() }}" alt="Voorbeeld" class="h-full w-full object-cover" />
@@ -31,6 +33,10 @@
 
                     <div class="absolute inset-0 flex items-center justify-center bg-forge-black/60" wire:loading.flex wire:target="photo">
                         <span class="font-pixel text-[9px] uppercase tracking-widest text-primary-300">Uploaden...</span>
+                    </div>
+
+                    <div class="absolute inset-0 flex items-center justify-center bg-forge-black/60" x-show="processing" style="display: none;">
+                        <span class="font-pixel text-[9px] uppercase tracking-widest text-primary-300">Verwerken...</span>
                     </div>
                 </label>
                 @error('photo') <p class="mt-2 font-pixel text-[8px] uppercase tracking-widest text-warning-400">{{ $message }}</p> @enderror

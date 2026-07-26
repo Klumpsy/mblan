@@ -10,17 +10,12 @@
     <x-slot name="form">
         <!-- Profile Photo -->
         @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-            <div x-data="{ photoName: null, photoPreview: null }" class="col-span-6 sm:col-span-4">
-                <!-- Profile Photo File Input -->
-                <input type="file" id="photo" class="hidden" wire:model.live="photo" x-ref="photo"
-                    x-on:change="
-                                    photoName = $refs.photo.files[0].name;
-                                    const reader = new FileReader();
-                                    reader.onload = (e) => {
-                                        photoPreview = e.target.result;
-                                    };
-                                    reader.readAsDataURL($refs.photo.files[0]);
-                            " />
+            <div x-data="imageUpload('photo')" class="col-span-6 sm:col-span-4">
+                <!-- Profile Photo File Input. The photo is converted (HEIC->JPEG)
+                     and downscaled in the browser before upload; see
+                     resources/js/image-upload.js. -->
+                <input type="file" id="photo" class="hidden" x-ref="photo" accept="image/*"
+                    x-on:change="handleSelect($event)" />
 
                 <x-label for="photo" value="{{ __('Foto') }}" />
 
@@ -46,6 +41,10 @@
                         {{ __('Foto verwijderen') }}
                     </x-secondary-button>
                 @endif
+
+                <p class="mt-2 text-sm text-forge-steel/80" x-show="processing" style="display: none;">
+                    {{ __('Foto wordt verwerkt...') }}
+                </p>
 
                 <x-input-error for="photo" class="mt-2" />
             </div>
