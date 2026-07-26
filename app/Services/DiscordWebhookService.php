@@ -261,8 +261,10 @@ class DiscordWebhookService
         }
 
         try {
+            // No automatic retry: a Discord webhook POST is not idempotent, so
+            // retrying after a slow-but-successful post (read timeout) creates a
+            // duplicate message. One attempt only; failures are logged.
             $response = Http::timeout((int) config('discord.webhook_timeout', 10))
-                ->retry((int) config('discord.webhook_retry_times', 3), 200)
                 ->post($this->webhookUrl, $payload);
 
             if ($response->successful()) {
