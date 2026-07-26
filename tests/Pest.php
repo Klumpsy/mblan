@@ -248,3 +248,32 @@ beforeAll(function () {
 afterAll(function () {
     // Code that runs once after all tests
 });
+
+/*
+|--------------------------------------------------------------------------
+| Helpers
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Sign a Discord interaction body the way Discord does and POST it to the
+ * interactions endpoint, exercising the VerifyDiscordSignature middleware.
+ */
+function postDiscordInteraction(array $payload): \Illuminate\Testing\TestResponse
+{
+    $keypair = sodium_crypto_sign_keypair();
+    config(['discord.public_key' => sodium_bin2hex(sodium_crypto_sign_publickey($keypair))]);
+
+    $body = json_encode($payload);
+    $timestamp = '1700000000';
+    $signature = sodium_bin2hex(sodium_crypto_sign_detached(
+        $timestamp.$body,
+        sodium_crypto_sign_secretkey($keypair),
+    ));
+
+    return test()->call('POST', '/discord/interactions', [], [], [], [
+        'HTTP_X-Signature-Ed25519' => $signature,
+        'HTTP_X-Signature-Timestamp' => $timestamp,
+        'CONTENT_TYPE' => 'application/json',
+    ], $body);
+}

@@ -40,6 +40,13 @@ class DiscordInteractionController extends Controller
     {
         $name = $request->input('data.name');
 
+        if (is_string($name) && $name !== '') {
+            \App\Models\DiscordCommandLog::create([
+                'command' => $name,
+                'discord_user_id' => $request->input('member.user.id') ?? $request->input('user.id'),
+            ]);
+        }
+
         return match ($name) {
             'schema' => $this->reply($this->scheduleEmbed(now())),
             'klassement' => $this->reply($this->standingsEmbed()),
