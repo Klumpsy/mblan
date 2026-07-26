@@ -19,6 +19,9 @@
                     <x-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')" class="whitespace-nowrap">
                         {{ __('Nieuws') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('timeline') }}" :active="request()->routeIs('timeline')" class="whitespace-nowrap">
+                        {{ __('Tijdlijn') }}
+                    </x-nav-link>
                     <x-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')" class="whitespace-nowrap">
                         {{ __('Live') }}
                     </x-nav-link>
@@ -106,6 +109,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')">
                 {{ __('Nieuws') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('timeline') }}" :active="request()->routeIs('timeline')">
+                {{ __('Tijdlijn') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')">
                 {{ __('Live') }}

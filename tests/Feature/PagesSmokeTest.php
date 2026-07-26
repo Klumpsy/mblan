@@ -64,6 +64,10 @@ test('news detail renders', function () {
     $this->actingAs($this->user)->get(route('news.show', $this->news))->assertOk();
 });
 
+test('photo timeline renders', function () {
+    $this->actingAs($this->user)->get(route('timeline'))->assertOk();
+});
+
 test('guests are redirected to login from protected pages', function () {
     $this->get(route('schedule'))->assertRedirect(route('login'));
     $this->get(route('tournaments'))->assertRedirect(route('login'));

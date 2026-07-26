@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\OptimizesImages;
 use App\Traits\Taggable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Game extends Model
 {
-    use HasFactory, Taggable;
+    use HasFactory, OptimizesImages, Taggable;
 
     protected $fillable = [
         'name',

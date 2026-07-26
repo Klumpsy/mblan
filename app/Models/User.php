@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\OptimizesImages;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use Filament\Models\Contracts\FilamentUser;
@@ -21,7 +22,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
+    use OptimizesImages;
     use TwoFactorAuthenticatable;
+
+    /**
+     * Uploaded profile photos are downscaled and recompressed on save. Jetstream
+     * stores them on the 'public' disk (config/jetstream.php).
+     *
+     * @var array<int, string>
+     */
+    protected array $optimizableImages = ['profile_photo_path'];
 
     /**
      * The attributes that are mass assignable.
