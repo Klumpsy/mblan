@@ -104,6 +104,13 @@ export function imageUpload(property = 'photo') {
             }
 
             this.processing = true;
+            // Show the site-wide Arti upload overlay for the whole convert+upload.
+            window.dispatchEvent(new CustomEvent('mblan-uploading', { detail: { on: true } }));
+            const done = () => {
+                this.processing = false;
+                window.dispatchEvent(new CustomEvent('mblan-uploading', { detail: { on: false } }));
+            };
+
             let upload;
             try {
                 upload = await prepareImage(file);
@@ -114,12 +121,7 @@ export function imageUpload(property = 'photo') {
             this.photoName = upload.name;
             this.photoPreview = URL.createObjectURL(upload);
 
-            this.$wire.upload(
-                property,
-                upload,
-                () => { this.processing = false; },
-                () => { this.processing = false; },
-            );
+            this.$wire.upload(property, upload, done, done);
         },
     };
 }

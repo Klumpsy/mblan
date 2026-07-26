@@ -53,6 +53,7 @@ class Feed extends Component
 
         $this->reset('photo', 'story');
         $this->dispatch('photo-posted');
+        $this->dispatch('mblan-notify', message: 'Foto geplaatst op de tijdlijn', type: 'success');
     }
 
     public function loadMore(): void

@@ -76,9 +76,9 @@ class GameResource extends Resource
                         ->imageResizeMode('cover')
                         ->imageCropAspectRatio('16:9')
                         // Downscale in the browser before upload so multi-megapixel
-                        // phone photos do not exceed the server's PHP upload limit.
-                        ->imageResizeTargetWidth('1920')
-                        ->imageResizeTargetHeight('1080'),
+                        // phone photos stay well under the server's PHP upload limit.
+                        ->imageResizeTargetWidth('1280')
+                        ->imageResizeTargetHeight('720'),
                     RichEditor::make('short_description')
                         ->required()
                         ->toolbarButtons(self::$textEditorSettings),

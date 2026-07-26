@@ -43,6 +43,9 @@
 
     @stack('modals')
 
+    <x-toast-host />
+    <x-arti-uploader />
+
     {{-- sync the barn-maze attempt stats (from the guest cookie) onto the account --}}
     <script>
         (function () {

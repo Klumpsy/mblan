@@ -64,9 +64,9 @@ class NewsResource extends Resource
                         ->imageResizeMode('cover')
                         ->imageCropAspectRatio('16:9')
                         // Downscale in the browser before upload so multi-megapixel
-                        // phone photos do not exceed the server's PHP upload limit.
-                        ->imageResizeTargetWidth('1920')
-                        ->imageResizeTargetHeight('1080'),
+                        // phone photos stay well under the server's PHP upload limit.
+                        ->imageResizeTargetWidth('1280')
+                        ->imageResizeTargetHeight('720'),
                     Textarea::make('preview_text')
                         ->label('Korte samenvatting')
                         ->helperText('Wordt getoond in het overzicht. Laat leeg om automatisch af te leiden.')
