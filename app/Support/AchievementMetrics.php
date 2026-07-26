@@ -2,7 +2,9 @@
 
 namespace App\Support;
 
+use App\Models\DiscordCommandLog;
 use App\Models\Photo;
+use App\Models\PizzaOrder;
 use App\Models\Reaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -57,6 +59,16 @@ class AchievementMetrics
             'discord_linked' => [
                 'label' => 'Discord gekoppeld (ja/nee)',
                 'resolve' => fn (User $u) => $u->discord_id ? 1 : 0,
+            ],
+            'discord_commands' => [
+                'label' => 'Discord slash-commando\'s gebruikt',
+                'resolve' => fn (User $u) => $u->discord_id
+                    ? DiscordCommandLog::where('discord_user_id', $u->discord_id)->count()
+                    : 0,
+            ],
+            'pizza_orders' => [
+                'label' => 'Eten besteld via de site',
+                'resolve' => fn (User $u) => PizzaOrder::where('user_id', $u->id)->count(),
             ],
 
             // --- Aanmeldingen / edities ---

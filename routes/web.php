@@ -46,6 +46,7 @@ Route::middleware([
     Route::get('/nieuws/{news}', [NewsController::class, 'show'])->name('news.show');
     Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments');
     Route::get('/tijdlijn', [TimelineController::class, 'index'])->name('timeline');
+    Route::view('/pizza', 'pizza.index')->name('pizza');
     Route::view('/live', 'live.index')->name('live');
 
     // Persist the barn-maze attempt stats onto the account (Arti Game leaderboard).
