@@ -119,8 +119,12 @@
                             class="w-full object-cover" loading="lazy" decoding="async" />
 
                         @if ($photo->story)
-                            <p class="whitespace-pre-line px-4 py-4 text-sm leading-relaxed text-forge-steel/80">{{ $photo->story }}</p>
+                            <p class="whitespace-pre-line px-4 pt-4 text-sm leading-relaxed text-forge-steel/80">{{ $photo->story }}</p>
                         @endif
+
+                        <div class="px-4 py-3">
+                            <livewire:reactions :model="$photo" :key="'react-photo-'.$photo->id" />
+                        </div>
                     </div>
                 </li>
             @endforeach

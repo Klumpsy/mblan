@@ -10,7 +10,8 @@
             @else
                 <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($items as $item)
-                        <a href="{{ route('news.show', $item) }}" class="group block frame-wood overflow-hidden transition hover:-translate-y-0.5">
+                        <div class="frame-wood overflow-hidden">
+                        <a href="{{ route('news.show', $item) }}" class="group block transition hover:-translate-y-0.5">
                             <div class="aspect-video w-full overflow-hidden bg-forge-graphite">
                                 @if ($item->image)
                                     <img src="{{ asset('storage/' . $item->image) }}" alt="{{ $item->title }}"
@@ -37,6 +38,10 @@
                                 <span class="mt-4 inline-block font-pixel text-[8px] uppercase tracking-widest text-primary-300">Lees meer &rarr;</span>
                             </div>
                         </a>
+                            <div class="border-t border-primary-500/10 px-5 py-3">
+                                <livewire:reactions :model="$item" :key="'react-news-'.$item->id" />
+                            </div>
+                        </div>
                     @endforeach
                 </div>
 

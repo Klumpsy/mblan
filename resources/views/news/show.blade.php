@@ -29,6 +29,10 @@
             <div class="prose prose-invert mt-8 max-w-none prose-headings:font-display prose-headings:uppercase prose-headings:tracking-wide prose-a:text-primary-400 prose-strong:text-white prose-p:text-forge-steel/80 prose-li:text-forge-steel/80">
                 {!! $news->content !!}
             </div>
+
+            <div class="mt-8 border-t border-primary-500/10 pt-5">
+                <livewire:reactions :model="$news" :key="'react-news-'.$news->id" />
+            </div>
         </div>
     </div>
 </x-app-layout>

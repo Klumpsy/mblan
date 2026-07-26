@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasReactions;
 use App\Models\Concerns\OptimizesImages;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 
 class News extends Model
 {
-    use HasFactory, OptimizesImages;
+    use HasFactory, HasReactions, OptimizesImages;
 
     protected $table = 'news';
 
