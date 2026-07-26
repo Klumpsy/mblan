@@ -21,7 +21,7 @@
 
                 <!-- Current Profile Photo -->
                 <div class="mt-2" x-show="! photoPreview">
-                    <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ $this->user->name }}"
+                    <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ $this->user->name }}"
                         class="clip-corner metal-edge h-20 w-20 object-cover">
                 </div>
 

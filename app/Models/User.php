@@ -34,6 +34,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     protected array $optimizableImages = ['profile_photo_path'];
 
     /**
+     * A fun, stable, per-user random avatar for players who have not uploaded a
+     * photo. Seeded by the account id so it never changes, and every account
+     * gets a different one. Uploading a photo on the profile form overrides it.
+     */
+    public function defaultProfilePhotoUrl(): string
+    {
+        return 'https://api.dicebear.com/9.x/pixel-art/svg?seed='.urlencode('mblan-'.$this->id);
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
