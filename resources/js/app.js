@@ -1,6 +1,7 @@
 import './bootstrap';
 import { initEmbers } from './forge/embers';
 import { imageUpload } from './image-upload';
+import { timelineChase } from './timeline-chase';
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -34,6 +35,10 @@ document.addEventListener('alpine:init', () => {
     // browser, then hand it to Livewire. Shared by the profile photo field and
     // the photo timeline. See resources/js/image-upload.js.
     Alpine.data('imageUpload', imageUpload);
+
+    // timelineChase: farmer + Arti run along the timeline rail on scroll; dots
+    // pulse as Arti passes. See resources/js/timeline-chase.js.
+    Alpine.data('timelineChase', timelineChase);
 
     // x-reveal: fade/slide a section in when it scrolls into view.
     // Optional modifier for stagger delay: x-reveal.150

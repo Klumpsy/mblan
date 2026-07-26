@@ -66,10 +66,25 @@
         </div>
     @else
         <ol class="relative ml-2 space-y-8 border-l-2 border-primary-500/15 pl-6">
+            {{-- Scroll chase: the farmer flees down the rail while Arti gives
+                 chase; dots pulse as Arti passes. Decorative only, and its Alpine
+                 lives here (not on the <ol>) so a missing bundle can't break the
+                 posts or their edit buttons. --}}
+            <div x-data="timelineChase()" class="pointer-events-none absolute left-0 top-0 z-20" x-cloak aria-hidden="true">
+                <div class="absolute w-8 will-change-transform" :style="`top: ${farmerY}px; transform: translate(-50%, -50%);`">
+                    <img src="{{ asset('images/farm/tile_0109.png') }}" alt="" class="pixel w-full"
+                        style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); animation: sprite-bob 0.3s steps(2, end) infinite;" />
+                </div>
+                <div class="absolute w-8 will-change-transform" :style="`top: ${artiY}px; transform: translate(-50%, -50%);`">
+                    <img src="{{ asset('images/farm/arti.png') }}" alt="" class="pixel w-full"
+                        style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); animation: sprite-bob 0.3s steps(2, end) infinite;" />
+                </div>
+            </div>
+
             @foreach ($photos as $photo)
                 <li class="relative" wire:key="photo-{{ $photo->id }}">
                     {{-- Node on the timeline line --}}
-                    <span class="absolute -left-[1.72rem] top-5 h-3 w-3 rounded-full ring-4 ring-forge-black {{ $photo->user_id === auth()->id() ? 'bg-primary-400' : 'bg-primary-500/50' }}"></span>
+                    <span data-timeline-dot class="absolute -left-[1.875rem] top-5 h-3 w-3 rounded-full ring-4 ring-forge-black {{ $photo->user_id === auth()->id() ? 'bg-primary-400' : 'bg-primary-500/50' }}"></span>
 
                     <div class="relative overflow-hidden clip-corner metal-edge">
                         @if ($this->canEdit($photo))
