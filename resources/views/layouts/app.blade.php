@@ -21,16 +21,17 @@
 <body class="font-sans antialiased">
     <x-banner />
 
-    {{-- farm + green ambiance so the app matches the landing --}}
-    <div class="pointer-events-none fixed inset-0 -z-10" aria-hidden="true">
-        <div class="absolute inset-0 bg-gradient-to-b from-forge-forest/60 via-forge-black to-forge-black"></div>
-        <div class="absolute inset-0 bg-primary-900/15"></div>
-        <div class="absolute inset-0 bg-grid opacity-[0.10]"></div>
-        <div class="absolute left-1/2 top-0 h-[45vmax] w-[45vmax] -translate-x-1/2 -translate-y-1/3 rounded-full bg-primary-500/12 blur-[130px]"></div>
-        <img src="{{ asset('images/farm/backdrop.png') }}" alt=""
-            class="pixel absolute inset-x-0 bottom-0 h-56 w-full object-cover opacity-[0.28]"
-            style="-webkit-mask-image: linear-gradient(to top, #000, transparent); mask-image: linear-gradient(to top, #000, transparent);" />
-    </div>
+    {{-- Per-page pixel-farm backdrop, chosen from the current route. --}}
+    @php
+        $sceneryVariant = match (true) {
+            request()->routeIs('news.*') => 'news',
+            request()->routeIs('tournaments') => 'tournaments',
+            request()->routeIs('timeline') => 'timeline',
+            request()->routeIs('profile.*') || request()->is('user/*') => 'profile',
+            default => 'default',
+        };
+    @endphp
+    <x-page-scenery :variant="$sceneryVariant" />
 
     <div class="min-h-screen bg-forge-black/40 text-forge-steel">
         <livewire:navigation-menu />
