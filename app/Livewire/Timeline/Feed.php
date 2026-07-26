@@ -24,6 +24,10 @@ class Feed extends Component
 
     public int $perPage = 6;
 
+    public ?int $editingId = null;
+
+    public string $editStory = '';
+
     /**
      * @return array<string, string>
      */
@@ -59,6 +63,51 @@ class Feed extends Component
     public function loadMore(): void
     {
         $this->perPage += 6;
+    }
+
+    /**
+     * May the current user edit this post? Owners can edit their own; admins
+     * can edit any.
+     */
+    public function canEdit(Photo $photo): bool
+    {
+        $user = Auth::user();
+
+        return $user !== null && ($photo->user_id === $user->id || $user->role === 'admin');
+    }
+
+    public function startEdit(int $id): void
+    {
+        $photo = Photo::findOrFail($id);
+        abort_unless($this->canEdit($photo), 403);
+
+        $this->editingId = $photo->id;
+        $this->editStory = (string) $photo->story;
+    }
+
+    public function cancelEdit(): void
+    {
+        $this->reset('editingId', 'editStory');
+    }
+
+    public function saveEdit(): void
+    {
+        $photo = Photo::findOrFail($this->editingId);
+        abort_unless($this->canEdit($photo), 403);
+
+        $validated = $this->validate(
+            ['editStory' => 'required|string|min:2|max:1000'],
+            [
+                'editStory.required' => 'Schrijf een kort verhaaltje bij je foto.',
+                'editStory.min' => 'Je verhaal is wel erg kort.',
+                'editStory.max' => 'Je verhaal is te lang (max 1000 tekens).',
+            ],
+        );
+
+        $photo->update(['story' => trim($validated['editStory'])]);
+
+        $this->reset('editingId', 'editStory');
+        $this->dispatch('mblan-notify', message: 'Bericht bijgewerkt', type: 'success');
     }
 
     public function render()

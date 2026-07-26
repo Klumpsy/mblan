@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\TournamentResource\RelationManager;
 
 use App\Models\User;
-use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Table;
@@ -23,6 +22,49 @@ use Illuminate\Support\Facades\DB;
 class UsersRelationManager extends RelationManager
 {
     protected static string $relationship = 'usersWithScores';
+
+    protected static ?string $title = 'Scores';
+
+    /**
+     * Players who may be given a score: those who signed up for this tournament
+     * and are not already on the scoreboard. Keyed id => name for a Select.
+     *
+     * @return \Illuminate\Support\Collection<int, string>
+     */
+    public function eligiblePlayers(): \Illuminate\Support\Collection
+    {
+        $tournament = $this->getOwnerRecord();
+        $attachedUserIds = $tournament->usersWithScores()->pluck('users.id')->toArray();
+
+        return $tournament->registrations()
+            ->whereNotIn('users.id', $attachedUserIds)
+            ->orderBy('name')
+            ->pluck('name', 'users.id');
+    }
+
+    /**
+     * Set a player's score to an absolute value, propagate it to teammates for
+     * team tournaments, and refresh the ranking. Both the "add" and "edit"
+     * score actions funnel through here.
+     */
+    private function setScore($record, int $newScore): void
+    {
+        $tournament = $this->getOwnerRecord();
+
+        $tournament->usersWithScores()->updateExistingPivot($record->id, array_filter([
+            'score' => $newScore,
+            'team_score' => $tournament->is_team_based ? $newScore : null,
+        ], fn ($value) => $value !== null));
+
+        if ($tournament->is_team_based && ! is_null($record->pivot->team_number)) {
+            DB::table('tournament_user')
+                ->where('tournament_id', $tournament->id)
+                ->where('team_number', $record->pivot->team_number)
+                ->update(['score' => $newScore, 'team_score' => $newScore]);
+        }
+
+        $this->recalculateRanking();
+    }
 
     protected function recalculateRanking(): void
     {
@@ -210,19 +252,15 @@ class UsersRelationManager extends RelationManager
             AttachAction::make()
                 ->form(fn() => [
                     Select::make('recordId')
-                        ->label('User')
-                        ->options(function () {
-                            $tournament = $this->getOwnerRecord();
-                            $attachedUserIds = $tournament->usersWithScores()->pluck('users.id')->toArray();
-
-                            return User::whereNotIn('id', $attachedUserIds)
-                                ->orderBy('name')
-                                ->pluck('name', 'id');
-                        })
+                        ->label('Speler')
+                        // Only players who signed up for this tournament can get a
+                        // score, minus anyone already on the scoreboard.
+                        ->options(fn () => $this->eligiblePlayers())
                         ->searchable()
                         ->required()
                         ->preload()
-                        ->placeholder('Select a user'),
+                        ->placeholder('Kies een aangemelde speler')
+                        ->helperText('Alleen spelers die zich hebben aangemeld voor dit toernooi.'),
                     TextInput::make('score')
                         ->numeric()
                         ->default(0)
@@ -328,46 +366,63 @@ class UsersRelationManager extends RelationManager
         }
 
         // --- Row actions ---
+        $scoreLabel = $tournament->scoreLabel();
+
         $actions = [
+            // Primary, one-field quick add: type the points/seconds from the last
+            // round and they are added to the running total. This is the fast path
+            // admins use during play — no need to compute the new absolute value.
+            Action::make('addScore')
+                ->label('Score toevoegen')
+                ->modalHeading(fn ($record) => "{$scoreLabel} toevoegen voor {$record->name}")
+                ->icon('heroicon-o-plus')
+                ->color('success')
+                ->form([
+                    TextInput::make('amount')
+                        ->label($scoreLabel)
+                        ->numeric()
+                        ->required()
+                        ->helperText('Wordt opgeteld bij de huidige score. Gebruik een negatief getal om af te trekken.'),
+                ])
+                ->action(function (array $data, $record): void {
+                    $current = (int) ($record->pivot->score ?? 0);
+                    $this->setScore($record, $current + (int) $data['amount']);
+                    Notification::make()->title('Score bijgewerkt')->success()->send();
+                }),
+
+            // Secondary: set the exact total, for corrections.
             EditAction::make()
-                ->form(fn(Form $form) => $this->form($form))
-                ->mutateFormDataUsing(function (array $data, $record) {
-                    $tournament = $this->getOwnerRecord();
-
-                    // Current score from pivot
-                    $currentScore = $record->pivot->score ?? 0;
-
-                    // Determine new score
-                    if (isset($data['add_to_score']) && $data['add_to_score'] !== null) {
-                        $newScore = $currentScore + $data['add_to_score'];
-                    } else {
-                        $newScore = $data['score'];
+                ->label('Score bijwerken')
+                ->modalHeading('Score bijwerken')
+                ->icon('heroicon-o-pencil-square')
+                // Prefill the player's current score from the pivot so the admin
+                // sees and edits the real value (the score lives on the pivot,
+                // not on the user, so the default fill would come up empty).
+                ->fillForm(fn ($record) => [
+                    'score' => $record->pivot->score ?? 0,
+                    'team_name' => $record->pivot->team_name ?? null,
+                ])
+                ->form(array_values(array_filter([
+                    TextInput::make('score')
+                        ->label($scoreLabel)
+                        ->numeric()
+                        ->required()
+                        ->helperText('De totale score van deze speler in dit toernooi.'),
+                    $tournament->is_team_based
+                        ? TextInput::make('team_name')
+                            ->label('Teamnaam')
+                            ->helperText('Laat leeg voor automatische toewijzing.')
+                        : null,
+                ])))
+                ->action(function (array $data, $record) use ($tournament): void {
+                    if ($tournament->is_team_based && array_key_exists('team_name', $data)) {
+                        $tournament->usersWithScores()->updateExistingPivot($record->id, ['team_name' => $data['team_name']]);
                     }
 
-                    // Update this user
-                    $tournament->usersWithScores()->updateExistingPivot(
-                        $record->id,
-                        array_filter([
-                            'score' => $newScore,
-                            'team_name' => $data['team_name'] ?? null,
-                            'team_score' => $tournament->is_team_based ? $newScore : null,
-                        ], fn($v) => true)
-                    );
+                    $this->setScore($record, (int) $data['score']);
 
-                    // If team-based, also update teammates' scores
-                    if ($tournament->is_team_based && !is_null($record->pivot->team_number)) {
-                        DB::table('tournament_user')
-                            ->where('tournament_id', $tournament->id)
-                            ->where('team_number', $record->pivot->team_number)
-                            ->update([
-                                'score' => $newScore,
-                                'team_score' => $newScore,
-                            ]);
-                    }
-
-                    return $data;
-                })
-                ->after(fn() => $this->recalculateRanking()),
+                    Notification::make()->title('Score bijgewerkt')->success()->send();
+                }),
 
             DetachAction::make(),
         ];
@@ -462,31 +517,5 @@ class UsersRelationManager extends RelationManager
         }
 
         return $table;
-    }
-
-    public function form(Schema $form): Schema
-    {
-        $tournament = $this->getOwnerRecord();
-
-        $schema = [
-            TextInput::make('score')
-                ->numeric()
-                ->required()
-                ->label('Score')
-                ->helperText('Enter the score for the user in this tournament.'),
-            TextInput::make('add_to_score')
-                ->numeric()
-                ->required()
-                ->label('Add to Score')
-                ->helperText('Enter a value to add to the current score. Use negative values to subtract.'),
-        ];
-
-        if ($tournament->is_team_based) {
-            $schema[] = TextInput::make('team_name')
-                ->label('Team Name')
-                ->helperText('Enter a custom team name or leave empty for auto-assignment.');
-        }
-
-        return $form->schema($schema);
     }
 }

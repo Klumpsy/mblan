@@ -71,7 +71,18 @@
                     {{-- Node on the timeline line --}}
                     <span class="absolute -left-[1.72rem] top-5 h-3 w-3 rounded-full ring-4 ring-forge-black {{ $photo->user_id === auth()->id() ? 'bg-primary-400' : 'bg-primary-500/50' }}"></span>
 
-                    <div class="overflow-hidden clip-corner metal-edge">
+                    <div class="relative overflow-hidden clip-corner metal-edge">
+                        @if ($this->canEdit($photo))
+                            <button type="button" wire:click="startEdit({{ $photo->id }})"
+                                title="Bewerk dit bericht"
+                                class="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-forge-black/60 text-forge-steel/70 ring-1 ring-primary-500/20 backdrop-blur transition hover:text-primary-300 hover:ring-primary-500/50">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                                        d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
+                                </svg>
+                            </button>
+                        @endif
+
                         <div class="flex items-center gap-3 border-b border-primary-500/10 bg-forge-graphite/40 px-4 py-3">
                             <img src="{{ $photo->user?->profile_photo_url }}" alt="{{ $photo->user?->name }}"
                                 class="h-9 w-9 shrink-0 rounded-full object-cover ring-2 {{ $photo->user_id === auth()->id() ? 'ring-primary-400' : 'ring-primary-500/20' }}" />
@@ -92,7 +103,23 @@
                         <img src="{{ asset('storage/' . $photo->image) }}" alt="Foto van {{ $photo->user?->name }}"
                             class="w-full object-cover" loading="lazy" decoding="async" />
 
-                        @if ($photo->story)
+                        @if ($editingId === $photo->id)
+                            <div class="space-y-3 px-4 py-4">
+                                <textarea wire:model="editStory" rows="4" maxlength="1000"
+                                    class="clip-corner w-full resize-none border border-primary-500/20 bg-forge-graphite/40 p-3 text-sm text-forge-steel focus:border-primary-500/40 focus:outline-none focus:ring-0"></textarea>
+                                @error('editStory') <p class="font-pixel text-[8px] uppercase tracking-widest text-warning-400">{{ $message }}</p> @enderror
+                                <div class="flex justify-end gap-2">
+                                    <button type="button" wire:click="cancelEdit"
+                                        class="clip-corner metal-edge px-4 py-2 font-display text-[10px] uppercase tracking-widest text-forge-steel transition hover:text-white">
+                                        Annuleren
+                                    </button>
+                                    <button type="button" wire:click="saveEdit" wire:loading.attr="disabled" wire:target="saveEdit"
+                                        class="btn-wood clip-corner px-4 py-2 text-[10px] disabled:opacity-50">
+                                        Opslaan
+                                    </button>
+                                </div>
+                            </div>
+                        @elseif ($photo->story)
                             <p class="whitespace-pre-line px-4 py-4 text-sm leading-relaxed text-forge-steel/80">{{ $photo->story }}</p>
                         @endif
                     </div>
