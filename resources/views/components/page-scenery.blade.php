@@ -22,40 +22,35 @@
         'barn', 'arti',
     ];
 
-    // Size buckets: [width classes, opacity, parallax speed]. Big = near = fast.
-    $sizes = [
-        ['w' => 'w-10 sm:w-12', 'op' => '0.32', 'spd' => '0.07'], // small / far
-        ['w' => 'w-16 sm:w-20', 'op' => '0.44', 'spd' => '0.15'],
-        ['w' => 'w-24 sm:w-28', 'op' => '0.56', 'spd' => '0.26'],
-        ['w' => 'w-32 sm:w-40', 'op' => '0.68', 'spd' => '0.38'], // big / near
+    // Just four sprites — two big (near, parallax fast) and two small (far,
+    // parallax slow), one tucked in each corner so they stay well scattered
+    // and never overlap. [width classes, opacity, parallax speed].
+    $big   = ['w' => 'w-40 sm:w-52', 'op' => '0.70', 'spd' => '0.34'];
+    $small = ['w' => 'w-12 sm:w-16', 'op' => '0.42', 'spd' => '0.10'];
+
+    // Four corner anchors in the gutters, hugging the edges (jittered).
+    $quads = [
+        [mt_rand(0, 3),   mt_rand(8, 20)],   // top-left
+        [mt_rand(90, 97), mt_rand(8, 20)],   // top-right
+        [mt_rand(0, 3),   mt_rand(66, 82)],  // bottom-left
+        [mt_rand(88, 96), mt_rand(66, 82)],  // bottom-right
     ];
 
-    // Gutter grid — columns hug the screen edges so sprites never crowd the
-    // left-aligned headings. Each column caps its max size: [x%, maxSizeIdx].
-    // Inner columns stay small; only the outermost columns get the big sprites.
-    $cols = [[1, 3], [10, 1], [90, 3], [99, 3]];
-    $rows = [6, 22, 38, 54, 70, 86];
-    $cells = [];
-    foreach ($cols as [$cx, $maxIdx]) {
-        foreach ($rows as $cy) {
-            $cells[] = [$cx, $cy, $maxIdx];
-        }
-    }
-    shuffle($cells);
-    $cells = array_slice($cells, 0, mt_rand(18, 24));
-
-    // Seed variant identity into the shuffle so sections still differ a little.
-    $offset = ['timeline' => 0, 'tournaments' => 5, 'news' => 11, 'profile' => 17][$variant] ?? 0;
+    // Pick four distinct sprites and randomly make two of the corners big.
+    $picks = $pool;
+    shuffle($picks);
+    $picks = array_slice($picks, 0, 4);
+    $order = [0, 1, 2, 3];
+    shuffle($order);
+    $bigCorners = array_slice($order, 0, 2);
 
     $placements = [];
-    foreach ($cells as $j => [$cx, $cy, $maxIdx]) {
-        $sprite = $pool[($j * 7 + $offset + mt_rand(0, count($pool) - 1)) % count($pool)];
-        $s = $sizes[mt_rand(0, $maxIdx)];
+    foreach ($quads as $i => [$lx, $ly]) {
         $placements[] = [
-            'src'  => $sprite.'.png',
-            'left' => max(0, min(99, $cx + mt_rand(-2, 2))),
-            'top'  => max(2, min(92, $cy + mt_rand(-4, 4))),
-            's'    => $s,
+            'src'  => $picks[$i].'.png',
+            'left' => $lx,
+            'top'  => $ly,
+            's'    => in_array($i, $bigCorners, true) ? $big : $small,
         ];
     }
 @endphp
