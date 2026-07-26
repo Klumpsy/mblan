@@ -122,6 +122,18 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasMany(Signup::class);
     }
 
+    /** Timeline photos this user has posted. */
+    public function photos(): HasMany
+    {
+        return $this->hasMany(Photo::class);
+    }
+
+    /** Emoji reactions this user has left on photos/news. */
+    public function reactionsGiven(): HasMany
+    {
+        return $this->hasMany(Reaction::class);
+    }
+
     public function news(): HasMany
     {
         return $this->hasMany(News::class, 'author_id');

@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Tournament;
 use App\Models\User;
+use App\Support\UserLeaderboards;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TournamentController extends Controller
 {
-    public function index(): View
+    public function index(UserLeaderboards $leaderboards): View
     {
         $tournaments = Tournament::with(['schedule', 'game'])->get();
 
@@ -26,6 +27,7 @@ class TournamentController extends Controller
         return view('tournaments.index', [
             'tournaments' => $tournaments,
             'artiLeaderboard' => $artiLeaderboard,
+            'statBrackets' => $leaderboards->all(),
         ]);
     }
 

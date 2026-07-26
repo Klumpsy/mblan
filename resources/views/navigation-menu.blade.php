@@ -14,7 +14,7 @@
                         {{ __('Schema') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')" class="whitespace-nowrap">
-                        {{ __('Toernooien') }}
+                        {{ __('Leaderboard') }}
                     </x-nav-link>
                     <x-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')" class="whitespace-nowrap">
                         {{ __('Nieuws') }}
@@ -105,7 +105,7 @@
                 {{ __('Schema') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
-                {{ __('Toernooien') }}
+                {{ __('Leaderboard') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')">
                 {{ __('Nieuws') }}
