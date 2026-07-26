@@ -1,4 +1,7 @@
-<div>
+<div x-data="timelineLightbox()"
+    x-on:keydown.left.window="open && prev()"
+    x-on:keydown.right.window="open && next()"
+    x-on:keydown.escape.window="open && close()">
     {{-- ===== Post a photo ===== --}}
     <form wire:submit="save" class="clip-corner metal-edge mb-14 p-6">
         <div class="mb-5 flex items-center gap-3">
@@ -116,7 +119,13 @@
                         </div>
 
                         <img src="{{ asset('storage/' . $photo->image) }}" alt="Foto van {{ $photo->user?->name }}"
-                            class="w-full object-cover" loading="lazy" decoding="async" />
+                            class="w-full cursor-zoom-in object-cover" loading="lazy" decoding="async"
+                            data-lb
+                            data-lb-src="{{ asset('storage/' . $photo->image) }}"
+                            data-lb-name="{{ $photo->user?->name ?? 'Onbekend' }}"
+                            data-lb-date="{{ $photo->created_at->translatedFormat('D d M Y') }} &middot; {{ $photo->created_at->format('H:i') }}"
+                            data-lb-story="{{ $photo->story }}"
+                            x-on:click="openAt($event.currentTarget)" />
 
                         @if ($photo->story)
                             <p class="whitespace-pre-line px-4 pt-4 text-sm leading-relaxed text-forge-steel/80">{{ $photo->story }}</p>
@@ -140,6 +149,36 @@
             </div>
         @endif
     @endif
+
+    {{-- ===== Lightbox ===== --}}
+    <div x-cloak x-show="open"
+        class="fixed inset-0 z-[95] flex items-center justify-center bg-forge-black/90 backdrop-blur-sm"
+        x-on:touchstart="onTouchStart($event)" x-on:touchend="onTouchEnd($event)">
+        <button type="button" x-on:click="close()" title="Sluiten"
+            class="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-forge-black/60 text-forge-steel/80 ring-1 ring-primary-500/20 transition hover:text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+
+        <button type="button" x-on:click="prev()" title="Vorige" x-show="items.length > 1"
+            class="absolute left-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-forge-black/60 text-forge-steel/80 ring-1 ring-primary-500/20 transition hover:text-white sm:left-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M15 19l-7-7 7-7" /></svg>
+        </button>
+        <button type="button" x-on:click="next()" title="Volgende" x-show="items.length > 1"
+            class="absolute right-2 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-forge-black/60 text-forge-steel/80 ring-1 ring-primary-500/20 transition hover:text-white sm:right-6">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 5l7 7-7 7" /></svg>
+        </button>
+
+        <div class="relative mx-auto flex max-h-[92vh] w-full max-w-3xl items-center justify-center px-2">
+            <div class="relative w-full overflow-hidden clip-corner">
+                <img :src="current.src" :alt="current.name" class="max-h-[92vh] w-full object-contain" />
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-forge-black/95 via-forge-black/70 to-transparent p-6 pt-16">
+                    <p class="font-display text-lg uppercase tracking-wide text-white" x-text="current.name"></p>
+                    <p class="font-pixel text-[8px] uppercase tracking-[0.2em] text-forge-steel/60" x-html="current.date"></p>
+                    <p class="mt-2 whitespace-pre-line text-sm leading-relaxed text-forge-steel/85" x-text="current.story"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- ===== Edit post modal (story + photo) ===== --}}
     @if ($editingId && $editingPhoto)

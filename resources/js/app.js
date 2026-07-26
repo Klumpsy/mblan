@@ -2,6 +2,7 @@ import './bootstrap';
 import { initEmbers } from './forge/embers';
 import { imageUpload } from './image-upload';
 import { timelineChase } from './timeline-chase';
+import { timelineLightbox } from './timeline-lightbox';
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -39,6 +40,10 @@ document.addEventListener('alpine:init', () => {
     // timelineChase: farmer + Arti run along the timeline rail on scroll; dots
     // pulse as Arti passes. See resources/js/timeline-chase.js.
     Alpine.data('timelineChase', timelineChase);
+
+    // timelineLightbox: click a post to view the big image with title/text and
+    // left/right (or swipe) navigation. See resources/js/timeline-lightbox.js.
+    Alpine.data('timelineLightbox', timelineLightbox);
 
     // x-reveal: fade/slide a section in when it scrolls into view.
     // Optional modifier for stagger delay: x-reveal.150
