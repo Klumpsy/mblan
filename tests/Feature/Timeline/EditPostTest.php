@@ -4,6 +4,8 @@ use App\Livewire\Timeline\Feed;
 use App\Models\Photo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -52,4 +54,24 @@ test('an admin can edit any post', function () {
         ->assertHasNoErrors();
 
     expect($photo->fresh()->story)->toBe('Door de admin aangepast');
+});
+
+test('a user can change the photo on their own post', function () {
+    Storage::fake('public');
+    $user = User::factory()->create();
+    $photo = Photo::factory()->create(['user_id' => $user->id, 'image' => 'timeline/old.jpg', 'story' => 'oud']);
+
+    $this->actingAs($user);
+
+    Livewire::test(Feed::class)
+        ->call('startEdit', $photo->id)
+        ->set('editStory', 'nieuw verhaal')
+        ->set('editPhoto', UploadedFile::fake()->image('new.jpg'))
+        ->call('saveEdit')
+        ->assertHasNoErrors();
+
+    $photo->refresh();
+    expect($photo->story)->toBe('nieuw verhaal');
+    expect($photo->image)->not->toBe('timeline/old.jpg');
+    Storage::disk('public')->assertExists($photo->image);
 });

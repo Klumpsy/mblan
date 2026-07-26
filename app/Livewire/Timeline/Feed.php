@@ -28,6 +28,8 @@ class Feed extends Component
 
     public string $editStory = '';
 
+    public $editPhoto = null;
+
     /**
      * @return array<string, string>
      */
@@ -83,11 +85,12 @@ class Feed extends Component
 
         $this->editingId = $photo->id;
         $this->editStory = (string) $photo->story;
+        $this->editPhoto = null;
     }
 
     public function cancelEdit(): void
     {
-        $this->reset('editingId', 'editStory');
+        $this->reset('editingId', 'editStory', 'editPhoto');
     }
 
     public function saveEdit(): void
@@ -96,17 +99,33 @@ class Feed extends Component
         abort_unless($this->canEdit($photo), 403);
 
         $validated = $this->validate(
-            ['editStory' => 'required|string|min:2|max:1000'],
+            [
+                'editStory' => 'required|string|min:2|max:1000',
+                'editPhoto' => 'nullable|image|max:12288',
+            ],
             [
                 'editStory.required' => 'Schrijf een kort verhaaltje bij je foto.',
                 'editStory.min' => 'Je verhaal is wel erg kort.',
                 'editStory.max' => 'Je verhaal is te lang (max 1000 tekens).',
+                'editPhoto.image' => 'Alleen afbeeldingen zijn toegestaan.',
+                'editPhoto.max' => 'Deze foto is te groot (max 12 MB).',
             ],
         );
 
-        $photo->update(['story' => trim($validated['editStory'])]);
+        $changes = ['story' => trim($validated['editStory'])];
 
-        $this->reset('editingId', 'editStory');
+        if ($this->editPhoto) {
+            $old = $photo->image;
+            $changes['image'] = $this->editPhoto->store('timeline', 'public');
+
+            if ($old && $old !== $changes['image']) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($old);
+            }
+        }
+
+        $photo->update($changes);
+
+        $this->reset('editingId', 'editStory', 'editPhoto');
         $this->dispatch('mblan-notify', message: 'Bericht bijgewerkt', type: 'success');
     }
 
@@ -122,6 +141,7 @@ class Feed extends Component
         return view('livewire.timeline.feed', [
             'photos' => $photos->take($this->perPage),
             'hasMore' => $hasMore,
+            'editingPhoto' => $this->editingId ? Photo::find($this->editingId) : null,
         ]);
     }
 }

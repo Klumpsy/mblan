@@ -118,23 +118,7 @@
                         <img src="{{ asset('storage/' . $photo->image) }}" alt="Foto van {{ $photo->user?->name }}"
                             class="w-full object-cover" loading="lazy" decoding="async" />
 
-                        @if ($editingId === $photo->id)
-                            <div class="space-y-3 px-4 py-4">
-                                <textarea wire:model="editStory" rows="4" maxlength="1000"
-                                    class="clip-corner w-full resize-none border border-primary-500/20 bg-forge-graphite/40 p-3 text-sm text-forge-steel focus:border-primary-500/40 focus:outline-none focus:ring-0"></textarea>
-                                @error('editStory') <p class="font-pixel text-[8px] uppercase tracking-widest text-warning-400">{{ $message }}</p> @enderror
-                                <div class="flex justify-end gap-2">
-                                    <button type="button" wire:click="cancelEdit"
-                                        class="clip-corner metal-edge px-4 py-2 font-display text-[10px] uppercase tracking-widest text-forge-steel transition hover:text-white">
-                                        Annuleren
-                                    </button>
-                                    <button type="button" wire:click="saveEdit" wire:loading.attr="disabled" wire:target="saveEdit"
-                                        class="btn-wood clip-corner px-4 py-2 text-[10px] disabled:opacity-50">
-                                        Opslaan
-                                    </button>
-                                </div>
-                            </div>
-                        @elseif ($photo->story)
+                        @if ($photo->story)
                             <p class="whitespace-pre-line px-4 py-4 text-sm leading-relaxed text-forge-steel/80">{{ $photo->story }}</p>
                         @endif
                     </div>
@@ -151,5 +135,58 @@
                 </button>
             </div>
         @endif
+    @endif
+
+    {{-- ===== Edit post modal (story + photo) ===== --}}
+    @if ($editingId && $editingPhoto)
+        <div class="fixed inset-0 z-[85] flex items-center justify-center bg-forge-black/75 p-4 backdrop-blur-sm"
+            x-data x-on:keydown.escape.window="$wire.cancelEdit()">
+            <div class="clip-corner metal-edge w-full max-w-lg bg-forge-graphite/95 p-6">
+                <div class="mb-4 flex items-center justify-between">
+                    <h3 class="font-display text-sm uppercase tracking-wide text-white">Bericht bewerken</h3>
+                    <button type="button" wire:click="cancelEdit" class="text-forge-steel/60 transition hover:text-white" title="Sluiten">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Photo: current image or a freshly picked one, converted + downscaled in the browser --}}
+                <div x-data="imageUpload('editPhoto')" class="mb-4">
+                    <label class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden clip-corner border border-dashed border-primary-500/25 bg-forge-graphite/40">
+                        <input type="file" accept="image/*" x-on:change="handleSelect($event)" class="hidden" />
+
+                        <template x-if="photoPreview">
+                            <img :src="photoPreview" alt="Nieuwe foto" class="h-full w-full object-cover" />
+                        </template>
+                        <template x-if="! photoPreview">
+                            <img src="{{ asset('storage/' . $editingPhoto->image) }}" alt="Huidige foto" class="h-full w-full object-cover" />
+                        </template>
+
+                        <span class="absolute bottom-2 right-2 bg-forge-black/60 px-2 py-1 font-pixel text-[8px] uppercase tracking-widest text-white/80">Foto wijzigen</span>
+                        <div class="absolute inset-0 flex items-center justify-center bg-forge-black/60" x-show="processing" style="display:none;">
+                            <span class="font-pixel text-[9px] uppercase tracking-widest text-primary-300">Verwerken...</span>
+                        </div>
+                    </label>
+                    @error('editPhoto') <p class="mt-2 font-pixel text-[8px] uppercase tracking-widest text-warning-400">{{ $message }}</p> @enderror
+                </div>
+
+                <textarea wire:model="editStory" rows="4" maxlength="1000"
+                    class="clip-corner w-full resize-none border border-primary-500/20 bg-forge-graphite/40 p-3 text-sm text-forge-steel focus:border-primary-500/40 focus:outline-none focus:ring-0"></textarea>
+                @error('editStory') <p class="mt-1 font-pixel text-[8px] uppercase tracking-widest text-warning-400">{{ $message }}</p> @enderror
+
+                <div class="mt-4 flex justify-end gap-2">
+                    <button type="button" wire:click="cancelEdit"
+                        class="clip-corner metal-edge px-4 py-2 font-display text-[10px] uppercase tracking-widest text-forge-steel transition hover:text-white">
+                        Annuleren
+                    </button>
+                    <button type="button" wire:click="saveEdit" wire:loading.attr="disabled" wire:target="saveEdit,editPhoto"
+                        class="btn-wood clip-corner px-4 py-2 text-[10px] disabled:opacity-50">
+                        <span wire:loading.remove wire:target="saveEdit">Opslaan</span>
+                        <span wire:loading wire:target="saveEdit">Bezig...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     @endif
 </div>
