@@ -82,13 +82,15 @@ class AchievementMetrics
                 'label' => 'Toernooien gespeeld (met score)',
                 'resolve' => fn (User $u) => DB::table('tournament_user')->where('user_id', $u->id)->count(),
             ],
+            // Won / podium only count once a tournament is CONCLUDED — a live
+            // ladder ranking means nothing until the tournament is finished.
             'tournaments_won' => [
-                'label' => 'Toernooien gewonnen (1e plek)',
-                'resolve' => fn (User $u) => DB::table('tournament_user')->where('user_id', $u->id)->where('ranking', 1)->count(),
+                'label' => 'Toernooien gewonnen (afgerond, 1e plek)',
+                'resolve' => fn (User $u) => self::concludedRankings($u->id)->where('tournament_user.ranking', 1)->count(),
             ],
             'tournament_podiums' => [
-                'label' => 'Podiumplekken in toernooien (top 3)',
-                'resolve' => fn (User $u) => DB::table('tournament_user')->where('user_id', $u->id)->whereBetween('ranking', [1, 3])->count(),
+                'label' => 'Podiumplekken (afgerond, top 3)',
+                'resolve' => fn (User $u) => self::concludedRankings($u->id)->whereBetween('tournament_user.ranking', [1, 3])->count(),
             ],
         ];
     }
@@ -97,6 +99,18 @@ class AchievementMetrics
     public static function options(): array
     {
         return array_map(fn ($d) => $d['label'], self::definitions());
+    }
+
+    /**
+     * A user's ranked rows restricted to concluded tournaments. Kept private so
+     * the "won" / "podium" metrics can't accidentally count live ladders.
+     */
+    private static function concludedRankings(int $userId): \Illuminate\Database\Query\Builder
+    {
+        return DB::table('tournament_user')
+            ->join('tournaments', 'tournaments.id', '=', 'tournament_user.tournament_id')
+            ->where('tournament_user.user_id', $userId)
+            ->where('tournaments.concluded', true);
     }
 
     public static function has(?string $key): bool

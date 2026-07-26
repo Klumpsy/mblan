@@ -38,21 +38,49 @@ test('an unconfirmed signup does not count', function () {
     expect(unlockedSlugs($user))->not->toContain('ingeschreven');
 });
 
-test('winning a tournament unlocks the tournament achievement', function () {
+test('leading a live (unconcluded) tournament does NOT count as a win', function () {
     $user = User::factory()->create();
-    $tournament = Tournament::factory()->create();
+    $tournament = Tournament::factory()->create(['concluded' => false]);
     DB::table('tournament_user')->insert([
-        'tournament_id' => $tournament->id,
-        'user_id' => $user->id,
-        'ranking' => 1,
-        'score' => 100,
-        'created_at' => now(),
-        'updated_at' => now(),
+        'tournament_id' => $tournament->id, 'user_id' => $user->id,
+        'ranking' => 1, 'score' => 100, 'created_at' => now(), 'updated_at' => now(),
+    ]);
+
+    app(AchievementEvaluator::class)->sync($user);
+
+    expect(unlockedSlugs($user))->not->toContain('toernooiwinnaar');
+    expect(unlockedSlugs($user))->not->toContain('podiumbeest');
+});
+
+test('winning a CONCLUDED tournament unlocks the tournament achievements', function () {
+    $user = User::factory()->create();
+    $tournament = Tournament::factory()->create(['concluded' => true]);
+    DB::table('tournament_user')->insert([
+        'tournament_id' => $tournament->id, 'user_id' => $user->id,
+        'ranking' => 1, 'score' => 100, 'created_at' => now(), 'updated_at' => now(),
     ]);
 
     app(AchievementEvaluator::class)->sync($user);
 
     expect(unlockedSlugs($user))->toContain('toernooiwinnaar')->toContain('podiumbeest');
+});
+
+test('the evaluator self-corrects: a win clears when the tournament is reopened', function () {
+    $user = User::factory()->create();
+    $tournament = Tournament::factory()->create(['concluded' => true]);
+    DB::table('tournament_user')->insert([
+        'tournament_id' => $tournament->id, 'user_id' => $user->id,
+        'ranking' => 1, 'score' => 100, 'created_at' => now(), 'updated_at' => now(),
+    ]);
+    $evaluator = app(AchievementEvaluator::class);
+    $evaluator->sync($user);
+    expect(unlockedSlugs($user))->toContain('toernooiwinnaar');
+
+    // Tournament reopened (no longer concluded) -> the award must disappear.
+    $tournament->update(['concluded' => false]);
+    $evaluator->sync($user);
+
+    expect(unlockedSlugs($user->fresh()))->not->toContain('toernooiwinnaar');
 });
 
 test('the backfill command awards achievements to already-registered users silently', function () {

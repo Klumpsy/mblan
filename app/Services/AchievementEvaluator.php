@@ -68,11 +68,16 @@ class AchievementEvaluator
                         'achieved_at' => $unlocked ? now() : null,
                     ]);
                 } else {
-                    $data = ['progress' => $progress];
-                    if ($unlocked && ! $wasAchieved) {
-                        $data['achieved_at'] = now();
-                    }
-                    $user->achievements()->updateExistingPivot($achievement->id, $data);
+                    // Self-correcting: achieved_at always reflects the current
+                    // truth. Keep the original earn date once unlocked; clear it
+                    // if the data no longer meets the threshold (e.g. an award
+                    // made before a tournament was actually concluded).
+                    $user->achievements()->updateExistingPivot($achievement->id, [
+                        'progress' => $progress,
+                        'achieved_at' => $unlocked
+                            ? ($wasAchieved ? $existing->pivot->achieved_at : now())
+                            : null,
+                    ]);
                 }
 
                 if ($unlocked && ! $wasAchieved) {
