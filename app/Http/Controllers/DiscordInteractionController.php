@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Schedule;
 use App\Models\Tournament;
+use App\Support\DiscordCommands;
 use App\Support\ScheduleTimeline;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -44,6 +45,7 @@ class DiscordInteractionController extends Controller
             'klassement' => $this->reply($this->standingsEmbed()),
             'volgende' => $this->reply($this->nextEmbed()),
             'next' => $this->reply($this->nextGameEmbed()),
+            'help' => $this->reply($this->helpEmbed(), true),
             default => $this->reply(['title' => 'Onbekend commando', 'description' => 'Dit commando ken ik niet.']),
         };
     }
@@ -194,17 +196,38 @@ class DiscordInteractionController extends Controller
     }
 
     /**
+     * A listing of every slash command the bot offers, built from the shared
+     * catalogue so it always matches what is registered with Discord.
+     *
+     * @return array<string, mixed>
+     */
+    private function helpEmbed(): array
+    {
+        $lines = [];
+        foreach (DiscordCommands::all() as $command) {
+            $lines[] = "`/{$command['name']}` - {$command['description']}";
+        }
+
+        return [
+            'title' => 'Commando\'s',
+            'description' => implode("\n", $lines),
+        ];
+    }
+
+    /**
      * @param  array<string, mixed>  $embed
      */
-    private function reply(array $embed): JsonResponse
+    private function reply(array $embed, bool $ephemeral = false): JsonResponse
     {
         $embed['color'] = self::GREEN;
         $embed['footer'] = ['text' => 'MBLAN26'];
 
-        return response()->json([
-            'type' => 4,
-            'data' => ['embeds' => [$embed]],
-        ]);
+        $data = ['embeds' => [$embed]];
+        if ($ephemeral) {
+            $data['flags'] = self::EPHEMERAL;
+        }
+
+        return response()->json(['type' => 4, 'data' => $data]);
     }
 
     private function replyText(string $content, bool $ephemeral = false): JsonResponse

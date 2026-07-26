@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Services\DiscordApiService;
+use App\Support\DiscordCommands;
 use Illuminate\Console\Command;
 
 /**
@@ -23,12 +24,12 @@ class DiscordRegisterCommands extends Command
             return self::SUCCESS;
         }
 
-        $commands = [
-            ['name' => 'schema', 'description' => 'Toon het programma van vandaag', 'type' => 1],
-            ['name' => 'klassement', 'description' => 'Toon de standen van de actieve toernooien', 'type' => 1],
-            ['name' => 'volgende', 'description' => 'Wat staat er als eerstvolgende op het programma?', 'type' => 1],
-            ['name' => 'next', 'description' => 'Toon de eerstvolgende game met afbeelding en omschrijving', 'type' => 1],
-        ];
+        // type 1 = CHAT_INPUT (slash command). The catalogue lives in one place
+        // so /help and the registered commands can never drift apart.
+        $commands = array_map(
+            fn (array $command) => [...$command, 'type' => 1],
+            DiscordCommands::all(),
+        );
 
         $ok = $discord->registerGuildCommands($commands);
         $this->info($ok ? 'Slash commands geregistreerd.' : 'Registratie mislukt (zie logs).');
