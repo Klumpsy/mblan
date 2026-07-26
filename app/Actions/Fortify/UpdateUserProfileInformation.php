@@ -19,7 +19,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'discord_id' => ['string', 'max:100', Rule::unique('users')->ignore($user->id)],
+            'discord_id' => ['nullable', 'string', 'max:100', Rule::unique('users')->ignore($user->id)],
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             // Photos are downscaled and re-encoded to JPEG in the browser before
             // upload (see update-profile-information-form.blade.php), so the file

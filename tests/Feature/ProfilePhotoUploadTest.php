@@ -32,3 +32,18 @@ test('an unreasonably large upload is still rejected', function () {
         'photo' => UploadedFile::fake()->image('huge.jpg')->size(5000), // ~5 MB
     ]);
 })->throws(ValidationException::class);
+
+test('a user who has not linked Discord can still save their profile', function () {
+    // Regression: the discord_id rule lacked "nullable", so a null discord_id
+    // failed validation and silently blocked the whole profile save (including
+    // the photo) for anyone who logged in without Discord.
+    $user = User::factory()->create(['discord_id' => null]);
+
+    (new UpdateUserProfileInformation())->update($user, [
+        'name' => 'Nieuwe Naam',
+        'email' => $user->email,
+        'discord_id' => null,
+    ]);
+
+    expect($user->fresh()->name)->toBe('Nieuwe Naam');
+});
