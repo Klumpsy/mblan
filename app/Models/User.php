@@ -57,6 +57,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'barn_catches',
         'barn_completed',
         'barn_time_ms',
+        'beer_count',
+        'last_beer_at',
     ];
 
     /**
@@ -78,7 +80,21 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_beer_at' => 'datetime',
+        'beer_count' => 'integer',
     ];
+
+    /**
+     * Log one drunk beer and return the new personal total. Used by the Discord
+     * /beer command.
+     */
+    public function drinkBeer(int $amount = 1): int
+    {
+        $this->increment('beer_count', $amount);
+        $this->forceFill(['last_beer_at' => now()])->save();
+
+        return $this->beer_count;
+    }
 
     /**
      * The accessors to append to the model's array form.

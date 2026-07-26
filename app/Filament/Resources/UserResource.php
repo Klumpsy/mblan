@@ -51,6 +51,14 @@ class UserResource extends Resource
                     ])
                     ->default('user')
                     ->required(),
+
+                TextInput::make('beer_count')
+                    ->label('Biertjes')
+                    ->helperText('Aantal gedronken biertjes (bijstelbaar).')
+                    ->numeric()
+                    ->minValue(0)
+                    ->default(0)
+                    ->required(),
             ]);
     }
 
@@ -60,7 +68,10 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email'),
-                TextColumn::make("role")
+                TextColumn::make("role"),
+                TextColumn::make('beer_count')
+                    ->label('Biertjes')
+                    ->sortable(),
             ])
             ->filters([
                 //

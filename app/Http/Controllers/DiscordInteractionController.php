@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Schedule;
 use App\Models\Tournament;
+use App\Models\User;
+use App\Support\BeerMessages;
 use App\Support\DiscordCommands;
 use App\Support\ScheduleTimeline;
 use Illuminate\Http\JsonResponse;
@@ -52,6 +54,9 @@ class DiscordInteractionController extends Controller
             'klassement' => $this->reply($this->standingsEmbed()),
             'volgende' => $this->reply($this->nextEmbed()),
             'next' => $this->reply($this->nextGameEmbed()),
+            'beer' => $this->handleBeer($request),
+            'beercount' => $this->reply($this->beerCountEmbed()),
+            'beerlist' => $this->reply($this->beerListEmbed()),
             'help' => $this->reply($this->helpEmbed(), true),
             default => $this->reply(['title' => 'Onbekend commando', 'description' => 'Dit commando ken ik niet.']),
         };
@@ -200,6 +205,93 @@ class DiscordInteractionController extends Controller
         }
 
         return $embed;
+    }
+
+    /**
+     * /beer - log one beer for the Discord user (matched to their website
+     * account by discord_id) and reply with a funny line that escalates with
+     * their personal total. Unlinked users get a friendly ephemeral nudge.
+     */
+    private function handleBeer(Request $request): JsonResponse
+    {
+        $discordId = $request->input('member.user.id') ?? $request->input('user.id');
+        $user = $discordId ? User::where('discord_id', $discordId)->first() : null;
+
+        if (! $user) {
+            return $this->reply([
+                'title' => 'Nog geen account gekoppeld',
+                'description' => 'Koppel eerst je Discord aan je MBLAN26-account op de site, dan tel ik je biertjes mee.',
+            ], true);
+        }
+
+        $count = $user->drinkBeer();
+        $name = $request->input('member.user.global_name')
+            ?? $request->input('member.user.username')
+            ?? $user->name;
+
+        return $this->reply([
+            'title' => 'Proost!',
+            'description' => BeerMessages::line($name, $count),
+        ]);
+    }
+
+    /**
+     * /beercount - the grand total of all beers drunk across every account.
+     *
+     * @return array<string, mixed>
+     */
+    private function beerCountEmbed(): array
+    {
+        $total = (int) User::sum('beer_count');
+        $drinkers = User::where('beer_count', '>', 0)->count();
+
+        if ($total === 0) {
+            return ['title' => 'Bierteller', 'description' => 'Er is nog geen enkel biertje genoteerd. Wie opent de bar?'];
+        }
+
+        $noun = $total === 1 ? 'biertje' : 'biertjes';
+        $who = $drinkers === 1 ? '1 deelnemer' : "{$drinkers} deelnemers";
+
+        return [
+            'title' => 'Bierteller',
+            'description' => "In totaal zijn er **{$total}** {$noun} gedronken door {$who}. Proost op MBLAN26.",
+        ];
+    }
+
+    /**
+     * /beerlist - a ranked leaderboard of everyone who has logged a beer,
+     * formatted as an aligned code block so it stays readable in Discord.
+     *
+     * @return array<string, mixed>
+     */
+    private function beerListEmbed(): array
+    {
+        $users = User::where('beer_count', '>', 0)
+            ->orderByDesc('beer_count')
+            ->orderBy('name')
+            ->get(['name', 'beer_count']);
+
+        if ($users->isEmpty()) {
+            return ['title' => 'Bierranglijst', 'description' => 'Nog geen biertjes genoteerd. De ranglijst wacht op de eerste held.'];
+        }
+
+        $shown = $users->take(25);
+        $rows = [
+            str_pad('#', 3).str_pad('Deelnemer', 22).'Bier',
+            str_repeat('-', 29),
+        ];
+        foreach ($shown as $i => $user) {
+            $name = mb_strimwidth($user->name, 0, 20, '..');
+            $rows[] = str_pad((string) ($i + 1).'.', 3).str_pad($name, 22).$user->beer_count;
+        }
+
+        $description = "```\n".implode("\n", $rows)."\n```";
+        if ($users->count() > $shown->count()) {
+            $rest = $users->count() - $shown->count();
+            $description .= "\n... en nog {$rest} andere deelnemers.";
+        }
+
+        return ['title' => 'Bierranglijst', 'description' => $description];
     }
 
     /**
