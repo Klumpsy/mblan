@@ -42,25 +42,27 @@ class UsersRelationManager extends RelationManager
             ])
             ->headerActions([
                 Action::make('grant')
-                    ->label('Toekennen aan speler')
+                    ->label('Toekennen aan spelers')
                     ->icon('heroicon-o-plus')
+                    ->modalHeading('Achievement toekennen')
+                    ->modalDescription('Kies één of meerdere spelers. Bij meerdere spelers komt er één Discord-bericht met alle namen.')
                     ->form([
-                        Select::make('user_id')
-                            ->label('Speler')
+                        Select::make('user_ids')
+                            ->label('Spelers')
                             ->options(fn () => User::orderBy('name')->pluck('name', 'id'))
+                            ->multiple()
                             ->searchable()
+                            ->preload()
                             ->required(),
                     ])
                     ->action(function (array $data): void {
-                        $user = User::find($data['user_id']);
-                        if (! $user) {
-                            return;
-                        }
+                        $users = User::whereIn('id', $data['user_ids'])->get();
 
-                        $granted = app(AchievementEvaluator::class)->grant($user, $this->getOwnerRecord());
+                        $granted = app(AchievementEvaluator::class)->grantMany($users, $this->getOwnerRecord());
 
+                        $skipped = $users->count() - count($granted);
                         Notification::make()
-                            ->title($granted ? 'Achievement toegekend' : 'Speler had deze al')
+                            ->title(count($granted).' toegekend'.($skipped > 0 ? ", {$skipped} had het al" : ''))
                             ->success()
                             ->send();
                     }),

@@ -103,9 +103,11 @@ class AchievementEvaluator
 
     /**
      * Grant a (typically manual) achievement to a user directly, as an admin
-     * action or system decision. Marks it achieved and notifies Discord once.
+     * action or system decision. Marks it achieved and, unless $notify is
+     * false, announces it once on Discord. Returns true only if it was newly
+     * granted (the user didn't already have it).
      */
-    public function grant(User $user, Achievement $achievement): bool
+    public function grant(User $user, Achievement $achievement, bool $notify = true): bool
     {
         $existing = $user->achievements()->where('achievements.id', $achievement->id)->first();
         if ($existing && $existing->pivot->achieved_at) {
@@ -119,9 +121,42 @@ class AchievementEvaluator
             $user->achievements()->attach($achievement->id, $payload);
         }
 
-        $this->notify($user, $achievement);
+        if ($notify) {
+            $this->notify($user, $achievement);
+        }
 
         return true;
+    }
+
+    /**
+     * Grant the same achievement to many users at once and announce all the
+     * newly-awarded names in a SINGLE Discord message (no per-person spam).
+     * Users who already had it are skipped. Returns the users newly granted.
+     *
+     * @param  iterable<User>  $users
+     * @return array<int, User>
+     */
+    public function grantMany(iterable $users, Achievement $achievement): array
+    {
+        $granted = [];
+        foreach ($users as $user) {
+            if ($this->grant($user, $achievement, notify: false)) {
+                $granted[] = $user;
+            }
+        }
+
+        if ($granted !== []) {
+            try {
+                $this->discord->sendAchievementBulkNotification(
+                    $achievement,
+                    array_map(fn (User $u) => $u->name, $granted),
+                );
+            } catch (\Throwable $e) {
+                Log::warning('Achievement bulk Discord notification failed: '.$e->getMessage());
+            }
+        }
+
+        return $granted;
     }
 
     private function notify(User $user, Achievement $achievement): void

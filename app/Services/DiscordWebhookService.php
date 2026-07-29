@@ -164,6 +164,46 @@ class DiscordWebhookService
     }
 
     /**
+     * One combined message when an admin hands the same achievement to several
+     * people at once, so the channel isn't spammed with a post per person.
+     *
+     * @param  array<int, string>  $names
+     */
+    public function sendAchievementBulkNotification($achievement, array $names): bool
+    {
+        $names = array_values(array_filter($names));
+        if ($names === []) {
+            return false;
+        }
+
+        if (count($names) === 1) {
+            $description = "{$names[0]} verdiende: {$achievement->name}.";
+        } else {
+            $list = implode(', ', $names);
+            // Keep well within Discord's embed description limit.
+            if (mb_strlen($list) > 3500) {
+                $shown = [];
+                $len = 0;
+                foreach ($names as $name) {
+                    if ($len + mb_strlen($name) + 2 > 3400) {
+                        break;
+                    }
+                    $shown[] = $name;
+                    $len += mb_strlen($name) + 2;
+                }
+                $list = implode(', ', $shown).' en nog '.(count($names) - count($shown)).' anderen';
+            }
+            $description = count($names).' spelers verdienden **'.$achievement->name.'**: '.$list.'.';
+        }
+
+        return $this->sendEmbed(
+            count($names) === 1 ? 'Prestatie behaald' : 'Prestaties behaald',
+            $description,
+            $achievement->description ? [['name' => 'Toelichting', 'value' => $achievement->description, 'inline' => false]] : [],
+        );
+    }
+
+    /**
      * A news item was published.
      */
     public function announceNews(News $news): bool
