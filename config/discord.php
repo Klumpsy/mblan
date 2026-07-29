@@ -15,6 +15,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | News Webhook URL
+    |--------------------------------------------------------------------------
+    |
+    | Optional separate webhook so news announcements land in their own
+    | #nieuws channel. Create it in Discord under that channel's
+    | Settings > Integrations > Webhooks. Falls back to the main webhook above
+    | when unset, so news keeps posting to the default channel until you set it.
+    |
+    */
+    'news_webhook_url' => env('DISCORD_NEWS_WEBHOOK_URL', env('DISCORD_WEBHOOK_URL', env('DISCORD_WEBHOOK_URL_LOBBY'))),
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue Announcements
     |--------------------------------------------------------------------------
     |

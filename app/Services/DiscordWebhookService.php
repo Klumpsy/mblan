@@ -181,6 +181,7 @@ class DiscordWebhookService
             $fields,
             $news->image ? asset('storage/'.$news->image) : null,
             route('news.show', $news),
+            config('discord.news_webhook_url'),
         );
     }
 
@@ -214,7 +215,7 @@ class DiscordWebhookService
      *
      * @param  array<int, array{name: string, value: string, inline: bool}>  $fields
      */
-    private function sendEmbed(string $title, string $description, array $fields = [], ?string $image = null, ?string $url = null): bool
+    private function sendEmbed(string $title, string $description, array $fields = [], ?string $image = null, ?string $url = null, ?string $webhookUrl = null): bool
     {
         $embed = [
             'title' => $title,
@@ -234,7 +235,7 @@ class DiscordWebhookService
             $embed['image'] = ['url' => $image];
         }
 
-        return $this->sendWebhook(['embeds' => [$embed]]);
+        return $this->sendWebhook(['embeds' => [$embed]], $webhookUrl);
     }
 
     private function formatTime(int $ms): string
@@ -247,10 +248,13 @@ class DiscordWebhookService
     /**
      * @param  array<string, mixed>  $payload
      */
-    private function sendWebhook(array $payload): bool
+    private function sendWebhook(array $payload, ?string $webhookUrl = null): bool
     {
+        // Post to the given channel webhook, falling back to the default one.
+        $url = $webhookUrl ?: $this->webhookUrl;
+
         // No webhook configured -> silently do nothing (local, testing, or not set up yet).
-        if (empty($this->webhookUrl)) {
+        if (empty($url)) {
             return false;
         }
 
@@ -265,7 +269,7 @@ class DiscordWebhookService
             // retrying after a slow-but-successful post (read timeout) creates a
             // duplicate message. One attempt only; failures are logged.
             $response = Http::timeout((int) config('discord.webhook_timeout', 10))
-                ->post($this->webhookUrl, $payload);
+                ->post($url, $payload);
 
             if ($response->successful()) {
                 return true;
