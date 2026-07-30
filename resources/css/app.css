@@ -209,6 +209,25 @@
 .dog { position: absolute; transform: translate(-50%, -100%); z-index: 19; }
 .dog img { display: block; width: 100%; animation: sprite-bob 0.3s steps(2, end) infinite; }
 
+/* Mobile menu flourish: when the overlay opens, Arti trots across the pasture
+   at the foot of the menu toward the barn, then loops. The bob is the same
+   2-frame hop the farm sprites use, so it reads as one world. */
+@keyframes menu-trot {
+    0%   { left: -14%; }
+    100% { left: 108%; }
+}
+.menu-arti {
+    position: absolute;
+    bottom: 0.25rem;
+    width: 3.25rem;
+    animation: menu-trot 6.5s linear infinite;
+}
+.menu-arti img { display: block; width: 100%; animation: sprite-bob 0.28s steps(2, end) infinite; }
+@media (prefers-reduced-motion: reduce) {
+    .menu-arti { left: 8%; animation: none; }
+    .menu-arti img { animation: none; }
+}
+
 /* wooden game UI: buttons + framed panels to match the pixel farm */
 .btn-wood {
     display: inline-flex; align-items: center; justify-content: center;

@@ -1,4 +1,8 @@
-<nav x-data="{ open: false }" class="sticky top-0 z-50 border-b border-primary-500/20 bg-forge-black/85 backdrop-blur">
+<div x-data="{ open: false }"
+    x-effect="document.documentElement.style.overflow = open ? 'hidden' : ''"
+    @keydown.escape.window="open = false"
+    @resize.window="if (window.innerWidth >= 1024) open = false">
+<nav class="sticky top-0 z-50 border-b border-primary-500/20 bg-forge-black/85 backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
@@ -98,8 +102,19 @@
         </div>
     </div>
 
-    <!-- Responsive Navigation Menu -->
-    <div :class="{ 'block': open, 'hidden': !open }" class="hidden lg:hidden">
+    </nav>
+
+    <!-- Responsive Navigation Menu — full-screen overlay -->
+    <div x-cloak x-show="open"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        @click.self="open = false"
+        class="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain bg-forge-black/95 backdrop-blur-md lg:hidden">
+        <div class="mx-auto max-w-7xl px-4 pt-2 pb-6 sm:px-6">
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link href="{{ route('schedule') }}" :active="request()->routeIs('schedule')">
                 {{ __('Schema') }}
@@ -158,5 +173,17 @@
                 </form>
             </div>
         </div>
+        </div>
+
+        {{-- pasture flourish: Arti trots across toward the barn when the menu opens --}}
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-24 overflow-hidden" aria-hidden="true">
+            <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-primary-900/45 via-primary-900/15 to-transparent"></div>
+            <div class="absolute bottom-1 right-4 w-14 opacity-80">
+                <img class="pixel block w-full" src="{{ asset('images/farm/barn.png') }}" alt="">
+            </div>
+            <div class="menu-arti">
+                <img class="pixel" src="{{ asset('images/farm/arti.png') }}" alt="">
+            </div>
+        </div>
     </div>
-</nav>
+</div>

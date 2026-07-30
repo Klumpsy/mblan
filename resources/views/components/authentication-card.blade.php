@@ -1,4 +1,4 @@
-<div class="relative min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-6 overflow-hidden wood-panel">
+<div class="relative min-h-dvh flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-6 overflow-hidden wood-panel">
     <div class="absolute inset-0 bg-grid opacity-40"></div>
     <x-forge.embers />
     <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-forge-black/40 via-transparent to-forge-black"></div>

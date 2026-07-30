@@ -22,7 +22,7 @@
     <main
         x-data="barnGame(@js($maze ?? []))"
         x-init="@if ($errors->any()) open = true @endif"
-        class="relative flex min-h-screen items-center justify-center overflow-hidden select-none"
+        class="relative flex min-h-dvh items-center justify-center overflow-hidden select-none"
     >
         {{-- viewport ambiance behind the stage --}}
         <div class="pointer-events-none fixed inset-0" aria-hidden="true">
