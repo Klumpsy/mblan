@@ -59,6 +59,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'barn_time_ms',
         'beer_count',
         'last_beer_at',
+        'wine_count',
+        'last_wine_at',
     ];
 
     /**
@@ -82,6 +84,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'email_verified_at' => 'datetime',
         'last_beer_at' => 'datetime',
         'beer_count' => 'integer',
+        'last_wine_at' => 'datetime',
+        'wine_count' => 'integer',
     ];
 
     /**
@@ -94,6 +98,18 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         $this->forceFill(['last_beer_at' => now()])->save();
 
         return $this->beer_count;
+    }
+
+    /**
+     * Log one glass of wine and return the new personal total. Used by the
+     * Discord /wine command.
+     */
+    public function drinkWine(int $amount = 1): int
+    {
+        $this->increment('wine_count', $amount);
+        $this->forceFill(['last_wine_at' => now()])->save();
+
+        return $this->wine_count;
     }
 
     /**

@@ -22,6 +22,8 @@ class DiscordCommands
             ['name' => 'beer', 'description' => 'Noteer een biertje op jouw naam'],
             ['name' => 'beercount', 'description' => 'Toon het totaal aantal gedronken biertjes'],
             ['name' => 'beerlist', 'description' => 'Toon de bierranglijst van alle deelnemers'],
+            ['name' => 'wine', 'description' => 'Noteer een glas wijn op jouw naam'],
+            ['name' => 'winelist', 'description' => 'Toon de wijnranglijst van alle deelnemers'],
             ['name' => 'help', 'description' => 'Toon een overzicht van alle commando\'s'],
         ];
     }
