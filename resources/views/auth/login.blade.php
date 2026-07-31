@@ -12,6 +12,17 @@
             </div>
         @endif
 
+        {{-- Primary: log in with Discord (same flow as the home page) --}}
+        <a href="{{ route('discord.redirect') }}" class="btn-wood clip-corner block w-full text-center text-xs">
+            Login met Discord
+        </a>
+
+        <div class="my-6 flex items-center gap-3">
+            <div class="h-px flex-1 bg-primary-500/15"></div>
+            <span class="font-pixel text-[8px] uppercase tracking-widest text-forge-steel/50">of met e-mail</span>
+            <div class="h-px flex-1 bg-primary-500/15"></div>
+        </div>
+
         <form method="POST" action="{{ route('login') }}">
             @csrf
 
