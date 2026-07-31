@@ -4,10 +4,12 @@ namespace App\Filament\Resources\TournamentResource\RelationManager;
 
 use App\Models\User;
 use App\Services\DiscordWebhookService;
+use App\Support\TeamGenerator;
 use App\Support\TimeScore;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Actions\AttachAction;
@@ -176,73 +178,124 @@ class UsersRelationManager extends RelationManager
     }
 
     /**
-     * Create teams (kept exactly like you had it, including shuffle + assignment).
+     * Everyone who signed up belongs in the draw: put registered players who
+     * are not on the scoreboard yet on it with a zero score, so the team maker
+     * can deal the whole tournament in one go.
      */
-    protected function createTeams(int $teamSize): void
+    protected function attachRegisteredPlayers(): void
     {
         $tournament = $this->getOwnerRecord();
 
-        // Get users without teams
-        $usersWithoutTeams = $tournament->usersWithScores()
-            ->whereNull('team_number')
-            ->get()
-            ->shuffle(); // Shuffle for random teams
+        $missing = $tournament->registrations()
+            ->whereNotIn('users.id', $tournament->usersWithScores()->pluck('users.id'))
+            ->pluck('users.id');
 
-        if ($usersWithoutTeams->count() < 1) {
+        foreach ($missing as $userId) {
+            $tournament->usersWithScores()->attach($userId, ['score' => 0]);
+        }
+    }
+
+    /**
+     * Shared "hoe verdelen we de teams" fields: pick players-per-team or a
+     * fixed number of teams, plus the matching number.
+     *
+     * @return array<int, Select|TextInput>
+     */
+    protected function teamSetupFields(): array
+    {
+        return [
+            Select::make('mode')
+                ->label('Verdeling')
+                ->options([
+                    'team_size' => 'Spelers per team',
+                    'team_count' => 'Aantal teams',
+                ])
+                ->default('team_size')
+                ->required()
+                ->live(),
+            TextInput::make('team_size')
+                ->label('Spelers per team')
+                ->numeric()
+                ->minValue(2)
+                ->maxValue(50)
+                ->default(2)
+                ->visible(fn (Get $get) => ($get('mode') ?? 'team_size') === 'team_size')
+                ->required(fn (Get $get) => ($get('mode') ?? 'team_size') === 'team_size'),
+            TextInput::make('team_count')
+                ->label('Aantal teams')
+                ->numeric()
+                ->minValue(2)
+                ->maxValue(50)
+                ->default(2)
+                ->visible(fn (Get $get) => $get('mode') === 'team_count')
+                ->required(fn (Get $get) => $get('mode') === 'team_count'),
+        ];
+    }
+
+    /**
+     * Deal the given players into random teams according to the submitted
+     * form data and store the assignment. Returns the number of teams made.
+     *
+     * @param  \Illuminate\Support\Collection<int, int>  $userIds
+     */
+    protected function assignTeams(\Illuminate\Support\Collection $userIds, array $data, int $startNumber = 1): int
+    {
+        $tournament = $this->getOwnerRecord();
+
+        $teams = ($data['mode'] ?? 'team_size') === 'team_count'
+            ? TeamGenerator::byTeamCount($userIds, (int) ($data['team_count'] ?? 2))
+            : TeamGenerator::byTeamSize($userIds, (int) ($data['team_size'] ?? 2));
+
+        foreach ($teams as $number => $members) {
+            $teamNumber = $startNumber + $number - 1;
+
+            DB::table('tournament_user')
+                ->where('tournament_id', $tournament->id)
+                ->whereIn('user_id', $members->all())
+                ->update([
+                    'team_name' => "Team {$teamNumber}",
+                    'team_number' => $teamNumber,
+                ]);
+        }
+
+        return $teams->count();
+    }
+
+    /**
+     * "Teams maken": deal every player who has no team yet (including fresh
+     * registrations) into random teams. Existing teams keep their line-up.
+     */
+    protected function createTeams(array $data): void
+    {
+        $tournament = $this->getOwnerRecord();
+
+        $this->attachRegisteredPlayers();
+
+        $userIds = $tournament->usersWithScores()
+            ->whereNull('team_number')
+            ->pluck('users.id');
+
+        if ($userIds->isEmpty()) {
             Notification::make()
-                ->title('No users available')
-                ->body("No users without teams available.")
+                ->title('Geen spelers beschikbaar')
+                ->body('Er zijn geen spelers zonder team.')
                 ->danger()
                 ->send();
+
             return;
         }
 
-        // Get the next team number using direct DB query
-        $lastTeamNumber = DB::table('tournament_user')
+        $startNumber = (int) (DB::table('tournament_user')
             ->where('tournament_id', $tournament->id)
-            ->whereNotNull('team_number')
-            ->max('team_number') ?? 0;
+            ->max('team_number') ?? 0) + 1;
 
-        $teamNumber = $lastTeamNumber + 1;
-        $teamsCreated = 0;
-        $usersProcessed = 0;
-
-        // Create teams of the specified size
-        while ($usersProcessed < $usersWithoutTeams->count()) {
-            $remainingUsers = $usersWithoutTeams->count() - $usersProcessed;
-
-            // If we have enough users for a full team, create it
-            if ($remainingUsers >= $teamSize) {
-                $teamMembers = $usersWithoutTeams->slice($usersProcessed, $teamSize);
-                $actualTeamSize = $teamSize;
-            } else {
-                // Create individual teams for remaining users
-                $teamMembers = $usersWithoutTeams->slice($usersProcessed, 1);
-                $actualTeamSize = 1;
-            }
-
-            $teamName = $actualTeamSize > 1 ? "Team {$teamNumber}" : "Solo {$teamNumber}";
-
-            foreach ($teamMembers as $user) {
-                DB::table('tournament_user')
-                    ->where('tournament_id', $tournament->id)
-                    ->where('user_id', $user->id)
-                    ->update([
-                        'team_name' => $teamName,
-                        'team_number' => $teamNumber,
-                    ]);
-            }
-
-            $usersProcessed += $actualTeamSize;
-            $teamNumber++;
-            $teamsCreated++;
-        }
+        $teamsCreated = $this->assignTeams($userIds, $data, $startNumber);
 
         $this->recalculateRanking();
 
         Notification::make()
-            ->title('Teams created successfully')
-            ->body("Created {$teamsCreated} teams. All users have been assigned.")
+            ->title('Teams gemaakt')
+            ->body("{$teamsCreated} teams gemaakt, alle spelers zijn ingedeeld.")
             ->success()
             ->send();
     }
@@ -329,47 +382,39 @@ class UsersRelationManager extends RelationManager
                 ->icon('heroicon-o-user-group')
                 ->color('success')
                 ->form([
-                    TextInput::make('team_size')
-                        ->label('Teamgrootte')
-                        ->numeric()
-                        ->required()
-                        ->minValue(2)
-                        ->maxValue(10)
-                        ->default(2)
-                        ->helperText('Aantal spelers per team.'),
+                    ...$this->teamSetupFields(),
                     Toggle::make('post_to_discord')
                         ->label('Teams naar Discord posten')
                         ->helperText('Plaatst de teamindeling meteen in het Discord-kanaal.')
                         ->default(false),
                 ])
                 ->action(function (array $data): void {
-                    $this->createTeams((int) $data['team_size']);
+                    $this->createTeams($data);
 
                     if (! empty($data['post_to_discord'])) {
                         app(DiscordWebhookService::class)->announceTeams($this->getOwnerRecord());
                     }
                 })
                 ->requiresConfirmation()
-                ->modalDescription('Maakt automatisch teams van spelers die nog geen team hebben.');
+                ->modalDescription('Deelt alle aangemelde spelers zonder team willekeurig in. Restspelers schuiven bij een bestaand team aan.');
 
             $headerActions[] = Action::make('shuffle_teams')
-                ->label('Shuffle Teams')
+                ->label('Teams shuffelen')
                 ->icon('heroicon-o-arrow-path')
                 ->color('warning')
                 ->form([
-                    TextInput::make('team_size')
-                        ->label('Team Size')
-                        ->numeric()
-                        ->required()
-                        ->minValue(2)
-                        ->maxValue(10)
-                        ->default(2)
-                        ->helperText('Number of players per team'),
+                    ...$this->teamSetupFields(),
+                    Toggle::make('post_to_discord')
+                        ->label('Teams naar Discord posten')
+                        ->helperText('Plaatst de nieuwe teamindeling meteen in het Discord-kanaal.')
+                        ->default(false),
                 ])
                 ->action(function (array $data): void {
                     $tournament = $this->getOwnerRecord();
 
-                    // Clear all team assignments
+                    $this->attachRegisteredPlayers();
+
+                    // Clear all team assignments, then deal everyone again.
                     DB::table('tournament_user')
                         ->where('tournament_id', $tournament->id)
                         ->update([
@@ -377,49 +422,34 @@ class UsersRelationManager extends RelationManager
                             'team_number' => null,
                         ]);
 
-                    // Shuffle all users into new teams
-                    $allUsers = $tournament->usersWithScores()->get()->shuffle();
-                    $teamSize = $data['team_size'];
-                    $teamNumber = 1;
-                    $teamsCreated = 0;
-                    $usersProcessed = 0;
+                    $userIds = $tournament->usersWithScores()->pluck('users.id');
 
-                    while ($usersProcessed < $allUsers->count()) {
-                        $remainingUsers = $allUsers->count() - $usersProcessed;
-                        if ($remainingUsers >= $teamSize) {
-                            $teamMembers = $allUsers->slice($usersProcessed, $teamSize);
-                            $actualTeamSize = $teamSize;
-                        } else {
-                            $teamMembers = $allUsers->slice($usersProcessed, 1);
-                            $actualTeamSize = 1;
-                        }
-                        $teamName = $actualTeamSize > 1 ? "Team {$teamNumber}" : "Solo {$teamNumber}";
+                    if ($userIds->isEmpty()) {
+                        Notification::make()
+                            ->title('Geen spelers beschikbaar')
+                            ->body('Er zijn nog geen spelers op het scorebord.')
+                            ->danger()
+                            ->send();
 
-                        foreach ($teamMembers as $user) {
-                            DB::table('tournament_user')
-                                ->where('tournament_id', $tournament->id)
-                                ->where('user_id', $user->id)
-                                ->update([
-                                    'team_name' => $teamName,
-                                    'team_number' => $teamNumber,
-                                ]);
-                        }
-
-                        $usersProcessed += $actualTeamSize;
-                        $teamNumber++;
-                        $teamsCreated++;
+                        return;
                     }
+
+                    $teamsCreated = $this->assignTeams($userIds, $data);
 
                     $this->recalculateRanking();
 
+                    if (! empty($data['post_to_discord'])) {
+                        app(DiscordWebhookService::class)->announceTeams($tournament);
+                    }
+
                     Notification::make()
-                        ->title('Teams shuffled successfully')
-                        ->body("Shuffled into {$teamsCreated} teams. All users have been assigned.")
+                        ->title('Teams geshuffeld')
+                        ->body("Opnieuw verdeeld over {$teamsCreated} teams.")
                         ->success()
                         ->send();
                 })
                 ->requiresConfirmation()
-                ->modalDescription('This will clear all existing teams and create new random teams.');
+                ->modalDescription('Wist de huidige teams en deelt alle spelers opnieuw willekeurig in.');
         }
 
         // --- Row actions ---
