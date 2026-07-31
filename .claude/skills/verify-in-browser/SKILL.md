@@ -46,3 +46,13 @@ seen running. This recipe caught the HEIC upload bug that unit tests missed.
 - Transient overlays (Arti chase, upload spinner): start `waitForSelector`
   *before* the trigger, or they vanish before you screenshot.
 - Clean up throwaway users/photos and stop the server when done.
+- **Filament panel navigation:** `page.goto('/admin/...')` gets `ERR_ABORTED`
+  (Livewire SPA-mode). Log in at `/admin/login`, then navigate by clicking the
+  sidebar links. To open a record, use the table search box and click
+  `tr:has-text("Name") >> text=Name` — a bare `text=Name` hits the
+  "Zoekopdracht" filter chip instead of the row.
+- **Env overrides don't reach the server:** `artisan serve` whitelists which
+  env vars pass to its PHP workers, so `DISCORD_PUBLIC_KEY=x php artisan serve`
+  silently drops the var (plain `php -S` + server.php has the same problem via
+  variables_order). To test config-driven behaviour like the Discord signature
+  middleware: back up `.env`, append the var, serve, and restore `.env` after.
