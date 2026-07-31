@@ -68,6 +68,14 @@ test('photo timeline renders', function () {
     $this->actingAs($this->user)->get(route('timeline'))->assertOk();
 });
 
+test('live page renders with follow and donate buttons', function () {
+    $this->actingAs($this->user)->get(route('live'))
+        ->assertOk()
+        ->assertSee('Volg op Twitch')
+        ->assertSee('Doneer')
+        ->assertSee('https://streamlabs.com/mblan26/tip', false);
+});
+
 test('guests are redirected to login from protected pages', function () {
     $this->get(route('schedule'))->assertRedirect(route('login'));
     $this->get(route('tournaments'))->assertRedirect(route('login'));

@@ -40,9 +40,15 @@
                 </div>
             </div>
 
-            <div class="mt-6">
+            <div class="mt-6 flex flex-wrap gap-3">
                 <a href="https://www.twitch.tv/{{ $channel }}" target="_blank" rel="noopener"
                     class="btn-wood clip-corner inline-block text-xs">Open op Twitch</a>
+                {{-- Volgen kan alleen op de kanaalpagina zelf; Twitch heeft geen directe volg-link. --}}
+                <a href="https://www.twitch.tv/{{ $channel }}" target="_blank" rel="noopener"
+                    class="btn-wood clip-corner inline-block text-xs">Volg op Twitch</a>
+                {{-- Donatielink uit het "Steun de MBLAN!"-paneel op het Twitch-kanaal. --}}
+                <a href="https://streamlabs.com/{{ $channel }}/tip" target="_blank" rel="noopener"
+                    class="btn-wood clip-corner inline-block text-xs">Doneer</a>
             </div>
         </div>
     </div>
