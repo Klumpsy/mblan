@@ -183,11 +183,26 @@ class Tournament extends Model
             ->orderBy('team_number', 'asc')
             ->get();
 
-        foreach ($teamScores as $index => $team) {
+        // Teams with the same score share the same rank (1, 1, 3, ...),
+        // exactly like the individual ranking does.
+        $rank = 1;
+        $lastScore = null;
+        $position = 1;
+
+        foreach ($teamScores as $team) {
+            $score = (int) $team->total_score;
+
+            if ($lastScore === null || $score !== $lastScore) {
+                $rank = $position;
+            }
+
             \Illuminate\Support\Facades\DB::table('tournament_user')
                 ->where('tournament_id', $this->id)
                 ->where('team_number', $team->team_number)
-                ->update(['ranking' => $index + 1]);
+                ->update(['ranking' => $rank]);
+
+            $lastScore = $score;
+            $position++;
         }
     }
 

@@ -76,18 +76,20 @@
         @if ($podium->count() >= 2)
             <div class="grid grid-cols-3 gap-3 bg-forge-forest/30 p-6">
                 @php
+                    // Visual arrangement stays 2-1-3, but step height and medal
+                    // follow the rank, so tied players stand on the same stage.
                     $order = [1 => 'order-1', 0 => 'order-2', 2 => 'order-3'];
-                    $heights = [0 => 'h-28', 1 => 'h-20', 2 => 'h-16'];
-                    $medals = [0 => 'text-amber-300', 1 => 'text-forge-steel', 2 => 'text-amber-600'];
+                    $heights = [1 => 'h-28', 2 => 'h-20', 3 => 'h-16'];
+                    $medals = [1 => 'text-amber-300', 2 => 'text-forge-steel', 3 => 'text-amber-600'];
                 @endphp
                 @foreach ($podium as $i => $row)
                     <div class="flex flex-col items-center justify-end {{ $order[$i] ?? 'order-2' }}">
                         <div class="mb-2 text-center">
                             <div class="font-display text-sm font-bold uppercase tracking-wide text-white truncate max-w-[9rem]">{{ $row['name'] }}</div>
-                            <div class="font-display text-lg {{ $medals[$i] ?? 'text-primary-300' }}">{{ $row['score'] }}</div>
+                            <div class="font-display text-lg {{ $medals[$row['ranking']] ?? 'text-primary-300' }}">{{ $row['score'] }}</div>
                         </div>
-                        <div class="flex w-full items-end justify-center {{ $heights[$i] ?? 'h-16' }} clip-corner bg-gradient-to-t from-primary-500/10 to-primary-500/40 border border-primary-500/30 transition-all duration-700">
-                            <span class="pb-2 font-display text-2xl font-bold {{ $medals[$i] ?? 'text-primary-300' }} text-glow">{{ $row['ranking'] }}</span>
+                        <div class="flex w-full items-end justify-center {{ $heights[$row['ranking']] ?? 'h-16' }} clip-corner bg-gradient-to-t from-primary-500/10 to-primary-500/40 border border-primary-500/30 transition-all duration-700">
+                            <span class="pb-2 font-display text-2xl font-bold {{ $medals[$row['ranking']] ?? 'text-primary-300' }} text-glow">{{ $row['ranking'] }}</span>
                         </div>
                     </div>
                 @endforeach
