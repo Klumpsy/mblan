@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TournamentResource\Pages;
 use App\Filament\Resources\TournamentResource\RelationManager\RegistrationsRelationManager;
+use App\Filament\Resources\TournamentResource\RelationManager\RoundsRelationManager;
 use App\Filament\Resources\TournamentResource\RelationManager\UsersRelationManager;
 use App\Models\Tournament;
 use Filament\Forms\Components\Placeholder;
@@ -190,6 +191,7 @@ class TournamentResource extends Resource
         return [
             RegistrationsRelationManager::class,
             UsersRelationManager::class,
+            RoundsRelationManager::class,
         ];
     }
 

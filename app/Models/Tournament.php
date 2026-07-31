@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 class Tournament extends Model
@@ -103,6 +104,72 @@ class Tournament extends Model
         }
 
         return $this->registrations()->whereKey($user->id)->exists();
+    }
+
+    public function rounds(): HasMany
+    {
+        return $this->hasMany(TournamentRound::class)->orderBy('number');
+    }
+
+    public function nextRoundNumber(): int
+    {
+        return ((int) $this->rounds()->max('number')) + 1;
+    }
+
+    /**
+     * Once a tournament has rounds, the rounds are the source of truth:
+     * every player's total is the sum of their round points, and the
+     * rankings follow from those totals.
+     */
+    public function applyRoundTotals(): void
+    {
+        $totals = TournamentRoundScore::query()
+            ->join('tournament_rounds', 'tournament_rounds.id', '=', 'tournament_round_scores.tournament_round_id')
+            ->where('tournament_rounds.tournament_id', $this->id)
+            ->groupBy('tournament_round_scores.user_id')
+            ->selectRaw('tournament_round_scores.user_id, SUM(tournament_round_scores.points) as total')
+            ->pluck('total', 'tournament_round_scores.user_id');
+
+        foreach ($this->usersWithScores()->pluck('users.id') as $userId) {
+            $total = (int) ($totals[$userId] ?? 0);
+
+            $this->usersWithScores()->updateExistingPivot($userId, array_merge(
+                ['score' => $total],
+                $this->is_team_based ? ['team_score' => $total] : [],
+            ));
+        }
+
+        $this->recalculateRankings();
+    }
+
+    /**
+     * Recalculate the ranking column for team and individual tournaments
+     * alike. Team tournaments rank whole teams; teamless players sink to
+     * the bottom.
+     */
+    public function recalculateRankings(): void
+    {
+        if (! $this->is_team_based) {
+            $this->updateRankings();
+
+            return;
+        }
+
+        $teamScores = \Illuminate\Support\Facades\DB::table('tournament_user')
+            ->select('team_number', \Illuminate\Support\Facades\DB::raw('MAX(team_score) as total_score'))
+            ->where('tournament_id', $this->id)
+            ->whereNotNull('team_number')
+            ->groupBy('team_number')
+            ->orderBy('total_score', $this->higher_is_better ? 'desc' : 'asc')
+            ->orderBy('team_number', 'asc')
+            ->get();
+
+        foreach ($teamScores as $index => $team) {
+            \Illuminate\Support\Facades\DB::table('tournament_user')
+                ->where('tournament_id', $this->id)
+                ->where('team_number', $team->team_number)
+                ->update(['ranking' => $index + 1]);
+        }
     }
 
     public function usersWithScores(): BelongsToMany

@@ -124,35 +124,7 @@ class UsersRelationManager extends RelationManager
             ->orderByPivot('score', $tournament->higher_is_better ? 'desc' : 'asc')
             ->first()?->id;
 
-        if ($tournament->is_team_based) {
-            $teamScores = DB::table('tournament_user')
-                ->select('team_number', 'team_name', DB::raw('MAX(team_score) as total_score'))
-                ->where('tournament_id', $tournament->id)
-                ->whereNotNull('team_number')
-                ->groupBy('team_number', 'team_name')
-                ->orderBy('total_score', $tournament->higher_is_better ? 'desc' : 'asc')
-                ->orderBy('team_number', 'asc')
-                ->get();
-
-            foreach ($teamScores as $index => $team) {
-                $rank = $index + 1;
-                DB::table('tournament_user')
-                    ->where('tournament_id', $tournament->id)
-                    ->where('team_number', $team->team_number)
-                    ->update(['ranking' => $rank]);
-            }
-        } else {
-            $direction = $tournament->higher_is_better ? 'desc' : 'asc';
-            $users = $tournament->usersWithScores()
-                ->orderByPivot('score', $direction)
-                ->get();
-
-            foreach ($users as $index => $user) {
-                $tournament->usersWithScores()->updateExistingPivot($user->id, [
-                    'ranking' => $index + 1,
-                ]);
-            }
-        }
+        $tournament->recalculateRankings();
 
         $this->announceLeaderChange($tournament, $previousLeaderId);
     }
