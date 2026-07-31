@@ -7,6 +7,7 @@ use App\Models\Tournament;
 use App\Models\User;
 use App\Support\BeerMessages;
 use App\Support\DiscordCommands;
+use App\Support\WineMessages;
 use App\Support\ScheduleTimeline;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -57,6 +58,8 @@ class DiscordInteractionController extends Controller
             'beer' => $this->handleBeer($request),
             'beercount' => $this->reply($this->beerCountEmbed()),
             'beerlist' => $this->reply($this->beerListEmbed()),
+            'wine' => $this->handleWine($request),
+            'winelist' => $this->reply($this->wineListEmbed()),
             'help' => $this->reply($this->helpEmbed(), true),
             default => $this->reply(['title' => 'Onbekend commando', 'description' => 'Dit commando ken ik niet.']),
         };
@@ -237,6 +240,70 @@ class DiscordInteractionController extends Controller
             'title' => 'Proost!',
             'description' => BeerMessages::line($name, $count),
         ]);
+    }
+
+    /**
+     * /wine - log one glass of wine for the Discord user, the classier
+     * counterpart of /beer. Same account matching, own counter.
+     */
+    private function handleWine(Request $request): JsonResponse
+    {
+        $discordId = $request->input('member.user.id') ?? $request->input('user.id');
+        $user = $discordId ? User::where('discord_id', $discordId)->first() : null;
+
+        if (! $user) {
+            return $this->reply([
+                'title' => 'Nog geen account gekoppeld',
+                'description' => 'Koppel eerst je Discord aan je MBLAN26-account op de site, dan tel ik je wijntjes mee.',
+            ], true);
+        }
+
+        $count = $user->drinkWine();
+
+        $name = $request->input('member.user.global_name')
+            ?? $request->input('member.user.username')
+            ?? $user->name;
+
+        return $this->reply([
+            'title' => 'Santé!',
+            'description' => WineMessages::line($name, $count),
+        ]);
+    }
+
+    /**
+     * /winelist - a ranked leaderboard of everyone who has logged a glass,
+     * formatted like the beer list.
+     *
+     * @return array<string, mixed>
+     */
+    private function wineListEmbed(): array
+    {
+        $users = User::where('wine_count', '>', 0)
+            ->orderByDesc('wine_count')
+            ->orderBy('name')
+            ->get(['name', 'wine_count']);
+
+        if ($users->isEmpty()) {
+            return ['title' => 'Wijnranglijst', 'description' => 'Nog geen wijn genoteerd. De kelder wacht op de eerste kenner.'];
+        }
+
+        $shown = $users->take(25);
+        $rows = [
+            str_pad('#', 3).str_pad('Deelnemer', 22).'Wijn',
+            str_repeat('-', 29),
+        ];
+        foreach ($shown as $i => $user) {
+            $name = mb_strimwidth($user->name, 0, 20, '..');
+            $rows[] = str_pad((string) ($i + 1).'.', 3).str_pad($name, 22).$user->wine_count;
+        }
+
+        $description = "```\n".implode("\n", $rows)."\n```";
+        if ($users->count() > $shown->count()) {
+            $rest = $users->count() - $shown->count();
+            $description .= "\n... en nog {$rest} andere deelnemers.";
+        }
+
+        return ['title' => 'Wijnranglijst', 'description' => $description];
     }
 
     /**
