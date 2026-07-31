@@ -45,12 +45,11 @@ class TournamentResource extends Resource
                             ->hiddenLabel()
                             ->content(new HtmlString(<<<'HTML'
                                 <ol class="list-decimal space-y-2 ps-5 text-sm leading-relaxed">
-                                    <li>Spelers melden zich aan via de site. Je ziet ze op het tabblad <strong>Aanmeldingen</strong> onderaan deze pagina.</li>
-                                    <li>Kies onder <strong>Scoresysteem</strong> hoe er gescoord wordt: punten/kills (hoogste wint) of <strong>tijd</strong> (laagste wint). Voor tijd kies je het "Tijd"-preset; scores voer je dan in als <strong>minuten, seconden en milliseconden</strong>.</li>
-                                    <li>Ga naar het tabblad <strong>Scores</strong> en voeg een <strong>aangemelde</strong> speler toe. Alleen spelers die zich hebben aangemeld kun je kiezen.</li>
-                                    <li>Werk tijdens het spelen bij met <strong>Score toevoegen</strong>: typ de punten/seconden van de laatste ronde, ze worden opgeteld bij het totaal. Voor een correctie gebruik je <strong>Score bijwerken</strong>.</li>
-                                    <li>Bij teamtoernooien maak je met <strong>Teams maken</strong> automatisch teams van een instelbare grootte. Zet daar de toggle aan om de indeling meteen in <strong>Discord</strong> te posten.</li>
-                                    <li>De <strong>ranking</strong> rekent zichzelf uit: hoogste score bovenaan, of de laagste tijd bij tijd-toernooien.</li>
+                                    <li><strong>Stap 1 · Aanmeldingen.</strong> Spelers melden zich aan via de site; je ziet (en beheert) ze op het tabblad <strong>Aanmeldingen</strong>. Iedereen die is aangemeld staat automatisch op het scorebord en doet mee met de rondes.</li>
+                                    <li>Kies onder <strong>Scoresysteem</strong> hoe er gescoord wordt: punten/kills (hoogste wint) of <strong>tijd</strong> (laagste wint). Voor tijd voer je scores in als <strong>minuten, seconden en milliseconden</strong>.</li>
+                                    <li><strong>Stap 2 · Teams of lobby's.</strong> Op het tabblad <strong>Scores</strong> verdeel je het veld met één klik: kies <strong>aantal teams</strong> of <strong>spelers per team</strong>. Bij individuele toernooien (zoals Hearthstone) heten dit lobby's en tellen de scores gewoon per speler. Shuffelen kan altijd opnieuw, en met <strong>Teams aankondigen</strong> post je de indeling in Discord.</li>
+                                    <li><strong>Stap 3 · Rondes.</strong> Op het tabblad <strong>Rondes</strong> klik je na elke ronde op <strong>Ronde toevoegen</strong> en vul je de punten per speler (of per team) in. Totalen en ranking rekenen zichzelf uit; een ronde achteraf bewerken of verwijderen corrigeert alles automatisch.</li>
+                                    <li>Losse correcties kunnen ook: <strong>Score toevoegen</strong> telt punten bij het totaal op, <strong>Score bijwerken</strong> zet de exacte stand. Let op: bij een toernooi mét rondes zijn de rondepunten leidend.</li>
                                     <li>Zet onderaan <strong>Afgerond</strong> aan als het klaar is. De eindstand verschijnt dan op de site en in Discord.</li>
                                 </ol>
                             HTML)),

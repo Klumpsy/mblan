@@ -26,6 +26,9 @@ class RegistrationsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('name')
+            ->description('Stap 1 · Wie doet er mee? Aanmeldingen via de site komen hier automatisch binnen; je kunt ook zelf spelers toevoegen.')
+            ->emptyStateHeading('Nog geen aanmeldingen')
+            ->emptyStateDescription('Spelers melden zich aan via de site, of voeg ze hier zelf toe met "Speler toevoegen".')
             ->columns([
                 TextColumn::make('name')
                     ->label('Speler')

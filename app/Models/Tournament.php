@@ -106,6 +106,25 @@ class Tournament extends Model
         return $this->registrations()->whereKey($user->id)->exists();
     }
 
+    /**
+     * Everyone who signed up belongs in the game: put registered players who
+     * are not on the scoreboard yet on it with a zero score, so team making,
+     * scoring and rounds always see the whole field. Idempotent; the admin
+     * tabs call it on every load. Returns how many players were added.
+     */
+    public function putRegistrationsOnScoreboard(): int
+    {
+        $missing = $this->registrations()
+            ->whereNotIn('users.id', $this->usersWithScores()->pluck('users.id'))
+            ->pluck('users.id');
+
+        foreach ($missing as $userId) {
+            $this->usersWithScores()->attach($userId, ['score' => 0]);
+        }
+
+        return $missing->count();
+    }
+
     public function rounds(): HasMany
     {
         return $this->hasMany(TournamentRound::class)->orderBy('number');

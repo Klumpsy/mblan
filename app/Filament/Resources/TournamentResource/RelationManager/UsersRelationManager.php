@@ -12,7 +12,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Table;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Actions\AttachAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\DetachAction;
 use Filament\Actions\DetachBulkAction;
@@ -29,23 +28,6 @@ class UsersRelationManager extends RelationManager
     protected static string $relationship = 'usersWithScores';
 
     protected static ?string $title = 'Scores';
-
-    /**
-     * Players who may be given a score: those who signed up for this tournament
-     * and are not already on the scoreboard. Keyed id => name for a Select.
-     *
-     * @return \Illuminate\Support\Collection<int, string>
-     */
-    public function eligiblePlayers(): \Illuminate\Support\Collection
-    {
-        $tournament = $this->getOwnerRecord();
-        $attachedUserIds = $tournament->usersWithScores()->pluck('users.id')->toArray();
-
-        return $tournament->registrations()
-            ->whereNotIn('users.id', $attachedUserIds)
-            ->orderBy('name')
-            ->pluck('name', 'users.id');
-    }
 
     /**
      * Set a player's score to an absolute value, propagate it to teammates for
@@ -150,21 +132,14 @@ class UsersRelationManager extends RelationManager
     }
 
     /**
-     * Everyone who signed up belongs in the draw: put registered players who
-     * are not on the scoreboard yet on it with a zero score, so the team maker
-     * can deal the whole tournament in one go.
+     * Keep the scoreboard in sync with the sign-ups: everyone who registered
+     * shows up here automatically, no manual attach step needed.
      */
-    protected function attachRegisteredPlayers(): void
+    public function mount(): void
     {
-        $tournament = $this->getOwnerRecord();
+        parent::mount();
 
-        $missing = $tournament->registrations()
-            ->whereNotIn('users.id', $tournament->usersWithScores()->pluck('users.id'))
-            ->pluck('users.id');
-
-        foreach ($missing as $userId) {
-            $tournament->usersWithScores()->attach($userId, ['score' => 0]);
-        }
+        $this->getOwnerRecord()->putRegistrationsOnScoreboard();
     }
 
     /**
@@ -241,7 +216,7 @@ class UsersRelationManager extends RelationManager
     {
         $tournament = $this->getOwnerRecord();
 
-        $this->attachRegisteredPlayers();
+        $this->getOwnerRecord()->putRegistrationsOnScoreboard();
 
         $userIds = $tournament->usersWithScores()
             ->whereNull('team_number')
@@ -329,32 +304,9 @@ class UsersRelationManager extends RelationManager
                 default => 'gray',
             });
 
-        // --- Header actions (includes your Create Teams + Shuffle Teams buttons as-is) ---
-        $headerActions = [
-            AttachAction::make()
-                ->form(fn() => [
-                    Select::make('recordId')
-                        ->label('Speler')
-                        // Only players who signed up for this tournament can get a
-                        // score, minus anyone already on the scoreboard.
-                        ->options(fn () => $this->eligiblePlayers())
-                        ->searchable()
-                        ->required()
-                        ->preload()
-                        ->placeholder('Kies een aangemelde speler')
-                        ->helperText('Alleen spelers die zich hebben aangemeld voor dit toernooi.'),
-                    TextInput::make('score')
-                        ->numeric()
-                        ->default(0)
-                        ->required(),
-                ])
-                ->mutateFormDataUsing(fn(array $data) => [
-                    'recordId' => $data['recordId'],
-                    'score' => $data['score'],
-                ])
-                ->after(fn() => $this->recalculateRanking())
-                ->preloadRecordSelect(),
-        ];
+        // --- Header actions. No manual attach: registrations flow onto the
+        // scoreboard automatically, walk-ins are added on the Aanmeldingen tab.
+        $headerActions = [];
 
         // Team maker is available for every tournament: team tournaments get
         // scoring teams, individual tournaments (Hearthstone etc.) use the
@@ -394,7 +346,7 @@ class UsersRelationManager extends RelationManager
                 ->action(function (array $data): void {
                     $tournament = $this->getOwnerRecord();
 
-                    $this->attachRegisteredPlayers();
+                    $this->getOwnerRecord()->putRegistrationsOnScoreboard();
 
                     // Clear all team assignments, then deal everyone again.
                     DB::table('tournament_user')
@@ -572,6 +524,11 @@ class UsersRelationManager extends RelationManager
 
         // --- Build the table ---
         $table = $table
+            ->description($tournament->is_team_based
+                ? 'Stap 2 · Alle aangemelde spelers staan hier automatisch. Maak teams en houd de scores bij; de ranking volgt vanzelf.'
+                : 'Stap 2 · Alle aangemelde spelers staan hier automatisch. Verdeel ze eventueel in lobby\'s en houd de scores bij.')
+            ->emptyStateHeading('Nog geen spelers')
+            ->emptyStateDescription('Zodra spelers zich aanmelden (tabblad Aanmeldingen) verschijnen ze hier vanzelf.')
             ->columns($columns)
             ->defaultSort('tournament_user.ranking', 'asc')
             ->headerActions($headerActions)

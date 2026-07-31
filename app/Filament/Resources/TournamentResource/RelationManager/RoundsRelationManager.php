@@ -19,6 +19,30 @@ class RoundsRelationManager extends RelationManager
     protected static ?string $title = 'Rondes';
 
     /**
+     * Everyone who signed up joins the rounds automatically: sync the
+     * registrations onto the scoreboard before building the points form.
+     */
+    public function mount(): void
+    {
+        parent::mount();
+
+        $this->getOwnerRecord()->putRegistrationsOnScoreboard();
+    }
+
+    /**
+     * Team tournaments need a team line-up before round points make sense.
+     */
+    protected function needsTeamsFirst(): bool
+    {
+        $tournament = $this->getOwnerRecord();
+
+        return $tournament->is_team_based && ! DB::table('tournament_user')
+            ->where('tournament_id', $tournament->id)
+            ->whereNotNull('team_number')
+            ->exists();
+    }
+
+    /**
      * One points input per team (team tournaments) or per player, plus an
      * optional round name. Existing points prefill when editing a round.
      *
@@ -108,6 +132,13 @@ class RoundsRelationManager extends RelationManager
         $tournament = $this->getOwnerRecord();
 
         return $table
+            ->description($tournament->is_team_based
+                ? 'Stap 3 · Voer na elke ronde de punten per team in. Totalen en ranking rekenen zichzelf uit.'
+                : 'Stap 3 · Voer na elke ronde de punten per speler in. Totalen en ranking rekenen zichzelf uit.')
+            ->emptyStateHeading('Nog geen rondes')
+            ->emptyStateDescription(fn () => $this->needsTeamsFirst()
+                ? 'Maak eerst teams op het tabblad Scores, daarna voer je hier per ronde de teampunten in.'
+                : 'Klik op "Ronde toevoegen" en vul de punten in. Alle aangemelde spelers staan al klaar.')
             ->columns([
                 TextColumn::make('number')
                     ->label('#')
@@ -131,7 +162,7 @@ class RoundsRelationManager extends RelationManager
                     ->label('Ronde toevoegen')
                     ->icon('heroicon-o-plus')
                     ->color('success')
-                    ->visible(fn () => $tournament->usersWithScores()->exists())
+                    ->visible(fn () => $tournament->usersWithScores()->exists() && ! $this->needsTeamsFirst())
                     ->modalHeading('Ronde toevoegen')
                     ->modalDescription('Vul de behaalde ' . strtolower($tournament->scoreLabel()) . ' van deze ronde in. De totalen en ranking worden automatisch bijgewerkt.')
                     ->form(fn () => $this->pointsFields())

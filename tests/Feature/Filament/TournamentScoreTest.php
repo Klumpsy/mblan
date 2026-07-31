@@ -44,26 +44,29 @@ test('an admin can quickly add seconds/points to a running score', function () {
     expect((int) $tournament->usersWithScores()->where('users.id', $player->id)->first()->pivot->score)->toBe(40);
 });
 
-test('only signed-up players who are not yet scored can be given a score', function () {
+test('registered players land on the scoreboard automatically when the tab opens', function () {
     $tournament = Tournament::factory()->create(['is_team_based' => false, 'higher_is_better' => true]);
-    $registeredUnscored = User::factory()->create(['name' => 'Aangemeld Zonder Score']);
-    $registeredScored = User::factory()->create(['name' => 'Al Op Scorebord']);
+    $registered = User::factory()->create(['name' => 'Aangemeld Zonder Score']);
+    $alreadyScored = User::factory()->create(['name' => 'Al Op Scorebord']);
     $notRegistered = User::factory()->create(['name' => 'Niet Aangemeld']);
 
-    $tournament->registrations()->attach([$registeredUnscored->id, $registeredScored->id]);
-    $tournament->usersWithScores()->attach($registeredScored->id, ['score' => 5, 'ranking' => 1]);
+    $tournament->registrations()->attach([$registered->id, $alreadyScored->id]);
+    $tournament->usersWithScores()->attach($alreadyScored->id, ['score' => 5, 'ranking' => 1]);
 
-    $component = Livewire::test(UsersRelationManager::class, [
+    Livewire::test(UsersRelationManager::class, [
         'ownerRecord' => $tournament,
         'pageClass' => EditTournament::class,
     ]);
 
-    $eligibleIds = $component->instance()->eligiblePlayers()->keys()->all();
+    $scoreboard = $tournament->usersWithScores()->get()->keyBy('id');
 
-    expect($eligibleIds)
-        ->toContain($registeredUnscored->id)   // signed up, no score yet
-        ->not->toContain($registeredScored->id) // already on the scoreboard
-        ->not->toContain($notRegistered->id);   // never signed up
+    expect($scoreboard->keys()->all())
+        ->toContain($registered->id)          // pulled in automatically
+        ->toContain($alreadyScored->id)
+        ->not->toContain($notRegistered->id); // never signed up
+
+    expect((int) $scoreboard[$registered->id]->pivot->score)->toBe(0);
+    expect((int) $scoreboard[$alreadyScored->id]->pivot->score)->toBe(5); // untouched
 });
 
 test('time-based scores are added as minutes, seconds and milliseconds', function () {

@@ -21,6 +21,36 @@ function roundsManager(Tournament $tournament)
     ]);
 }
 
+test('players who joined the tournament are in the rounds automatically', function () {
+    $tournament = Tournament::factory()->create(['is_team_based' => false, 'higher_is_better' => true]);
+    [$a, $b] = User::factory()->count(2)->create();
+
+    // Only registered, never manually put on the scoreboard.
+    $tournament->registrations()->attach([$a->id, $b->id]);
+
+    roundsManager($tournament)
+        ->callTableAction('add_round', data: [
+            'player_points' => [$a->id => 10, $b->id => 4],
+        ])
+        ->assertHasNoTableActionErrors();
+
+    $pivots = $tournament->usersWithScores()->get()->keyBy('id');
+
+    expect($pivots)->toHaveCount(2);
+    expect((int) $pivots[$a->id]->pivot->score)->toBe(10);
+    expect((int) $pivots[$b->id]->pivot->score)->toBe(4);
+    expect((int) $pivots[$a->id]->pivot->ranking)->toBe(1);
+});
+
+test('team tournaments ask for teams before rounds can be added', function () {
+    $tournament = Tournament::factory()->create(['is_team_based' => true]);
+    $players = User::factory()->count(4)->create();
+    $tournament->registrations()->attach($players->pluck('id'));
+
+    // No teams made yet: the add-round button stays hidden.
+    roundsManager($tournament)->assertTableActionHidden('add_round');
+});
+
 test('an admin can save a round with points per player and the totals follow', function () {
     $tournament = Tournament::factory()->create(['is_team_based' => false, 'higher_is_better' => true]);
     [$a, $b] = User::factory()->count(2)->create();
