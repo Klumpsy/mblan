@@ -52,6 +52,39 @@ test('an unknown emoji is ignored', function () {
     expect($photo->reactions()->count())->toBe(0);
 });
 
+test('the rendered component lists the names of who reacted', function () {
+    $photo = Photo::factory()->create();
+    $bart = User::factory()->create(['name' => 'Bart']);
+    $jasper = User::factory()->create(['name' => 'Jasper']);
+    $photo->reactions()->create(['user_id' => $bart->id, 'emoji' => 'heart']);
+    $photo->reactions()->create(['user_id' => $jasper->id, 'emoji' => 'heart']);
+
+    Livewire::test(Reactions::class, ['model' => $photo])
+        ->assertSee('Bart')
+        ->assertSee('Jasper');
+});
+
+test('names are capped at 15 with a "+N anderen" suffix', function () {
+    $photo = Photo::factory()->create();
+    $users = User::factory()->count(17)->sequence(fn ($seq) => ['name' => 'Speler'.($seq->index + 1)])->create();
+    foreach ($users as $user) {
+        $photo->reactions()->create(['user_id' => $user->id, 'emoji' => 'goat']);
+    }
+
+    Livewire::test(Reactions::class, ['model' => $photo])
+        ->assertSee('Speler15')
+        ->assertDontSee('Speler16')
+        ->assertSee('+2 anderen');
+});
+
+test('no reactor names are rendered when nobody reacted', function () {
+    $photo = Photo::factory()->create();
+    User::factory()->create(['name' => 'Eenzaam']);
+
+    Livewire::test(Reactions::class, ['model' => $photo])
+        ->assertDontSee('Eenzaam');
+});
+
 test('counts reflect reactions from multiple users', function () {
     $photo = Photo::factory()->create();
     [$a, $b] = User::factory()->count(2)->create();
