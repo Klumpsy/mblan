@@ -45,13 +45,19 @@ class Ladder extends Component
 
         $rows = $tournament->getLeaderboard();
 
+        // The podium holds the top three RANKS; players with the same score
+        // share a step, so a tie for first shows both names above step 1.
+        $podium = $rows->filter(fn ($row) => $row['ranking'] !== null && $row['ranking'] <= 3)
+            ->groupBy('ranking')
+            ->sortKeys();
+
         $registrants = $tournament->registrations()->orderBy('name')->get();
 
         return view('livewire.tournament.ladder', [
             't' => $tournament,
             'rows' => $rows,
-            'podium' => $rows->take(3),
-            'rest' => $rows->slice(3),
+            'podium' => $podium,
+            'rest' => $rows->slice($podium->flatten(1)->count()),
             'topScore' => max(1, (int) $rows->max('score')),
             'scoreLabel' => $tournament->scoreLabel(),
             'isRegistered' => Auth::check() && $registrants->contains('id', Auth::id()),

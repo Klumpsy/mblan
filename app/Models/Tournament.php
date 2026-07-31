@@ -183,17 +183,16 @@ class Tournament extends Model
             ->orderBy('team_number', 'asc')
             ->get();
 
-        // Teams with the same score share the same rank (1, 1, 3, ...),
-        // exactly like the individual ranking does.
-        $rank = 1;
+        // Dense ranking, exactly like the individual ranking: teams with the
+        // same score share a rank and the next team gets the next number.
+        $rank = 0;
         $lastScore = null;
-        $position = 1;
 
         foreach ($teamScores as $team) {
             $score = (int) $team->total_score;
 
             if ($lastScore === null || $score !== $lastScore) {
-                $rank = $position;
+                $rank++;
             }
 
             \Illuminate\Support\Facades\DB::table('tournament_user')
@@ -202,7 +201,6 @@ class Tournament extends Model
                 ->update(['ranking' => $rank]);
 
             $lastScore = $score;
-            $position++;
         }
     }
 
@@ -220,6 +218,11 @@ class Tournament extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Dense ranking: players with the same score share a rank and the next
+     * score simply gets the next number (1, 1, 2), so the podium always
+     * shows steps 1, 2 and 3.
+     */
     public function updateRankings(): void
     {
         $users = $this->usersWithScores()
@@ -227,15 +230,14 @@ class Tournament extends Model
             ->orderByPivot('score', $this->sortDirection())
             ->get();
 
-        $rank = 1;
+        $rank = 0;
         $lastScore = null;
-        $actualRank = 1;
 
-        foreach ($users as $index => $user) {
-            $score = $user->pivot->score;
+        foreach ($users as $user) {
+            $score = (int) $user->pivot->score;
 
-            if ($score !== $lastScore) {
-                $rank = $actualRank;
+            if ($lastScore === null || $score !== $lastScore) {
+                $rank++;
             }
 
             $this->usersWithScores()->updateExistingPivot($user->id, [
@@ -243,7 +245,6 @@ class Tournament extends Model
             ]);
 
             $lastScore = $score;
-            $actualRank++;
         }
     }
 
