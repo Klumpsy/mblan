@@ -6,6 +6,7 @@ use App\Models\Tournament;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
@@ -103,6 +104,69 @@ test('registered players who are not on the scoreboard yet are included in the d
     expect($assigned)->toBe(
         $scored->pluck('id')->merge($registeredOnly->pluck('id'))->sort()->values()->all()
     );
+});
+
+test('individual tournaments can be split into lobbies too', function () {
+    // Hearthstone-style: 14 solo players dealt into 2 lobbies.
+    $tournament = Tournament::factory()->create(['is_team_based' => false]);
+    User::factory()->count(14)->create()->each(
+        fn ($u) => $tournament->usersWithScores()->attach($u->id, ['score' => 0])
+    );
+
+    teamMaker($tournament)
+        ->callTableAction('create_teams', data: ['mode' => 'team_count', 'team_count' => 2])
+        ->assertHasNoTableActionErrors();
+
+    expect(teamSizes($tournament))->toBe([7, 7]);
+});
+
+test('lobby mates in an individual tournament keep their own score and ranking', function () {
+    $tournament = Tournament::factory()->create(['is_team_based' => false, 'higher_is_better' => true]);
+    [$a, $b] = User::factory()->count(2)->create();
+    $tournament->usersWithScores()->attach([$a->id => ['score' => 0], $b->id => ['score' => 0]]);
+
+    teamMaker($tournament)
+        ->callTableBulkAction('create_team_from_selection', [$a->id, $b->id], data: ['team_name' => 'Lobby 1'])
+        ->assertHasNoTableActionErrors();
+
+    // Both players sit in the same lobby; scoring one must not touch the other.
+    teamMaker($tournament)
+        ->callTableAction('addScore', $a, data: ['amount' => 25])
+        ->assertHasNoTableActionErrors();
+
+    $pivots = $tournament->usersWithScores()->get()->keyBy('id');
+
+    expect((int) $pivots[$a->id]->pivot->score)->toBe(25);
+    expect((int) $pivots[$b->id]->pivot->score)->toBe(0);
+    expect((int) $pivots[$a->id]->pivot->ranking)->toBe(1);
+    expect((int) $pivots[$b->id]->pivot->ranking)->toBe(2);
+});
+
+test('an admin can announce the current line-up to Discord with one click', function () {
+    config(['discord.webhook_url' => 'https://discord.test/webhook']);
+    Http::fake(['discord.test/*' => Http::response('', 204)]);
+
+    $tournament = Tournament::factory()->create(['is_team_based' => false, 'name' => 'Hearthstone Cup']);
+    User::factory()->count(2)->create()->each(
+        fn ($u) => $tournament->usersWithScores()->attach($u->id, [
+            'score' => 0, 'team_name' => 'Lobby 1', 'team_number' => 1,
+        ])
+    );
+
+    teamMaker($tournament)
+        ->callTableAction('announce_teams')
+        ->assertHasNoTableActionErrors();
+
+    Http::assertSent(fn ($r) => str_contains($r['embeds'][0]['title'] ?? '', 'Teams')
+        && str_contains($r['embeds'][0]['description'] ?? '', 'Lobby 1'));
+});
+
+test('the announce button stays hidden until there is a line-up', function () {
+    $tournament = Tournament::factory()->create(['is_team_based' => false]);
+    $player = User::factory()->create();
+    $tournament->usersWithScores()->attach($player->id, ['score' => 0]);
+
+    teamMaker($tournament)->assertTableActionHidden('announce_teams');
 });
 
 test('shuffling clears the old teams and deals everyone again', function () {

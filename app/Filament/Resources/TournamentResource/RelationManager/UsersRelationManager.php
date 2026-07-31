@@ -301,6 +301,14 @@ class UsersRelationManager extends RelationManager
                 )
                 ->placeholder('-');
         } else {
+            $columns[] = TextColumn::make('pivot.team_name')
+                ->label('Lobby')
+                ->sortable(
+                    query: fn($query, $direction) =>
+                    $query->orderBy('tournament_user.team_name', $direction)
+                )
+                ->placeholder('-')
+                ->toggleable(isToggledHiddenByDefault: false);
             $columns[] = TextColumn::make('pivot.score')
                 ->label($scoreLabel)
                 ->formatStateUsing(fn ($state) => $tournament->isTimeBased() && $state !== null ? TimeScore::format((int) $state) : $state)
@@ -348,37 +356,39 @@ class UsersRelationManager extends RelationManager
                 ->preloadRecordSelect(),
         ];
 
-        if ($tournament->is_team_based) {
-            $headerActions[] = Action::make('create_teams')
-                ->label('Teams maken')
-                ->icon('heroicon-o-user-group')
-                ->color('success')
-                ->form([
-                    ...$this->teamSetupFields(),
-                    Toggle::make('post_to_discord')
-                        ->label('Teams naar Discord posten')
-                        ->helperText('Plaatst de teamindeling meteen in het Discord-kanaal.')
-                        ->default(false),
-                ])
-                ->action(function (array $data): void {
-                    $this->createTeams($data);
+        // Team maker is available for every tournament: team tournaments get
+        // scoring teams, individual tournaments (Hearthstone etc.) use the
+        // same draw to split the field into lobbies.
+        $headerActions[] = Action::make('create_teams')
+            ->label($tournament->is_team_based ? 'Teams maken' : 'Lobby\'s maken')
+            ->icon('heroicon-o-user-group')
+            ->color('success')
+            ->form([
+                ...$this->teamSetupFields(),
+                Toggle::make('post_to_discord')
+                    ->label('Indeling naar Discord posten')
+                    ->helperText('Plaatst de indeling meteen in het Discord-kanaal.')
+                    ->default(false),
+            ])
+            ->action(function (array $data): void {
+                $this->createTeams($data);
 
-                    if (! empty($data['post_to_discord'])) {
-                        app(DiscordWebhookService::class)->announceTeams($this->getOwnerRecord());
-                    }
-                })
-                ->requiresConfirmation()
-                ->modalDescription('Deelt alle aangemelde spelers zonder team willekeurig in. Restspelers schuiven bij een bestaand team aan.');
+                if (! empty($data['post_to_discord'])) {
+                    app(DiscordWebhookService::class)->announceTeams($this->getOwnerRecord());
+                }
+            })
+            ->requiresConfirmation()
+            ->modalDescription('Deelt alle aangemelde spelers zonder team of lobby willekeurig in. Restspelers schuiven bij een bestaande groep aan.');
 
-            $headerActions[] = Action::make('shuffle_teams')
-                ->label('Teams shuffelen')
+        $headerActions[] = Action::make('shuffle_teams')
+                ->label($tournament->is_team_based ? 'Teams shuffelen' : 'Lobby\'s shuffelen')
                 ->icon('heroicon-o-arrow-path')
                 ->color('warning')
                 ->form([
                     ...$this->teamSetupFields(),
                     Toggle::make('post_to_discord')
-                        ->label('Teams naar Discord posten')
-                        ->helperText('Plaatst de nieuwe teamindeling meteen in het Discord-kanaal.')
+                        ->label('Indeling naar Discord posten')
+                        ->helperText('Plaatst de nieuwe indeling meteen in het Discord-kanaal.')
                         ->default(false),
                 ])
                 ->action(function (array $data): void {
@@ -421,8 +431,31 @@ class UsersRelationManager extends RelationManager
                         ->send();
                 })
                 ->requiresConfirmation()
-                ->modalDescription('Wist de huidige teams en deelt alle spelers opnieuw willekeurig in.');
-        }
+                ->modalDescription('Wist de huidige indeling en deelt alle spelers opnieuw willekeurig in.');
+
+        // Let the Discord bot post the current line-up on demand, so an admin
+        // can announce the teams whenever the channel needs them again.
+        $headerActions[] = Action::make('announce_teams')
+            ->label('Teams aankondigen')
+            ->icon('heroicon-o-megaphone')
+            ->color('info')
+            ->visible(fn () => DB::table('tournament_user')
+                ->where('tournament_id', $tournament->id)
+                ->whereNotNull('team_number')
+                ->exists())
+            ->requiresConfirmation()
+            ->modalDescription('Post de huidige team- of lobby-indeling in het Discord-kanaal.')
+            ->action(function (): void {
+                $sent = app(DiscordWebhookService::class)->announceTeams($this->getOwnerRecord());
+
+                Notification::make()
+                    ->title($sent ? 'Indeling aangekondigd' : 'Aankondigen mislukt')
+                    ->body($sent
+                        ? 'De indeling staat in het Discord-kanaal.'
+                        : 'De Discord-webhook is niet ingesteld of gaf een fout.')
+                    ->{$sent ? 'success' : 'danger'}()
+                    ->send();
+            });
 
         // --- Row actions ---
         $actions = [
@@ -479,71 +512,63 @@ class UsersRelationManager extends RelationManager
             DetachAction::make(),
         ];
 
-        if ($tournament->is_team_based) {
-            $actions[] = Action::make('remove_from_team')
-                ->label('Remove from Team')
-                ->icon('heroicon-o-x-mark')
-                ->color('danger')
-                ->action(function ($record): void {
-                    $tournament = $this->getOwnerRecord();
-                    $tournament->usersWithScores()->updateExistingPivot($record->id, [
-                        'team_name' => null,
-                        'team_number' => null,
-                        // Optional: clear team_score/score on removal if you prefer
-                        // 'team_score' => null,
-                        // 'score' => null,
-                    ]);
+        $actions[] = Action::make('remove_from_team')
+            ->label($tournament->is_team_based ? 'Uit team halen' : 'Uit lobby halen')
+            ->icon('heroicon-o-x-mark')
+            ->color('danger')
+            ->action(function ($record): void {
+                $tournament = $this->getOwnerRecord();
+                $tournament->usersWithScores()->updateExistingPivot($record->id, [
+                    'team_name' => null,
+                    'team_number' => null,
+                ]);
 
-                    $this->recalculateRanking();
+                $this->recalculateRanking();
 
-                    Notification::make()
-                        ->title('User removed from team')
-                        ->success()
-                        ->send();
-                })
-                ->requiresConfirmation()
-                ->visible(fn($record) => !is_null($record->pivot->team_number));
-        }
+                Notification::make()
+                    ->title('Speler uit de groep gehaald')
+                    ->success()
+                    ->send();
+            })
+            ->requiresConfirmation()
+            ->visible(fn($record) => !is_null($record->pivot->team_number));
 
         $bulkActions = [DetachBulkAction::make()];
 
-        if ($tournament->is_team_based) {
-            $bulkActions[] = BulkAction::make('create_team_from_selection')
-                ->label('Create Team from Selection')
-                ->icon('heroicon-o-user-group')
-                ->color('success')
-                ->form([
-                    TextInput::make('team_name')
-                        ->label('Team Name')
-                        ->required()
-                        ->placeholder('Enter team name'),
-                ])
-                ->action(function (Collection $records, array $data): void {
-                    $tournament = $this->getOwnerRecord();
+        $bulkActions[] = BulkAction::make('create_team_from_selection')
+            ->label($tournament->is_team_based ? 'Team van selectie maken' : 'Lobby van selectie maken')
+            ->icon('heroicon-o-user-group')
+            ->color('success')
+            ->form([
+                TextInput::make('team_name')
+                    ->label($tournament->is_team_based ? 'Teamnaam' : 'Lobbynaam')
+                    ->required()
+                    ->placeholder($tournament->is_team_based ? 'Naam van het team' : 'Naam van de lobby'),
+            ])
+            ->action(function (Collection $records, array $data): void {
+                $tournament = $this->getOwnerRecord();
 
-                    // Get the next team number
-                    $lastTeamNumber = $tournament->usersWithScores()
-                        ->whereNotNull('team_number')
-                        ->max('team_number') ?? 0;
-                    $teamNumber = $lastTeamNumber + 1;
+                $lastTeamNumber = $tournament->usersWithScores()
+                    ->whereNotNull('team_number')
+                    ->max('team_number') ?? 0;
+                $teamNumber = $lastTeamNumber + 1;
 
-                    foreach ($records as $record) {
-                        $tournament->usersWithScores()->updateExistingPivot($record->id, [
-                            'team_name' => $data['team_name'],
-                            'team_number' => $teamNumber,
-                        ]);
-                    }
+                foreach ($records as $record) {
+                    $tournament->usersWithScores()->updateExistingPivot($record->id, [
+                        'team_name' => $data['team_name'],
+                        'team_number' => $teamNumber,
+                    ]);
+                }
 
-                    $this->recalculateRanking();
+                $this->recalculateRanking();
 
-                    Notification::make()
-                        ->title('Team created successfully')
-                        ->body("Created team '{$data['team_name']}' with " . $records->count() . " members.")
-                        ->success()
-                        ->send();
-                })
-                ->deselectRecordsAfterCompletion();
-        }
+                Notification::make()
+                    ->title('Groep aangemaakt')
+                    ->body("'{$data['team_name']}' aangemaakt met {$records->count()} spelers.")
+                    ->success()
+                    ->send();
+            })
+            ->deselectRecordsAfterCompletion();
 
         // --- Build the table ---
         $table = $table
@@ -553,20 +578,24 @@ class UsersRelationManager extends RelationManager
             ->actions($actions)
             ->bulkActions($bulkActions);
 
-        // --- Team mode: visually group members by team with a header showing team name & score ---
-        if ($tournament->is_team_based) {
-            $table = $table->groups([
-                Group::make('pivot.team_number')
-                    ->label('Team')
-                    ->collapsible()
-                    ->getTitleFromRecordUsing(function ($record): string {
-                        $teamName = $record->pivot->team_name ?? 'No Team';
-                        $teamNo   = $record->pivot->team_number ?? '-';
-                        $score    = $record->pivot->team_score ?? '-';
-                        return "{$teamName} (#{ $teamNo }) — Score: {$score}";
-                    }),
-            ]);
-        }
+        // Group members visually by team (or lobby). Team tournaments show the
+        // team score in the header; lobbies just show the name.
+        $table = $table->groups([
+            Group::make('pivot.team_number')
+                ->label($tournament->is_team_based ? 'Team' : 'Lobby')
+                ->collapsible()
+                ->getTitleFromRecordUsing(function ($record) use ($tournament): string {
+                    $teamName = $record->pivot->team_name ?? ($tournament->is_team_based ? 'Geen team' : 'Geen lobby');
+
+                    if (! $tournament->is_team_based) {
+                        return $teamName;
+                    }
+
+                    $score = $record->pivot->team_score ?? '-';
+
+                    return "{$teamName} · Score: {$score}";
+                }),
+        ]);
 
         return $table;
     }
