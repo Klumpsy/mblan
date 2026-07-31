@@ -257,9 +257,15 @@ class DiscordWebhookService
      */
     private function sendEmbed(string $title, string $description, array $fields = [], ?string $image = null, ?string $url = null, ?string $webhookUrl = null): bool
     {
+        $fields = array_map(fn (array $field) => [
+            ...$field,
+            'name' => $this->stripHtml((string) $field['name']),
+            'value' => $this->stripHtml((string) $field['value']),
+        ], $fields);
+
         $embed = [
-            'title' => $title,
-            'description' => $description,
+            'title' => $this->stripHtml($title),
+            'description' => $this->stripHtml($description),
             'color' => self::COLOR,
             'footer' => ['text' => 'MBLAN26'],
             'timestamp' => now()->toISOString(),
@@ -276,6 +282,23 @@ class DiscordWebhookService
         }
 
         return $this->sendWebhook(['embeds' => [$embed]], $webhookUrl);
+    }
+
+    /**
+     * Rich-text content (Filament RichEditor, pasted HTML) must never reach
+     * Discord as literal tags. Paragraph/line-break tags become newlines so
+     * the formatting survives; everything else is stripped. Markdown is left
+     * alone — Discord renders it.
+     */
+    private function stripHtml(string $text): string
+    {
+        $text = preg_replace('/<br\s*\/?>/i', "\n", $text);
+        $text = preg_replace('/<\/(p|div|h[1-6]|li)>\s*/i', "\n", $text);
+        $text = strip_tags($text);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace("/\n{3,}/", "\n\n", $text);
+
+        return trim($text);
     }
 
     private function formatTime(int $ms): string
