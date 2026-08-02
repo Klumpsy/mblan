@@ -53,4 +53,30 @@
             </form>
         @endif
     </x-forge.card>
+
+    @if ($round && $orders->isNotEmpty())
+        <div class="mt-6">
+            <x-forge.card>
+                <h4 class="font-display text-lg font-bold uppercase tracking-wide text-white">Bestellingen</h4>
+                <p class="mt-1 mb-4 font-pixel text-[8px] uppercase tracking-widest text-forge-steel/60">
+                    {{ $orders->count() }} {{ $orders->count() === 1 ? 'bestelling' : 'bestellingen' }} in deze ronde
+                </p>
+
+                <ul class="divide-y divide-primary-500/10">
+                    @foreach ($orders as $order)
+                        <li class="flex items-start gap-3 py-2.5 {{ $order->user_id === auth()->id() ? 'text-white' : 'text-forge-steel/80' }}">
+                            <img class="mt-0.5 h-6 w-6 shrink-0 rounded-full object-cover" src="{{ $order->user->profile_photo_url }}" alt="">
+                            <div class="min-w-0">
+                                <span class="font-display text-sm uppercase tracking-wider">{{ $order->user->name }}</span>
+                                <span class="text-sm"> — {{ $order->pizza }}</span>
+                                @if ($order->notes)
+                                    <div class="text-xs text-forge-steel/60">{{ $order->notes }}</div>
+                                @endif
+                            </div>
+                        </li>
+                    @endforeach
+                </ul>
+            </x-forge.card>
+        </div>
+    @endif
 </div>

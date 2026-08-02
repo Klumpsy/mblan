@@ -75,10 +75,17 @@ class PizzaOrderForm extends Component
             ? $round->orders()->where('user_id', auth()->id())->first()
             : null;
 
+        // Everyone may see the round's combined list, so you know what the
+        // group ordered without asking the organisation.
+        $orders = $round
+            ? $round->orders()->with('user')->oldest()->get()
+            : collect();
+
         return view('livewire.pizza-order-form', [
             'round' => $round,
             'menu' => PizzaMenu::grouped(),
             'myOrder' => $myOrder,
+            'orders' => $orders,
         ]);
     }
 }

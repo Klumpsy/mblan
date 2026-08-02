@@ -29,6 +29,9 @@
                     <x-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')" class="whitespace-nowrap">
                         {{ __('Live') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('pizza') }}" :active="request()->routeIs('pizza')" class="whitespace-nowrap">
+                        {{ __('Eten') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -130,6 +133,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')">
                 {{ __('Live') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('pizza') }}" :active="request()->routeIs('pizza')">
+                {{ __('Eten') }}
             </x-responsive-nav-link>
         </div>
 

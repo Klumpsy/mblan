@@ -72,3 +72,28 @@ test('ordering food unlocks the pizza achievement', function () {
     $slugs = $user->achievements()->wherePivotNotNull('achieved_at')->pluck('slug')->all();
     expect($slugs)->toContain('pizzaliefhebber');
 });
+
+test('everyone can see who ordered what in the open round', function () {
+    $round = PizzaRound::create(['name' => 'Vrijdag', 'is_open' => true]);
+    $bart = User::factory()->create(['name' => 'Bart']);
+    $jasper = User::factory()->create(['name' => 'Jasper']);
+    $round->orders()->create(['user_id' => $bart->id, 'pizza' => '60. Hawaï', 'notes' => 'extra kaas']);
+    $round->orders()->create(['user_id' => $jasper->id, 'pizza' => 'Kapsalon']);
+
+    Livewire::actingAs(User::factory()->create())
+        ->test(PizzaOrderForm::class)
+        ->assertSee('Bart')
+        ->assertSee('60. Hawaï')
+        ->assertSee('extra kaas')
+        ->assertSee('Jasper')
+        ->assertSee('Kapsalon');
+});
+
+test('the navigation links to the food ordering page', function () {
+    $this->actingAs(User::factory()->create(['email_verified_at' => now()]));
+
+    $this->get(route('timeline'))
+        ->assertOk()
+        ->assertSee('Eten')
+        ->assertSee(route('pizza'), false);
+});
