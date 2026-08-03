@@ -36,6 +36,11 @@ class ScheduleResource extends Resource
                     ->native(false)
                     ->displayFormat('d-m-Y')
                     ->format('Y-m-d'),
+                \Filament\Forms\Components\Select::make('edition_id')
+                    ->label('Editie')
+                    ->relationship('edition', 'name')
+                    ->default(fn () => \App\Models\Edition::current()?->id)
+                    ->required(),
             ]);
     }
 
@@ -53,9 +58,15 @@ class ScheduleResource extends Resource
                     ->label('Games Count')
                     ->counts('games')
                     ->sortable(),
+                TextColumn::make('edition.name')
+                    ->label('Editie')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                \Filament\Tables\Filters\SelectFilter::make('edition_id')
+                    ->label('Editie')
+                    ->relationship('edition', 'name'),
             ])
             ->actions([
                 EditAction::make(),

@@ -77,6 +77,12 @@ class TournamentResource extends Resource
                             ->preload()
                             ->required(),
 
+                        Select::make('edition_id')
+                            ->label('Editie')
+                            ->relationship('edition', 'name')
+                            ->default(fn () => \App\Models\Edition::current()?->id)
+                            ->required(),
+
                         Textarea::make('description')
                             ->label('Omschrijving')
                             ->rows(3)
@@ -174,6 +180,15 @@ class TournamentResource extends Resource
                 TextColumn::make('schedule.name')->sortable(),
                 TextColumn::make('time_start')->dateTime(),
                 TextColumn::make('time_end')->dateTime(),
+                TextColumn::make('edition.name')
+                    ->label('Editie')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                \Filament\Tables\Filters\SelectFilter::make('edition_id')
+                    ->label('Editie')
+                    ->relationship('edition', 'name'),
             ])
             ->actions([
                 EditAction::make(),

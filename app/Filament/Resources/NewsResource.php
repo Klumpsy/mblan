@@ -84,6 +84,11 @@ class NewsResource extends Resource
                     DateTimePicker::make('published_at')
                         ->label('Publicatiedatum')
                         ->default(now()),
+                    \Filament\Forms\Components\Select::make('edition_id')
+                        ->label('Editie')
+                        ->relationship('edition', 'name')
+                        ->default(fn () => \App\Models\Edition::current()?->id)
+                        ->required(),
                 ])->columns(2),
             ]);
     }
@@ -111,6 +116,15 @@ class NewsResource extends Resource
                     ->label('Datum')
                     ->dateTime('d-m-Y H:i')
                     ->sortable(),
+                TextColumn::make('edition.name')
+                    ->label('Editie')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                \Filament\Tables\Filters\SelectFilter::make('edition_id')
+                    ->label('Editie')
+                    ->relationship('edition', 'name'),
             ])
             ->defaultSort('published_at', 'desc')
             ->actions([

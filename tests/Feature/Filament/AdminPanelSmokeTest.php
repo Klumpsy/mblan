@@ -19,8 +19,9 @@ function admin(): User
     return User::factory()->create(['role' => 'admin']);
 }
 
-// The panel is intentionally minimal: games, game schedules, tournaments, users.
+// The panel is intentionally minimal: games, game schedules, tournaments, users, editions.
 $resources = [
+    'editions',
     'games',
     'schedules',
     'tournaments',
