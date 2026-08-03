@@ -17,7 +17,11 @@
     @livewireStyles
 </head>
 
-@php $cols = $maze['cols'] ?? 25; $rows = $maze['rows'] ?? 15; @endphp
+@php
+    $cols = $maze['cols'] ?? 25;
+    $rows = $maze['rows'] ?? 15;
+    [$brandBase, $brandAccent] = \App\Models\Edition::currentBrand();
+@endphp
 
 <body class="font-sans antialiased bg-forge-black text-forge-steel overflow-hidden overscroll-none">
     <main
@@ -111,8 +115,10 @@
         <div class="pointer-events-none absolute left-1/2 top-3 z-30 flex -translate-x-1/2 flex-col items-center px-4 text-center">
             <div class="frame-wood inline-block px-4 py-2 [transform:skewX(-5deg)]">
                 <h1 class="flex items-baseline justify-center font-display font-bold leading-none tracking-tight">
-                    <span class="bg-gradient-to-b from-white via-[#e7edeb] to-[#7f8f89] bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">MBLAN</span>
-                    <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)]">26</span>
+                    <span class="bg-gradient-to-b from-white via-[#e7edeb] to-[#7f8f89] bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">{{ $brandBase }}</span>
+                    @if ($brandAccent !== '')
+                        <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(1.6rem,6vw,3.5rem)]">{{ $brandAccent }}</span>
+                    @endif
                 </h1>
             </div>
             <div class="mt-5 rounded-lg bg-forge-black/70 px-4 py-2 backdrop-blur-sm">
@@ -169,7 +175,7 @@
             <div x-show="open" x-transition class="frame-wood relative w-full max-w-md p-8">
                 <button type="button" @click="closeModal()" class="absolute right-3 top-3 font-pixel text-xs text-forge-steel/60 hover:text-primary-300">X</button>
                 <div class="mb-1 font-pixel text-[8px] uppercase tracking-[0.2em] text-primary-400">De schuur is open</div>
-                <h2 class="mb-2 font-display text-2xl font-bold uppercase tracking-wide text-white">Welkom bij MBLAN<span class="text-primary-400">26</span></h2>
+                <h2 class="mb-2 font-display text-2xl font-bold uppercase tracking-wide text-white">Welkom bij {{ $brandBase }}@if ($brandAccent !== '')<span class="text-primary-400">{{ $brandAccent }}</span>@endif</h2>
                 <p class="mb-6 font-pixel text-[8px] uppercase tracking-wider text-forge-steel/60"
                     x-text="'Arti pakte je ' + caughtCount + 'x' + (timeMs > 0 ? '  ·  tijd ' + formatTime(timeMs) : '')"></p>
 

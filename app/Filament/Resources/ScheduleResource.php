@@ -24,6 +24,8 @@ class ScheduleResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-calendar';
 
+    protected static string | \UnitEnum | null $navigationGroup = 'Deze editie';
+
     public static function form(Schema $form): Schema
     {
         return $form
@@ -66,7 +68,9 @@ class ScheduleResource extends Resource
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('edition_id')
                     ->label('Editie')
-                    ->relationship('edition', 'name'),
+                    ->relationship('edition', 'name')
+                    // Standaard zie je de actieve editie; kies een jaar voor het archief.
+                    ->default(\App\Models\Edition::current()?->id),
             ])
             ->actions([
                 EditAction::make(),

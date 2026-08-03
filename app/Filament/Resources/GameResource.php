@@ -23,6 +23,8 @@ class GameResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-puzzle-piece';
 
+    protected static string | \UnitEnum | null $navigationGroup = 'Beheer';
+
     protected static array $textEditorSettings = [
         'attachFiles',
         'blockquote',

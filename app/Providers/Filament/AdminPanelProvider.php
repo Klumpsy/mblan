@@ -29,11 +29,16 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('MBLAN26')
+            ->brandName(fn (): string => rescue(fn () => \App\Models\Edition::currentName(), 'MBLAN', report: false))
             ->defaultThemeMode(ThemeMode::Dark)
             ->font('Chakra Petch')
-            ->colors([
-                'primary' => Color::hex('#37c26f'),
+            ->colors(fn (): array => [
+                // The admin panel always wears the active edition's color.
+                'primary' => Color::hex(rescue(
+                    fn () => \App\Models\Edition::current()?->primary_color,
+                    '#37c26f',
+                    report: false,
+                ) ?? '#37c26f'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

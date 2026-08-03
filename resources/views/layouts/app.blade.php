@@ -33,8 +33,10 @@
             request()->routeIs('profile.*') || request()->is('user/*') => 'profile',
             default => 'default',
         };
+        // A recap page wears the archived edition's own sprites.
+        $sceneryEdition = request()->routeIs('editions.show') ? request()->route('edition') : null;
     @endphp
-    <x-page-scenery :variant="$sceneryVariant" />
+    <x-page-scenery :variant="$sceneryVariant" :edition="$sceneryEdition" />
 
     <div class="min-h-dvh text-forge-steel">
         <livewire:navigation-menu />

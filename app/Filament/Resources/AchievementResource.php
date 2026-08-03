@@ -24,6 +24,8 @@ class AchievementResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-trophy';
 
+    protected static string | \UnitEnum | null $navigationGroup = 'Beheer';
+
     protected static ?string $navigationLabel = 'Achievements';
 
     public static function form(Schema $form): Schema

@@ -9,6 +9,10 @@
                 @foreach ($editions as $edition)
                     <a href="{{ $edition->is_active ? route('schedule') : route('editions.show', $edition) }}"
                         class="group frame-wood block p-6 transition hover:-translate-y-0.5">
+                        @if ($edition->hero_image_path)
+                            <img src="{{ asset('storage/'.$edition->hero_image_path) }}" alt="{{ $edition->name }}"
+                                class="clip-corner mb-4 aspect-video w-full object-cover" />
+                        @endif
                         <div class="flex items-center justify-between">
                             <span class="inline-block h-4 w-4 clip-corner"
                                 style="background: {{ $edition->primary_color }}"></span>

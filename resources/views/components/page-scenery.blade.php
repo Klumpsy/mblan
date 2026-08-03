@@ -1,4 +1,4 @@
-@props(['variant' => 'default'])
+@props(['variant' => 'default', 'edition' => null])
 
 {{--
     Per-page pixel-farm scene. A dark fade is the base; over it a randomised
@@ -12,15 +12,18 @@
     pointer-events-none, parallax disabled under prefers-reduced-motion.
 --}}
 @php
-    // Curated pool — animals, crops, props, trees, farmers, plus barn + Arti.
-    $pool = [
-        'tile_0003', 'tile_0015', 'tile_0027', 'tile_0039', 'tile_0078', // trees + bushes
-        'tile_0032', 'tile_0044', 'tile_0068', 'tile_0083', 'tile_0059', 'tile_0047', // crops
-        'tile_0085', 'tile_0076', 'tile_0089', 'tile_0096', 'tile_0097', // props
-        'tile_0108', 'tile_0109', // farmers
-        'tile_0120', 'tile_0121', 'tile_0122', // sheep, cow, chicken
-        'barn', 'arti',
-    ];
+    // Sprite URLs from the edition (uploaded package, or its built-in set).
+    // Defaults to the active edition; recap pages pass their own.
+    $edition ??= \App\Models\Edition::current();
+    $pool = $edition?->scenerySprites() ?: array_map(
+        fn (string $sprite) => asset(\App\Support\ScenerySets::get(null)['path'].'/'.$sprite.'.png'),
+        \App\Support\ScenerySets::get(null)['pool'],
+    );
+
+    // A small uploaded package may hold fewer than the six slots; repeat it.
+    while (count($pool) < 6) {
+        $pool = array_merge($pool, $pool);
+    }
 
     // Six sprites across three depth tiers for a nice parallax: big = near =
     // fast, small = far = slow. [width classes, opacity, parallax speed].
@@ -44,13 +47,19 @@
     $picks = $pool;
     shuffle($picks);
     $picks = array_slice($picks, 0, 6);
+
+    // The edition's character (boer in 2026, astronaut in 2027) is always in.
+    $character = $edition?->sceneryCharacter();
+    if ($character && ! in_array($character, $picks, true)) {
+        $picks[array_rand($picks)] = $character;
+    }
     $sizeBag = [$big, $big, $med, $med, $small, $small];
     shuffle($sizeBag);
 
     $placements = [];
     foreach ($slots as $i => [$lx, $ly]) {
         $placements[] = [
-            'src'  => $picks[$i].'.png',
+            'src'  => $picks[$i],
             'left' => $lx,
             'top'  => $ly,
             's'    => $sizeBag[$i],
@@ -67,7 +76,7 @@
     {{-- randomised, non-overlapping sprite scatter (lg+ where gutters exist) --}}
     @foreach ($placements as $p)
         <img data-parallax="{{ $p['s']['spd'] }}"
-            src="{{ asset('images/farm/'.$p['src']) }}" alt=""
+            src="{{ $p['src'] }}" alt=""
             class="pixel absolute {{ $p['s']['w'] }} hidden lg:block {{ (float) $p['s']['op'] > 0.5 ? 'drop-shadow-[0_0_16px_rgba(101,229,154,0.22)]' : '' }}"
             style="left: {{ $p['left'] }}%; top: {{ $p['top'] }}%; opacity: {{ $p['s']['op'] }}; will-change: transform;" />
     @endforeach

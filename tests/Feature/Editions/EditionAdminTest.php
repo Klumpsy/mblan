@@ -29,6 +29,19 @@ it('activates an edition through the table action and deactivates the rest', fun
         ->and(Edition::where('is_active', true)->count())->toBe(1);
 });
 
+it('defaults the tournaments admin list to the active edition', function () {
+    $current = \App\Models\Tournament::factory()->create(['name' => 'Nu']);
+    $old = \App\Models\Tournament::factory()->create([
+        'name' => 'Vroeger',
+        'edition_id' => Edition::where('slug', 'mblan25')->firstOrFail()->id,
+    ]);
+
+    Livewire::actingAs($this->admin)
+        ->test(\App\Filament\Resources\TournamentResource\Pages\ListTournaments::class)
+        ->assertCanSeeTableRecords([$current])
+        ->assertCanNotSeeTableRecords([$old]);
+});
+
 it('hides the activate action for the already active edition', function () {
     $active = Edition::current();
 

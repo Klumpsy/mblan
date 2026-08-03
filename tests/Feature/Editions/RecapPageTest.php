@@ -9,7 +9,8 @@ use App\Models\User;
 
 beforeEach(function () {
     $this->user = User::factory()->create();
-    $this->old = Edition::factory()->create(['name' => 'MBLAN25', 'slug' => 'mblan25', 'year' => 2025]);
+    // MBLAN25 is seeded as an archived edition by the migrations.
+    $this->old = Edition::where('slug', 'mblan25')->firstOrFail();
 });
 
 it('lists all editions with the active one marked', function () {

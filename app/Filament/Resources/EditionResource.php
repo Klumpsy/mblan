@@ -23,6 +23,8 @@ class EditionResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-archive-box';
 
+    protected static string | \UnitEnum | null $navigationGroup = 'Archief';
+
     protected static ?string $navigationLabel = 'Edities';
 
     protected static ?string $modelLabel = 'editie';
@@ -61,21 +63,45 @@ class EditionResource extends Resource
                 ->required()
                 ->helperText('De accentkleur waaruit het hele kleurenpalet van deze editie wordt afgeleid.'),
 
+            \Filament\Forms\Components\Select::make('scenery_set')
+                ->label('Achtergrond-sprites')
+                ->options(\App\Support\ScenerySets::options())
+                ->default(\App\Support\ScenerySets::DEFAULT)
+                ->required()
+                ->helperText('De ingebouwde pixel-sprites voor de zijkanten van elke pagina. Een geüpload spritepakket hieronder gaat vóór deze keuze.'),
+
+            FileUpload::make('scenery_sprites')
+                ->label('Eigen spritepakket')
+                ->multiple()
+                ->image()
+                ->acceptedFileTypes(['image/png'])
+                ->maxSize(512)
+                ->disk('public')
+                ->directory('editions/scenery')
+                ->visibility('public')
+                ->reorderable()
+                ->helperText('Losse PNG-sprites: pixel-art met transparante achtergrond, klein formaat (± 16–64 px, de site schaalt ze scherp op), max 512 KB per stuk. Upload er minimaal 6 voor variatie. Zodra er sprites zijn geüpload gebruikt deze editie dit pakket als achtergrond, op de site en op de recap-pagina; zonder pakket geldt de ingebouwde set hierboven. De eerste sprite is het karakter van de editie (zoals de boer in 2026) en is altijd zichtbaar — versleep om de volgorde te wijzigen.'),
+
             FileUpload::make('logo_path')
                 ->label('Logo')
                 ->disk('public')
                 ->directory('editions')
                 ->visibility('public')
-                ->image(),
+                ->image()
+                ->acceptedFileTypes(['image/png', 'image/svg+xml', 'image/webp'])
+                ->maxSize(2048)
+                ->helperText('PNG, SVG of WebP met transparante achtergrond, max 2 MB. Wordt getoond in de hero van de recap-pagina.'),
 
             FileUpload::make('hero_image_path')
-                ->label('Hero-afbeelding')
+                ->label('Banner')
                 ->disk('public')
                 ->directory('editions')
                 ->visibility('public')
                 ->image()
+                ->maxSize(4096)
                 ->imageResizeTargetWidth('1920')
-                ->imageResizeTargetHeight('1080'),
+                ->imageResizeTargetHeight('1080')
+                ->helperText('JPG of PNG, liggend (16:9, ± 1920×1080 — groter wordt automatisch verkleind), max 4 MB. Wordt als banner getoond bovenaan het speelschema zolang de editie actief is, op de editie-kaart en op de recap-pagina.'),
 
             DatePicker::make('starts_at')
                 ->label('Start')
@@ -97,6 +123,19 @@ class EditionResource extends Resource
                 TextColumn::make('year')->label('Jaar')->sortable(),
                 ColorColumn::make('primary_color')->label('Kleur'),
                 IconColumn::make('is_active')->label('Actief')->boolean(),
+                \Filament\Tables\Columns\ImageColumn::make('scenery_sprites')
+                    ->label('Spritepakket')
+                    ->disk('public')
+                    ->stacked()
+                    ->limit(5)
+                    ->imageHeight(32)
+                    ->extraImgAttributes(['class' => 'pixel'])
+                    ->placeholder('Ingebouwde set'),
+                TextColumn::make('schedules_count')->label('Speeldagen')->counts('schedules'),
+                TextColumn::make('tournaments_count')->label('Toernooien')->counts('tournaments'),
+                TextColumn::make('news_count')->label('Nieuws')->counts('news'),
+                TextColumn::make('photos_count')->label("Foto's")->counts('photos'),
+                TextColumn::make('signups_count')->label('Aanmeldingen')->counts('signups'),
             ])
             ->defaultSort('year', 'desc')
             ->actions([

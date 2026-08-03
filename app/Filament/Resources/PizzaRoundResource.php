@@ -19,6 +19,8 @@ class PizzaRoundResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-cake';
 
+    protected static string | \UnitEnum | null $navigationGroup = 'Deze editie';
+
     protected static ?string $navigationLabel = 'Pizza-bestellingen';
 
     public static function form(Schema $form): Schema

@@ -25,6 +25,8 @@ class NewsResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-newspaper';
 
+    protected static string | \UnitEnum | null $navigationGroup = 'Deze editie';
+
     protected static ?string $navigationLabel = 'Nieuws';
 
     protected static ?string $modelLabel = 'nieuwsbericht';
@@ -124,7 +126,9 @@ class NewsResource extends Resource
             ->filters([
                 \Filament\Tables\Filters\SelectFilter::make('edition_id')
                     ->label('Editie')
-                    ->relationship('edition', 'name'),
+                    ->relationship('edition', 'name')
+                    // Standaard zie je de actieve editie; kies een jaar voor het archief.
+                    ->default(\App\Models\Edition::current()?->id),
             ])
             ->defaultSort('published_at', 'desc')
             ->actions([

@@ -20,18 +20,52 @@
                     <x-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')" class="whitespace-nowrap">
                         {{ __('Leaderboard') }}
                     </x-nav-link>
-                    <x-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')" class="whitespace-nowrap">
-                        {{ __('Nieuws') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('timeline') }}" :active="request()->routeIs('timeline')" class="whitespace-nowrap">
-                        {{ __('Tijdlijn') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('live') }}" :active="request()->routeIs('live')" class="whitespace-nowrap">
-                        {{ __('Live') }}
-                    </x-nav-link>
-                    <x-nav-link href="{{ route('pizza') }}" :active="request()->routeIs('pizza')" class="whitespace-nowrap">
-                        {{ __('Eten') }}
-                    </x-nav-link>
+                    {{-- Mega menu: pages that only matter during the LAN itself. --}}
+                    @php($lanActive = request()->routeIs('news.*') || request()->routeIs('timeline') || request()->routeIs('live') || request()->routeIs('pizza'))
+                    <div x-data="{ lan: false }" class="relative flex"
+                        @mouseenter="lan = true" @mouseleave="lan = false"
+                        @keydown.escape.window="lan = false" @click.outside="lan = false">
+                        <button type="button" @click="lan = true"
+                            class="inline-flex items-center gap-1.5 whitespace-nowrap border-b-2 px-1 pt-1 font-pixel text-[9px] uppercase tracking-wider leading-5 transition duration-150 ease-in-out focus:outline-none {{ $lanActive ? 'border-primary-400 text-white' : 'border-transparent text-forge-steel hover:border-primary-500/40 hover:text-primary-300' }}">
+                            {{ __('Tijdens de LAN') }}
+                            <svg class="h-3 w-3 transition-transform" :class="lan && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd" />
+                            </svg>
+                        </button>
+
+                        <div x-show="lan" x-cloak
+                            x-transition:enter="transition ease-out duration-150"
+                            x-transition:enter-start="opacity-0 translate-y-1"
+                            x-transition:enter-end="opacity-100 translate-y-0"
+                            x-transition:leave="transition ease-in duration-100"
+                            x-transition:leave-start="opacity-100"
+                            x-transition:leave-end="opacity-0"
+                            class="absolute left-1/2 top-full z-50 w-[26rem] -translate-x-1/2 pt-3">
+                            <div class="frame-wood grid grid-cols-2 gap-2 bg-forge-black/95 p-3 backdrop-blur">
+                                <a href="{{ route('news.index') }}" @click="lan = false"
+                                    class="group clip-corner block px-4 py-3 transition hover:bg-primary-500/10 {{ request()->routeIs('news.*') ? 'bg-primary-500/10' : '' }}">
+                                    <span class="font-pixel text-[9px] uppercase tracking-wider {{ request()->routeIs('news.*') ? 'text-primary-300' : 'text-white' }} group-hover:text-primary-300">{{ __('Nieuws') }}</span>
+                                    <span class="mt-1 block text-xs text-forge-steel/70">Updates en aankondigingen</span>
+                                </a>
+                                <a href="{{ route('timeline') }}" @click="lan = false"
+                                    class="group clip-corner block px-4 py-3 transition hover:bg-primary-500/10 {{ request()->routeIs('timeline') ? 'bg-primary-500/10' : '' }}">
+                                    <span class="font-pixel text-[9px] uppercase tracking-wider {{ request()->routeIs('timeline') ? 'text-primary-300' : 'text-white' }} group-hover:text-primary-300">{{ __('Tijdlijn') }}</span>
+                                    <span class="mt-1 block text-xs text-forge-steel/70">Foto's van de vloer</span>
+                                </a>
+                                <a href="{{ route('live') }}" @click="lan = false"
+                                    class="group clip-corner block px-4 py-3 transition hover:bg-primary-500/10 {{ request()->routeIs('live') ? 'bg-primary-500/10' : '' }}">
+                                    <span class="font-pixel text-[9px] uppercase tracking-wider {{ request()->routeIs('live') ? 'text-primary-300' : 'text-white' }} group-hover:text-primary-300">{{ __('Live') }}</span>
+                                    <span class="mt-1 block text-xs text-forge-steel/70">Stream en chat</span>
+                                </a>
+                                <a href="{{ route('pizza') }}" @click="lan = false"
+                                    class="group clip-corner block px-4 py-3 transition hover:bg-primary-500/10 {{ request()->routeIs('pizza') ? 'bg-primary-500/10' : '' }}">
+                                    <span class="font-pixel text-[9px] uppercase tracking-wider {{ request()->routeIs('pizza') ? 'text-primary-300' : 'text-white' }} group-hover:text-primary-300">{{ __('Eten') }}</span>
+                                    <span class="mt-1 block text-xs text-forge-steel/70">Pizza en bestellingen</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
                     <x-nav-link href="{{ route('editions.index') }}" :active="request()->routeIs('editions.*')" class="whitespace-nowrap">
                         {{ __('Edities') }}
                     </x-nav-link>
@@ -128,6 +162,12 @@
             <x-responsive-nav-link href="{{ route('tournaments') }}" :active="request()->routeIs('tournaments')">
                 {{ __('Leaderboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('editions.index') }}" :active="request()->routeIs('editions.*')">
+                {{ __('Edities') }}
+            </x-responsive-nav-link>
+
+            {{-- Pages that only matter during the LAN itself. --}}
+            <p class="px-3 pt-4 pb-1 font-pixel text-[8px] uppercase tracking-[0.2em] text-primary-400/70">{{ __('Tijdens de LAN') }}</p>
             <x-responsive-nav-link href="{{ route('news.index') }}" :active="request()->routeIs('news.*')">
                 {{ __('Nieuws') }}
             </x-responsive-nav-link>
@@ -139,9 +179,6 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('pizza') }}" :active="request()->routeIs('pizza')">
                 {{ __('Eten') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link href="{{ route('editions.index') }}" :active="request()->routeIs('editions.*')">
-                {{ __('Edities') }}
             </x-responsive-nav-link>
         </div>
 

@@ -3,11 +3,20 @@
         $grouped = $schedules->groupBy(fn ($s) => $s->date ? \Illuminate\Support\Carbon::parse($s->date)->format('Y-m-d') : 'tba');
         $dates = $grouped->keys()->values();
         $firstDate = $dates->first() ?? 'tba';
+        $currentEdition = \App\Models\Edition::current();
     @endphp
 
     <div class="relative">
         <div class="pointer-events-none absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-6xl px-6 py-12">
+
+            {{-- banner van de actieve editie, wanneer er een is geüpload --}}
+            @if ($currentEdition?->hero_image_path)
+                <div class="frame-wood mb-8 overflow-hidden">
+                    <img src="{{ asset('storage/'.$currentEdition->hero_image_path) }}"
+                        alt="{{ $currentEdition->name }}" class="max-h-64 w-full object-cover" />
+                </div>
+            @endif
 
             {{-- heading + a little pasture diorama --}}
             <x-forge.heading :eyebrow="\App\Models\Edition::currentName()" class="!mb-4">Speelschema</x-forge.heading>
