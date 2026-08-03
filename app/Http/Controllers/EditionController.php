@@ -54,6 +54,8 @@ class EditionController extends Controller
             'gameResults' => GameResult::forEdition($edition)
                 ->where('completed', true)
                 ->with('user:id,name,profile_photo_path')
+                ->orderByRaw('score IS NULL')
+                ->orderByDesc('score')
                 ->orderBy('catches')
                 ->orderByRaw('time_ms IS NULL')
                 ->orderBy('time_ms')

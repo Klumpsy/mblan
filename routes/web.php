@@ -15,13 +15,9 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public splash: the Arti maze game. Everything else lives behind login.
-Route::get('/', function () {
-    $mazePath = public_path('images/farm/maze.json');
-    $maze = is_file($mazePath) ? json_decode(file_get_contents($mazePath), true) : null;
-
-    return view('index', ['maze' => $maze]);
-})->name('home');
+// Public splash: the editie-klassieker (space shooter). Everything else
+// lives behind login.
+Route::view('/', 'index')->name('home');
 
 // Login met Discord (OAuth).
 Route::get('/auth/discord', [DiscordController::class, 'redirect'])->name('discord.redirect');
@@ -66,6 +62,43 @@ Route::middleware([
         }
 
         $user = $request->user();
+
+        // De editie-klassieker (space shooter): punten, hoogste wint. Alleen
+        // een verbetering van het persoonlijke record wordt opgeslagen.
+        if ($request->has('score')) {
+            $score = max(0, (int) $request->input('score', 0));
+
+            $previous = \App\Models\GameResult::where('user_id', $user->id)
+                ->where('edition_id', $edition->id)
+                ->first();
+
+            $improved = $score > (int) ($previous?->score ?? -1);
+
+            if ($improved) {
+                \App\Models\GameResult::updateOrCreate(
+                    ['user_id' => $user->id, 'edition_id' => $edition->id],
+                    ['score' => $score, 'completed' => true],
+                );
+
+                // Announce only when the improvement makes this player number one.
+                $leader = \App\Models\GameResult::query()
+                    ->join('users', 'users.id', '=', 'game_results.user_id')
+                    ->where('game_results.edition_id', $edition->id)
+                    ->where('game_results.completed', true)
+                    ->whereNotNull('game_results.score')
+                    ->orderByDesc('game_results.score')
+                    ->orderBy('users.name')
+                    ->select('game_results.*')
+                    ->first();
+
+                if ($leader && $leader->user_id === $user->id) {
+                    app(\App\Services\DiscordWebhookService::class)
+                        ->announceGameRecord($user, $score);
+                }
+            }
+
+            return response()->json(['ok' => true]);
+        }
         $caught = max(0, (int) $request->input('caught', 0));
         $time = (int) $request->input('time', 0);
         $newTime = $time > 0 ? $time : null;

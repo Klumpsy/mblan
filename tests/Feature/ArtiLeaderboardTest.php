@@ -91,3 +91,12 @@ test('the leaderboard is capped at twenty players', function () {
     $this->actingAs(User::factory()->create());
     expect(artiRanking())->toHaveCount(20);
 });
+
+test('score results rank highest-first and above legacy maze results', function () {
+    $a = artiPlayer('Topscorer', ['completed' => true, 'score' => 2000]);
+    artiPlayer('Middenmoot', ['completed' => true, 'score' => 800]);
+    artiPlayer('Mazehero', ['completed' => true, 'catches' => 0, 'time_ms' => 30000]);
+
+    $this->actingAs($a);
+    expect(artiRanking())->toBe(['Topscorer', 'Middenmoot', 'Mazehero']);
+});

@@ -27,7 +27,9 @@ class ArtiLeaderboardWidget extends TableWidget
                     ->with('user')
                     ->when($edition, fn ($q) => $q->forEdition($edition))
                     ->where('completed', true)
-                    ->whereNotNull('time_ms')
+                    ->orderByRaw('score IS NULL')
+                    ->orderByDesc('score')
+                    ->orderByRaw('time_ms IS NULL')
                     ->orderBy('time_ms')
             )
             ->paginated([5, 10])
@@ -35,16 +37,18 @@ class ArtiLeaderboardWidget extends TableWidget
                 TextColumn::make('user.name')
                     ->label('Speler'),
 
+                TextColumn::make('score')
+                    ->label('Punten')
+                    ->placeholder('-'),
+
                 TextColumn::make('time_ms')
-                    ->label('Tijd')
+                    ->label('Tijd (maze)')
+                    ->placeholder('-')
                     ->formatStateUsing(function (int $state): string {
                         $seconds = intdiv($state, 1000);
 
                         return intdiv($seconds, 60).':'.str_pad((string) ($seconds % 60), 2, '0', STR_PAD_LEFT);
                     }),
-
-                TextColumn::make('catches')
-                    ->label('Keer gepakt'),
             ]);
     }
 }

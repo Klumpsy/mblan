@@ -157,7 +157,7 @@
 
             {{-- Arti-spel --}}
             @if ($gameResults->isNotEmpty())
-                <x-forge.heading eyebrow="Entreespel" class="!mb-6">Het Arti Spel</x-forge.heading>
+                <x-forge.heading eyebrow="Entreespel" class="!mb-6">Editie-klassieker</x-forge.heading>
                 <x-forge.card class="mb-12">
                     <ol class="space-y-2">
                         @foreach ($gameResults as $result)
@@ -167,9 +167,13 @@
                                     {{ $result->user->name }}
                                 </span>
                                 <span class="font-pixel text-[9px] uppercase tracking-widest text-forge-steel/70">
-                                    {{ $result->catches }}x gepakt
-                                    @if ($result->time_ms)
-                                        &middot; {{ intdiv(intdiv($result->time_ms, 1000), 60) }}:{{ str_pad((string) (intdiv($result->time_ms, 1000) % 60), 2, '0', STR_PAD_LEFT) }}
+                                    @if ($result->score !== null)
+                                        {{ $result->score }} punten
+                                    @else
+                                        {{ $result->catches }}x gepakt
+                                        @if ($result->time_ms)
+                                            &middot; {{ intdiv(intdiv($result->time_ms, 1000), 60) }}:{{ str_pad((string) (intdiv($result->time_ms, 1000) % 60), 2, '0', STR_PAD_LEFT) }}
+                                        @endif
                                     @endif
                                 </span>
                             </li>

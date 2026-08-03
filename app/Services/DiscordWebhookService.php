@@ -95,6 +95,16 @@ class DiscordWebhookService
     }
 
     /**
+     * Someone set a new high score on the editie-klassieker (space shooter).
+     */
+    public function announceGameRecord(User $user, int $score): bool
+    {
+        $body = "{$user->name} scoorde {$score} punten. Wie doet het beter?";
+
+        return $this->sendEmbed('Nieuw record in de editie-klassieker', $body);
+    }
+
+    /**
      * Someone set a new best on the Arti Game leaderboard.
      */
     public function announceArtiRecord(User $user, int $catches, ?int $timeMs): bool

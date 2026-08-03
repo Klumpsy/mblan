@@ -52,20 +52,29 @@
     <x-toast-host />
     <x-arti-uploader />
 
-    {{-- sync the barn-maze attempt stats (from the guest cookie) onto the account --}}
+    {{-- sync the guest-cookie game result onto the account --}}
     <script>
         (function () {
             function c(n) { var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)'); return m ? decodeURIComponent(m[1]) : null; }
+            var payload = null;
+            var score = c('mblan_score');
             var caught = c('mblan_caught');
-            if (caught === null) return;
-            fetch('{{ route('game.sync') }}', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
-                body: JSON.stringify({
+            if (score !== null) {
+                // De editie-klassieker (space shooter): hoogste score wint.
+                payload = { score: parseInt(score, 10) || 0, completed: c('mblan_done') === '1' };
+            } else if (caught !== null) {
+                // Legacy: het oude maze-spel (stale cookies van voor de wissel).
+                payload = {
                     caught: parseInt(caught, 10) || 0,
                     completed: c('mblan_done') === '1',
                     time: parseInt(c('mblan_time') || '0', 10) || 0,
-                }),
+                };
+            }
+            if (!payload) return;
+            fetch('{{ route('game.sync') }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' },
+                body: JSON.stringify(payload),
             }).catch(function () {});
         })();
     </script>

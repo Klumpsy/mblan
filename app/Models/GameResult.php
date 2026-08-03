@@ -11,10 +11,11 @@ class GameResult extends Model
 {
     use BelongsToEdition;
 
-    protected $fillable = ['user_id', 'edition_id', 'catches', 'completed', 'time_ms'];
+    protected $fillable = ['user_id', 'edition_id', 'catches', 'score', 'completed', 'time_ms'];
 
     protected $casts = [
         'catches' => 'integer',
+        'score' => 'integer',
         'completed' => 'boolean',
         'time_ms' => 'integer',
     ];

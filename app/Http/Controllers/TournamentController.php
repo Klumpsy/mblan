@@ -21,19 +21,21 @@ class TournamentController extends Controller
             ->when($edition, fn ($q) => $q->forEdition($edition))
             ->get();
 
-        // The Arti Game: the hardcoded first tournament.
-        // Fewer catches ranks higher; ties are broken by the fastest completion time.
+        // De editie-klassieker: score-resultaten (hoogste wint) bovenaan;
+        // oude maze-resultaten (minste keer gepakt, snelste tijd) daaronder.
         $artiLeaderboard = $edition
             ? User::query()
                 ->join('game_results', 'game_results.user_id', '=', 'users.id')
                 ->where('game_results.edition_id', $edition->id)
                 ->where('game_results.completed', true)
+                ->orderByRaw('game_results.score IS NULL')
+                ->orderByDesc('game_results.score')
                 ->orderBy('game_results.catches')
                 ->orderByRaw('game_results.time_ms IS NULL')
                 ->orderBy('game_results.time_ms')
                 ->orderBy('users.name')
                 ->take(20)
-                ->get(['users.id', 'users.name', 'game_results.catches as barn_catches', 'game_results.time_ms as barn_time_ms'])
+                ->get(['users.id', 'users.name', 'game_results.score as game_score', 'game_results.catches as barn_catches', 'game_results.time_ms as barn_time_ms'])
             : collect();
 
         return view('tournaments.index', [

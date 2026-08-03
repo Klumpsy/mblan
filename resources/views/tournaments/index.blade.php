@@ -34,14 +34,14 @@
                         <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
                             <div>
                                 <p class="font-pixel text-[9px] uppercase tracking-[0.2em] text-primary-400">Editie-klassieker</p>
-                                <h3 class="mt-1 font-display text-2xl font-bold uppercase tracking-wide text-white">The Arti Game</h3>
-                                <p class="mt-1 text-xs uppercase tracking-widest text-forge-steel/60">Bereik de schuur, hoe minder keer gepakt, hoe hoger</p>
+                                <h3 class="mt-1 font-display text-2xl font-bold uppercase tracking-wide text-white">Arti in Space</h3>
+                                <p class="mt-1 text-xs uppercase tracking-widest text-forge-steel/60">Schiet je een weg door de golven, hoogste score wint</p>
                             </div>
                             <a href="{{ url('/') }}" class="btn-wood clip-corner text-[10px]">Speel opnieuw</a>
                         </div>
 
                         @if ($artiLeaderboard->isEmpty())
-                            <p class="text-sm text-forge-steel/60">Nog niemand heeft de schuur bereikt. Wees de eerste!</p>
+                            <p class="text-sm text-forge-steel/60">Nog niemand heeft een score neergezet. Wees de eerste!</p>
                         @else
                             <ul class="divide-y divide-primary-500/10">
                                 @foreach ($artiLeaderboard as $i => $row)
@@ -60,13 +60,19 @@
                                             @endif
                                         </span>
                                         <span class="flex shrink-0 items-baseline gap-3">
-                                            <span class="font-display text-sm text-primary-300">
-                                                {{ $row->barn_catches }} <span class="text-[10px] uppercase tracking-wider text-forge-steel/50">x gepakt</span>
-                                            </span>
-                                            @if ($row->barn_time_ms)
-                                                <span class="font-pixel text-[9px] uppercase tracking-wider text-forge-steel/60">
-                                                    {{ intdiv((int) floor($row->barn_time_ms / 1000), 60) }}:{{ str_pad((int) floor($row->barn_time_ms / 1000) % 60, 2, '0', STR_PAD_LEFT) }}
+                                            @if ($row->game_score !== null)
+                                                <span class="font-display text-sm text-primary-300">
+                                                    {{ $row->game_score }} <span class="text-[10px] uppercase tracking-wider text-forge-steel/50">punten</span>
                                                 </span>
+                                            @else
+                                                <span class="font-display text-sm text-primary-300">
+                                                    {{ $row->barn_catches }} <span class="text-[10px] uppercase tracking-wider text-forge-steel/50">x gepakt</span>
+                                                </span>
+                                                @if ($row->barn_time_ms)
+                                                    <span class="font-pixel text-[9px] uppercase tracking-wider text-forge-steel/60">
+                                                        {{ intdiv((int) floor($row->barn_time_ms / 1000), 60) }}:{{ str_pad((int) floor($row->barn_time_ms / 1000) % 60, 2, '0', STR_PAD_LEFT) }}
+                                                    </span>
+                                                @endif
                                             @endif
                                         </span>
                                     </li>

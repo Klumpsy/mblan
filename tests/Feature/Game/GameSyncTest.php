@@ -121,3 +121,44 @@ test('negative catch counts are clamped to zero', function () {
 
     expect(currentResult($user)->catches)->toBe(0);
 });
+
+/*
+|--------------------------------------------------------------------------
+| De klassieker (space shooter): score-gebaseerd, hoogste wint
+|--------------------------------------------------------------------------
+*/
+
+test('a completed space run stores the score for the active edition', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->postJson(route('game.sync'), ['score' => 1250, 'completed' => true])
+        ->assertOk()
+        ->assertJson(['ok' => true]);
+
+    $result = currentResult($user);
+    expect($result->score)->toBe(1250);
+    expect($result->completed)->toBeTrue();
+});
+
+test('only a higher score overwrites the personal best', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->postJson(route('game.sync'), ['score' => 900, 'completed' => true]);
+    $this->actingAs($user)->postJson(route('game.sync'), ['score' => 400, 'completed' => true]);
+    expect(currentResult($user)->score)->toBe(900);
+
+    $this->actingAs($user)->postJson(route('game.sync'), ['score' => 1500, 'completed' => true]);
+    expect(currentResult($user)->score)->toBe(1500);
+});
+
+test('score runs stay apart per edition', function () {
+    $user = User::factory()->create();
+    $old = Edition::factory()->create();
+    GameResult::create(['user_id' => $user->id, 'edition_id' => $old->id, 'completed' => true, 'score' => 5000]);
+
+    $this->actingAs($user)->postJson(route('game.sync'), ['score' => 100, 'completed' => true]);
+
+    expect(currentResult($user)->score)->toBe(100)
+        ->and(GameResult::where('user_id', $user->id)->count())->toBe(2);
+});
