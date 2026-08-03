@@ -55,6 +55,20 @@ it('lets an admin attach and detach participants on an edition', function () {
     expect($this->old->participants()->pluck('users.id')->all())->toBe([$player->id]);
 });
 
+it('attaches multiple participants in one go', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $players = User::factory()->count(3)->create();
+
+    Livewire::actingAs($admin)
+        ->test(ParticipantsRelationManager::class, [
+            'ownerRecord' => $this->old,
+            'pageClass' => EditEdition::class,
+        ])
+        ->callTableAction('attach', data: ['recordId' => $players->pluck('id')->all()]);
+
+    expect($this->old->participants()->count())->toBe(3);
+});
+
 it('shows the participant count on the recap', function () {
     $this->old->participants()->attach(User::factory()->count(3)->create());
 

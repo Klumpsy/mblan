@@ -40,9 +40,10 @@ class ParticipantsRelationManager extends RelationManager
             ])
             ->headerActions([
                 AttachAction::make()
-                    ->label('Deelnemer toevoegen')
+                    ->label('Deelnemers toevoegen')
+                    ->multiple()
                     ->recordSelectSearchColumns(['name', 'email'])
-                    ->recordSelect(fn (Select $select) => $select->placeholder('Kies een speler'))
+                    ->recordSelect(fn (Select $select) => $select->placeholder('Kies een of meer spelers'))
                     ->preloadRecordSelect(),
             ])
             ->actions([
