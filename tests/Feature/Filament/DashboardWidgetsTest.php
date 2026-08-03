@@ -38,9 +38,16 @@ test('the command usage widget renders and reflects logged commands', function (
 });
 
 test('the Arti leaderboard widget lists finishers fastest first', function () {
-    User::factory()->create(['name' => 'Traag', 'barn_completed' => true, 'barn_time_ms' => 90000, 'barn_catches' => 3]);
-    User::factory()->create(['name' => 'Snel', 'barn_completed' => true, 'barn_time_ms' => 40000, 'barn_catches' => 0]);
-    User::factory()->create(['name' => 'NietKlaar', 'barn_completed' => false]);
+    $result = function (string $name, array $attributes) {
+        $user = User::factory()->create(['name' => $name]);
+        \App\Models\GameResult::create(array_merge(
+            ['user_id' => $user->id, 'edition_id' => \App\Models\Edition::current()->id],
+            $attributes,
+        ));
+    };
+    $result('Traag', ['completed' => true, 'time_ms' => 90000, 'catches' => 3]);
+    $result('Snel', ['completed' => true, 'time_ms' => 40000, 'catches' => 0]);
+    $result('NietKlaar', ['completed' => false]);
 
     Livewire::test(ArtiLeaderboardWidget::class)
         ->assertOk()

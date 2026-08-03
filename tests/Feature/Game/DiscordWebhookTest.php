@@ -49,11 +49,13 @@ test('reaching the barn as the new leader posts an Arti record', function () {
 });
 
 test('a slower, non-improving run does not post to Discord', function () {
-    $user = User::factory()->create([
-        'email_verified_at' => now(),
-        'barn_completed' => true,
-        'barn_catches' => 0,
-        'barn_time_ms' => 30000,
+    $user = User::factory()->create(['email_verified_at' => now()]);
+    \App\Models\GameResult::create([
+        'user_id' => $user->id,
+        'edition_id' => \App\Models\Edition::current()->id,
+        'completed' => true,
+        'catches' => 0,
+        'time_ms' => 30000,
     ]);
 
     $this->actingAs($user)

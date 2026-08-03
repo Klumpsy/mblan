@@ -58,6 +58,11 @@ Route::middleware([
             return response()->json(['ok' => true]);
         }
 
+        $edition = \App\Models\Edition::current();
+        if (! $edition) {
+            return response()->json(['ok' => true]);
+        }
+
         $user = $request->user();
         $caught = max(0, (int) $request->input('caught', 0));
         $time = (int) $request->input('time', 0);
@@ -66,35 +71,38 @@ Route::middleware([
         // A genuine personal improvement (used only to gate the Discord record
         // announcement): a first completion, fewer catches, or the same catches
         // in a faster time. Captured before the stats are overwritten below.
-        $wasCompleted = (bool) $user->barn_completed;
-        $prevCatches = (int) $user->barn_catches;
-        $prevTime = $user->barn_time_ms;
-        $improved = ! $wasCompleted
-            || $caught < $prevCatches
-            || ($caught === $prevCatches
+        $previous = \App\Models\GameResult::where('user_id', $user->id)
+            ->where('edition_id', $edition->id)
+            ->first();
+        $improved = ! $previous?->completed
+            || $caught < $previous->catches
+            || ($caught === $previous->catches
                 && $newTime !== null
-                && ($prevTime === null || $newTime < $prevTime));
+                && ($previous->time_ms === null || $newTime < $previous->time_ms));
 
         // Each completed run is authoritative: the latest attempt overwrites the
         // stored stats, so hitting "Opnieuw" and replaying truly resets the
         // recorded catch count instead of keeping an older personal best.
-        $user->forceFill([
-            'barn_catches' => $caught,
-            'barn_completed' => true,
-            'barn_time_ms' => $newTime,
-        ])->save();
+        \App\Models\GameResult::updateOrCreate(
+            ['user_id' => $user->id, 'edition_id' => $edition->id],
+            ['catches' => $caught, 'completed' => true, 'time_ms' => $newTime],
+        );
 
         // Announce to Discord only when a genuine improvement makes this player
-        // the new number one on the Arti leaderboard.
+        // the new number one on this edition's Arti leaderboard.
         if ($improved) {
-            $leader = \App\Models\User::where('barn_completed', true)
-                ->orderBy('barn_catches')
-                ->orderByRaw('barn_time_ms IS NULL')
-                ->orderBy('barn_time_ms')
-                ->orderBy('name')
+            $leader = \App\Models\GameResult::query()
+                ->join('users', 'users.id', '=', 'game_results.user_id')
+                ->where('game_results.edition_id', $edition->id)
+                ->where('game_results.completed', true)
+                ->orderBy('game_results.catches')
+                ->orderByRaw('game_results.time_ms IS NULL')
+                ->orderBy('game_results.time_ms')
+                ->orderBy('users.name')
+                ->select('game_results.*')
                 ->first();
 
-            if ($leader && $leader->id === $user->id) {
+            if ($leader && $leader->user_id === $user->id) {
                 app(\App\Services\DiscordWebhookService::class)
                     ->announceArtiRecord($user, $caught, $newTime);
             }

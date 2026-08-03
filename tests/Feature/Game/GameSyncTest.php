@@ -1,17 +1,34 @@
 <?php
 
+use App\Models\Edition;
+use App\Models\GameResult;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
 /**
- * The /game/sync endpoint persists the guest-cookie Arti Game stats onto the
- * signed-in account. Only a completed run counts, and each completed run is
- * authoritative: the latest attempt overwrites the stored catches and time, so
- * hitting "Opnieuw" and replaying truly resets the recorded count (incomplete
- * runs never pollute the leaderboard).
+ * The /game/sync endpoint persists the guest-cookie Arti Game stats as the
+ * player's result within the active edition. Only a completed run counts, and
+ * each completed run is authoritative: the latest attempt overwrites the
+ * stored catches and time, so hitting "Opnieuw" and replaying truly resets
+ * the recorded count (incomplete runs never pollute the leaderboard).
  */
+
+function currentResult(User $user): ?GameResult
+{
+    return GameResult::where('user_id', $user->id)
+        ->where('edition_id', Edition::current()->id)
+        ->first();
+}
+
+function seedResult(User $user, array $attributes): GameResult
+{
+    return GameResult::create(array_merge(
+        ['user_id' => $user->id, 'edition_id' => Edition::current()->id],
+        $attributes,
+    ));
+}
 
 test('guests cannot sync game stats', function () {
     $this->post(route('game.sync'), ['caught' => 3])
@@ -26,68 +43,73 @@ test('a completed run stores catches, completion and time', function () {
         ->assertOk()
         ->assertJson(['ok' => true]);
 
-    $user->refresh();
-    expect($user->barn_catches)->toBe(4);
-    expect((bool) $user->barn_completed)->toBeTrue();
-    expect($user->barn_time_ms)->toBe(42000);
+    $result = currentResult($user);
+    expect($result->catches)->toBe(4);
+    expect($result->completed)->toBeTrue();
+    expect($result->time_ms)->toBe(42000);
 });
 
 test('an incomplete run does not touch the record', function () {
-    $user = User::factory()->create(['barn_catches' => 5, 'barn_completed' => true, 'barn_time_ms' => 30000]);
+    $user = User::factory()->create();
+    seedResult($user, ['catches' => 5, 'completed' => true, 'time_ms' => 30000]);
 
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 99, 'completed' => false, 'time' => 1000])
         ->assertOk();
 
-    $user->refresh();
-    expect($user->barn_catches)->toBe(5);
-    expect($user->barn_time_ms)->toBe(30000);
+    $result = currentResult($user);
+    expect($result->catches)->toBe(5);
+    expect($result->time_ms)->toBe(30000);
 });
 
 test('a better completed run lowers the recorded catch count', function () {
-    $user = User::factory()->create(['barn_catches' => 8, 'barn_completed' => true]);
+    $user = User::factory()->create();
+    seedResult($user, ['catches' => 8, 'completed' => true]);
 
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 3, 'completed' => true])
         ->assertOk();
 
-    expect($user->refresh()->barn_catches)->toBe(3);
+    expect(currentResult($user)->catches)->toBe(3);
 });
 
 test('a later completed run overwrites the recorded catch count, even when worse', function () {
-    $user = User::factory()->create(['barn_catches' => 2, 'barn_completed' => true]);
+    $user = User::factory()->create();
+    seedResult($user, ['catches' => 2, 'completed' => true]);
 
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 9, 'completed' => true])
         ->assertOk();
 
-    expect($user->refresh()->barn_catches)->toBe(9);
+    expect(currentResult($user)->catches)->toBe(9);
 });
 
 test('completion is sticky once achieved', function () {
-    $user = User::factory()->create(['barn_completed' => true, 'barn_catches' => 4]);
+    $user = User::factory()->create();
+    seedResult($user, ['catches' => 4, 'completed' => true]);
 
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 1, 'completed' => false])
         ->assertOk();
 
-    expect((bool) $user->refresh()->barn_completed)->toBeTrue();
+    expect(currentResult($user)->completed)->toBeTrue();
 });
 
 test('the latest completion time is stored', function () {
-    $user = User::factory()->create(['barn_time_ms' => 30000, 'barn_completed' => true, 'barn_catches' => 3]);
+    $user = User::factory()->create();
+    seedResult($user, ['catches' => 3, 'completed' => true, 'time_ms' => 30000]);
 
     // A slower run is the latest attempt, so it overwrites the record.
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 3, 'completed' => true, 'time' => 45000])
         ->assertOk();
-    expect($user->refresh()->barn_time_ms)->toBe(45000);
+    expect(currentResult($user)->time_ms)->toBe(45000);
 
     // A faster run does the same.
     $this->actingAs($user)
         ->postJson(route('game.sync'), ['caught' => 3, 'completed' => true, 'time' => 21000])
         ->assertOk();
-    expect($user->refresh()->barn_time_ms)->toBe(21000);
+    expect(currentResult($user)->time_ms)->toBe(21000);
 });
 
 test('negative catch counts are clamped to zero', function () {
@@ -97,5 +119,5 @@ test('negative catch counts are clamped to zero', function () {
         ->postJson(route('game.sync'), ['caught' => -5, 'completed' => true])
         ->assertOk();
 
-    expect($user->refresh()->barn_catches)->toBe(0);
+    expect(currentResult($user)->catches)->toBe(0);
 });

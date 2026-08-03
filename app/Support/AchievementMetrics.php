@@ -54,7 +54,8 @@ class AchievementMetrics
             ],
             'barn_completed' => [
                 'label' => 'Schuur bereikt in Het Arti Spel (ja/nee)',
-                'resolve' => fn (User $u) => $u->barn_completed ? 1 : 0,
+                // Any edition counts: achievements span the years.
+                'resolve' => fn (User $u) => $u->gameResults()->where('completed', true)->exists() ? 1 : 0,
             ],
             'discord_linked' => [
                 'label' => 'Discord gekoppeld (ja/nee)',

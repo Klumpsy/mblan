@@ -23,17 +23,19 @@ class DatabaseSeeder extends Seeder
                 ]
             );
 
-            User::updateOrCreate(
+            $bart = User::updateOrCreate(
                 ['email' => 'bart@test.nl'],
                 [
                     'name' => 'Bart Test',
                     'password' => Hash::make('password'),
                     'role' => 'admin',
                     'email_verified_at' => now(),
-                    'barn_completed' => true,
-                    'barn_catches' => 3,
-                    'barn_time_ms' => 92000,
                 ]
+            );
+
+            \App\Models\GameResult::updateOrCreate(
+                ['user_id' => $bart->id, 'edition_id' => \App\Models\Edition::current()?->id],
+                ['completed' => true, 'catches' => 3, 'time_ms' => 92000],
             );
         }
 
@@ -47,11 +49,14 @@ class DatabaseSeeder extends Seeder
 
         // Seed some "Arti Game" scores so the leaderboard is populated.
         User::inRandomOrder()->take(12)->get()->each(function (User $user) {
-            $user->forceFill([
-                'barn_completed' => true,
-                'barn_catches' => random_int(0, 9),
-                'barn_time_ms' => random_int(48, 300) * 1000,
-            ])->save();
+            \App\Models\GameResult::updateOrCreate(
+                ['user_id' => $user->id, 'edition_id' => \App\Models\Edition::current()?->id],
+                [
+                    'completed' => true,
+                    'catches' => random_int(0, 9),
+                    'time_ms' => random_int(48, 300) * 1000,
+                ],
+            );
         });
 
         $this->call([

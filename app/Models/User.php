@@ -54,9 +54,6 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'role',
         'password',
         'discord_id',
-        'barn_catches',
-        'barn_completed',
-        'barn_time_ms',
         'beer_count',
         'last_beer_at',
         'wine_count',
@@ -136,6 +133,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     public function signups(): HasMany
     {
         return $this->hasMany(Signup::class);
+    }
+
+    /** Arti-game results, one row per edition. */
+    public function gameResults(): HasMany
+    {
+        return $this->hasMany(GameResult::class);
     }
 
     /** Timeline photos this user has posted. */

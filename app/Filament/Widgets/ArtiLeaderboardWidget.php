@@ -2,14 +2,15 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\User;
+use App\Models\Edition;
+use App\Models\GameResult;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 
 /**
- * Fastest finishers of the Arti barn mini-game: the players who reached the
- * barn, ranked by time.
+ * Fastest finishers of the Arti barn mini-game in the active edition: the
+ * players who reached the barn, ranked by time.
  */
 class ArtiLeaderboardWidget extends TableWidget
 {
@@ -17,20 +18,24 @@ class ArtiLeaderboardWidget extends TableWidget
 
     public function table(Table $table): Table
     {
+        $edition = Edition::current();
+
         return $table
             ->heading('Arti-spel toppers')
             ->query(
-                User::query()
-                    ->where('barn_completed', true)
-                    ->whereNotNull('barn_time_ms')
-                    ->orderBy('barn_time_ms')
+                GameResult::query()
+                    ->with('user')
+                    ->when($edition, fn ($q) => $q->forEdition($edition))
+                    ->where('completed', true)
+                    ->whereNotNull('time_ms')
+                    ->orderBy('time_ms')
             )
             ->paginated([5, 10])
             ->columns([
-                TextColumn::make('name')
+                TextColumn::make('user.name')
                     ->label('Speler'),
 
-                TextColumn::make('barn_time_ms')
+                TextColumn::make('time_ms')
                     ->label('Tijd')
                     ->formatStateUsing(function (int $state): string {
                         $seconds = intdiv($state, 1000);
@@ -38,7 +43,7 @@ class ArtiLeaderboardWidget extends TableWidget
                         return intdiv($seconds, 60).':'.str_pad((string) ($seconds % 60), 2, '0', STR_PAD_LEFT);
                     }),
 
-                TextColumn::make('barn_catches')
+                TextColumn::make('catches')
                     ->label('Keer gepakt'),
             ]);
     }

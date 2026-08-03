@@ -31,5 +31,6 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="FAKER_LOCALE" value="en_US"/>
+        <ini name="memory_limit" value="512M"/>
     </php>
 </phpunit>
