@@ -6,6 +6,7 @@ use App\Models\Edition;
 use App\Models\GameResult;
 use App\Models\News;
 use App\Models\Photo;
+use App\Models\Schedule;
 use App\Models\Signup;
 use App\Models\Tournament;
 use Illuminate\Http\RedirectResponse;
@@ -31,8 +32,21 @@ class EditionController extends Controller
             return redirect()->route('schedule');
         }
 
+        // Deelnemers uit de pivot; oude edities zonder pivot-data vallen
+        // terug op de bevestigde aanmeldingen.
+        $participantCount = $edition->participants()->count()
+            ?: Signup::forEdition($edition)->where('confirmed', true)->count();
+
         return view('editions.show', [
             'edition' => $edition,
+            'participantCount' => $participantCount,
+            'schedules' => Schedule::forEdition($edition)
+                ->with([
+                    'games' => fn ($q) => $q->orderByPivot('start_date'),
+                    'blocks' => fn ($q) => $q->orderBy('start_date'),
+                ])
+                ->orderBy('date')
+                ->get(),
             'tournaments' => Tournament::forEdition($edition)->with('game')->get(),
             'photos' => Photo::forEdition($edition)->with('user')->latest()->get(),
             'news' => News::forEdition($edition)->published()->orderByDesc('published_at')->get(),
@@ -44,7 +58,6 @@ class EditionController extends Controller
                 ->orderBy('time_ms')
                 ->take(10)
                 ->get(),
-            'signupCount' => Signup::forEdition($edition)->where('confirmed', true)->count(),
         ]);
     }
 }

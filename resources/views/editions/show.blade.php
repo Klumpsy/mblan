@@ -18,7 +18,7 @@
                 @endif
 
                 <div class="mx-auto mt-8 grid max-w-xl grid-cols-3 gap-6">
-                    <x-forge.stat :value="$signupCount" label="Deelnemers" />
+                    <x-forge.stat :value="$participantCount" label="Deelnemers" />
                     <x-forge.stat :value="$tournaments->count()" label="Toernooien" />
                     <x-forge.stat :value="$photos->count()" label="Foto's" />
                 </div>
@@ -28,6 +28,65 @@
                 <div class="frame-wood mb-12 overflow-hidden">
                     <img src="{{ asset('storage/' . $edition->hero_image_path) }}" alt="{{ $edition->name }}"
                         class="w-full object-cover" />
+                </div>
+            @endif
+
+            {{-- Speelschema: wat speelden we wanneer --}}
+            @if ($schedules->isNotEmpty())
+                <x-forge.heading eyebrow="Wat speelden we" class="!mb-6">Speelschema</x-forge.heading>
+                <div class="mb-12 grid gap-6 {{ $schedules->count() >= 3 ? 'lg:grid-cols-3' : ($schedules->count() === 2 ? 'lg:grid-cols-2' : '') }}">
+                    @foreach ($schedules as $day)
+                        @php
+                            // Games en blokken door elkaar, gesorteerd op starttijd.
+                            $dayItems = $day->games
+                                ->map(fn ($game) => [
+                                    'start' => $game->pivot->start_date,
+                                    'end' => $game->pivot->end_date,
+                                    'title' => $game->name,
+                                    'is_tournament' => (bool) $game->pivot->is_tournament,
+                                    'is_block' => false,
+                                ])
+                                ->concat($day->blocks->map(fn ($block) => [
+                                    'start' => $block->start_date,
+                                    'end' => $block->end_date,
+                                    'title' => $block->title,
+                                    'is_tournament' => false,
+                                    'is_block' => true,
+                                ]))
+                                ->sortBy('start')
+                                ->values();
+                        @endphp
+                        <x-forge.card>
+                            <div class="flex items-baseline justify-between gap-2">
+                                <h3 class="font-display text-lg font-bold uppercase tracking-wide text-white">{{ $day->name }}</h3>
+                                @if ($day->date)
+                                    <span class="font-pixel text-[8px] uppercase tracking-widest text-forge-steel/50">{{ \Illuminate\Support\Carbon::parse($day->date)->translatedFormat('d M Y') }}</span>
+                                @endif
+                            </div>
+
+                            @if ($dayItems->isEmpty())
+                                <p class="mt-4 text-sm text-forge-steel/60">Geen programma bekend.</p>
+                            @else
+                                <ul class="mt-4 space-y-2">
+                                    @foreach ($dayItems as $item)
+                                        <li class="flex items-baseline gap-3 text-sm">
+                                            <span class="w-24 shrink-0 font-pixel text-[8px] uppercase tracking-widest text-forge-steel/50">
+                                                @if ($item['start'])
+                                                    {{ \Illuminate\Support\Carbon::parse($item['start'])->format('H:i') }}@if ($item['end'])&ndash;{{ \Illuminate\Support\Carbon::parse($item['end'])->format('H:i') }}@endif
+                                                @endif
+                                            </span>
+                                            <span class="{{ $item['is_block'] ? 'text-forge-steel/70' : 'text-forge-steel' }}">
+                                                {{ $item['title'] }}
+                                                @if ($item['is_tournament'])
+                                                    <span class="ml-1 font-pixel text-[8px] uppercase tracking-widest text-primary-300">Toernooi</span>
+                                                @endif
+                                            </span>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </x-forge.card>
+                    @endforeach
                 </div>
             @endif
 

@@ -73,6 +73,10 @@ class AchievementMetrics
             ],
 
             // --- Aanmeldingen / edities ---
+            'editions_attended' => [
+                'label' => 'Edities bijgewoond',
+                'resolve' => fn (User $u) => $u->editions()->count(),
+            ],
             'signups' => [
                 'label' => 'Aanmeldingen (bevestigd)',
                 'resolve' => fn (User $u) => $u->signups()->where('confirmed', true)->count(),

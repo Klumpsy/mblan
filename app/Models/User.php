@@ -141,6 +141,12 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasMany(GameResult::class);
     }
 
+    /** The editions this user attended. */
+    public function editions(): BelongsToMany
+    {
+        return $this->belongsToMany(Edition::class)->withTimestamps();
+    }
+
     /** Timeline photos this user has posted. */
     public function photos(): HasMany
     {

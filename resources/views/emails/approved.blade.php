@@ -64,7 +64,7 @@
             <ul>
                 <li><strong>Event:</strong> {{ $signup->edition?->name ?? "MBLAN" }}@if($signup->edition) ({{ $signup->edition->year }})@endif</li>
                 <li><strong>Location:</strong> Tachtig Bunderweg 6 - Sibculo</li>
-                <li><strong>Check-in:</strong> {{ $signup->schedules->first()->name }} 10.00</li>
+                <li><strong>Check-in:</strong> {{ $signup->schedules->first()?->name ?? 'Eerste dag' }} 10.00</li>
             </ul>
 
             <h2>📣 Join the Community</h2>

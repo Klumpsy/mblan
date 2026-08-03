@@ -146,6 +146,12 @@ class Edition extends Model
             : null;
     }
 
+    /** Everyone who attended this edition (confirmed signups + handmatig beheer). */
+    public function participants(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
     public function tournaments(): HasMany
     {
         return $this->hasMany(Tournament::class);

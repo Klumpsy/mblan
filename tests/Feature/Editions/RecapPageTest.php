@@ -38,6 +38,28 @@ it('shows an archived edition recap with its data', function () {
         ->assertSee('Oud maar goud');
 });
 
+it('shows the game schedule of an archived edition on its recap', function () {
+    $day = \App\Models\Schedule::factory()->create([
+        'name' => 'Zaterdag Retro',
+        'date' => '2025-08-02',
+        'edition_id' => $this->old->id,
+    ]);
+    $game = \App\Models\Game::factory()->create(['name' => 'Quake Klassiek']);
+    $day->games()->attach($game, [
+        'start_date' => '2025-08-02 14:00:00',
+        'end_date' => '2025-08-02 16:00:00',
+        'is_tournament' => true,
+    ]);
+    $day->blocks()->create(['title' => 'Retro BBQ', 'start_date' => '2025-08-02 17:00:00', 'end_date' => '2025-08-02 19:00:00']);
+
+    $this->actingAs($this->user)->get('/edities/mblan25')
+        ->assertOk()
+        ->assertSee('Zaterdag Retro')
+        ->assertSee('Quake Klassiek')
+        ->assertSee('14:00')
+        ->assertSee('Retro BBQ');
+});
+
 it('redirects the active edition recap to the live site', function () {
     $this->actingAs($this->user)->get('/edities/mblan26')
         ->assertRedirect(route('schedule'));

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EditionResource\Pages;
+use App\Filament\Resources\EditionResource\RelationManagers;
 use App\Models\Edition;
 use Filament\Actions\Action;
 use Filament\Actions\EditAction;
@@ -136,6 +137,7 @@ class EditionResource extends Resource
                 TextColumn::make('news_count')->label('Nieuws')->counts('news'),
                 TextColumn::make('photos_count')->label("Foto's")->counts('photos'),
                 TextColumn::make('signups_count')->label('Aanmeldingen')->counts('signups'),
+                TextColumn::make('participants_count')->label('Deelnemers')->counts('participants'),
             ])
             ->defaultSort('year', 'desc')
             ->actions([
@@ -149,6 +151,13 @@ class EditionResource extends Resource
                     ->action(fn (Edition $record) => $record->activate()),
                 EditAction::make(),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\ParticipantsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
