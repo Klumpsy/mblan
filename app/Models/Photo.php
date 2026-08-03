@@ -21,6 +21,8 @@ class Photo extends Model
         'user_id',
         'image',
         'story',
+        // Settable so the admin can backfill old editions with the original date.
+        'created_at',
     ];
 
     /** @var array<int, string> */

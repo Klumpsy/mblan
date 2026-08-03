@@ -23,6 +23,7 @@ function admin(): User
 $resources = [
     'editions',
     'games',
+    'photos',
     'schedules',
     'tournaments',
     'users',
