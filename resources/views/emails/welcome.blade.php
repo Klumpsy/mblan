@@ -63,7 +63,7 @@
 
             <h2>📋 Your Signup Details</h2>
             <ul>
-                <li><strong>Event:</strong> {{ $signup->edition->name }} ({{ $signup->edition->year }})</li>
+                <li><strong>Event:</strong> {{ $signup->edition?->name ?? "MBLAN" }}@if($signup->edition) ({{ $signup->edition->year }})@endif</li>
                 <li><strong>Status:</strong> ⏳ Pending Review</li>
                 <li><strong>Campsite Stay:</strong>
                     {{ $signup->stays_on_campsite ? '🏕️ Yes, I’ll be camping!' : '❌ No camping' }}

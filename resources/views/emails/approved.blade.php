@@ -62,7 +62,7 @@
 
             <h2>📍 Event Details</h2>
             <ul>
-                <li><strong>Event:</strong> {{ $signup->edition->name }} ({{ $signup->edition->year }})</li>
+                <li><strong>Event:</strong> {{ $signup->edition?->name ?? "MBLAN" }}@if($signup->edition) ({{ $signup->edition->year }})@endif</li>
                 <li><strong>Location:</strong> Tachtig Bunderweg 6 - Sibculo</li>
                 <li><strong>Check-in:</strong> {{ $signup->schedules->first()->name }} 10.00</li>
             </ul>
