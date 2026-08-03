@@ -3,7 +3,7 @@
         <div class="pointer-events-none absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-6xl px-6 py-12">
 
-            <x-forge.heading eyebrow="MBLAN26">Nieuws</x-forge.heading>
+            <x-forge.heading :eyebrow="\App\Models\Edition::currentName()">Nieuws</x-forge.heading>
 
             @if ($items->isEmpty())
                 <x-forge.card><p class="text-forge-steel/60">Er is nog geen nieuws.</p></x-forge.card>
@@ -18,7 +18,7 @@
                                         class="h-full w-full object-cover transition group-hover:scale-105" loading="lazy" />
                                 @else
                                     <div class="flex h-full w-full items-center justify-center text-forge-steel/30">
-                                        <span class="font-pixel text-[9px] uppercase tracking-widest">MBLAN26</span>
+                                        <span class="font-pixel text-[9px] uppercase tracking-widest">{{ \App\Models\Edition::currentName() }}</span>
                                     </div>
                                 @endif
                             </div>

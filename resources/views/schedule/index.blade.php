@@ -10,7 +10,7 @@
         <div class="relative mx-auto max-w-6xl px-6 py-12">
 
             {{-- heading + a little pasture diorama --}}
-            <x-forge.heading eyebrow="MBLAN26" class="!mb-4">Speelschema</x-forge.heading>
+            <x-forge.heading :eyebrow="\App\Models\Edition::currentName()" class="!mb-4">Speelschema</x-forge.heading>
 
             <div class="relative mb-10 h-14" aria-hidden="true">
                 <div class="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-primary-500/50 to-transparent"></div>

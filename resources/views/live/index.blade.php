@@ -13,7 +13,7 @@
     <div class="relative">
         <div class="pointer-events-none absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-6xl px-6 py-12">
-            <x-forge.heading eyebrow="MBLAN26">Live</x-forge.heading>
+            <x-forge.heading :eyebrow="\App\Models\Edition::currentName()">Live</x-forge.heading>
 
             <p class="mb-8 max-w-2xl font-pixel text-[9px] uppercase leading-relaxed tracking-[0.15em] text-forge-steel/60">
                 De stream van de LAN party. Draait er niks? Dan zijn we nog niet live, of buiten de speeltijden.
@@ -27,7 +27,7 @@
                             src="https://player.twitch.tv/?channel={{ $channel }}&{{ $parentQuery }}&autoplay=false"
                             class="absolute inset-0 h-full w-full"
                             allowfullscreen
-                            title="MBLAN26 Twitch stream"></iframe>
+                            title="MBLAN Twitch stream"></iframe>
                     </div>
                 </div>
 
@@ -36,7 +36,7 @@
                     <iframe
                         src="https://www.twitch.tv/embed/{{ $channel }}/chat?darkpopout&{{ $parentQuery }}"
                         class="h-[420px] w-full lg:h-full"
-                        title="MBLAN26 Twitch chat"></iframe>
+                        title="MBLAN Twitch chat"></iframe>
                 </div>
             </div>
 

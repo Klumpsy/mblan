@@ -2,7 +2,7 @@
     <x-forge.card>
         <div class="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
-                <p class="font-pixel text-[9px] uppercase tracking-[0.2em] text-primary-400">MBLAN26</p>
+                <p class="font-pixel text-[9px] uppercase tracking-[0.2em] text-primary-400">{{ \App\Models\Edition::currentName() }}</p>
                 <h3 class="mt-1 font-display text-2xl font-bold uppercase tracking-wide text-white">Achievements</h3>
                 <p class="mt-1 text-xs uppercase tracking-widest text-forge-steel/60">
                     Verdien ze door dingen te doen op de site en in Discord

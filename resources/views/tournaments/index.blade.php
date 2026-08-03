@@ -3,7 +3,7 @@
         x-data="{ tab: (new URLSearchParams(window.location.search)).get('tab') === 'stats' ? 'stats' : 'toernooien' }">
         <div class="pointer-events-none absolute inset-0 bg-grid opacity-30"></div>
         <div class="relative mx-auto max-w-6xl px-6 py-12">
-            <x-forge.heading eyebrow="MBLAN26">Leaderboard</x-forge.heading>
+            <x-forge.heading :eyebrow="\App\Models\Edition::currentName()">Leaderboard</x-forge.heading>
 
             {{-- ===== Tabs: tournaments vs. user stats ===== --}}
             <div class="mb-10 flex flex-wrap gap-3">

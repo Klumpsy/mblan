@@ -36,7 +36,7 @@
 
                 <div>
                     <div class="mb-3 flex items-center gap-3">
-                        <x-forge.badge>MBLAN26</x-forge.badge>
+                        <x-forge.badge>{{ \App\Models\Edition::currentName() }}</x-forge.badge>
                         @if ($game->year_of_release)
                             <span class="font-pixel text-[9px] uppercase tracking-[0.2em] text-forge-steel/50">{{ $game->year_of_release }}</span>
                         @endif

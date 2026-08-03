@@ -46,6 +46,8 @@ Route::middleware([
     Route::get('/nieuws/{news}', [NewsController::class, 'show'])->name('news.show');
     Route::get('/tournaments', [TournamentController::class, 'index'])->name('tournaments');
     Route::get('/tijdlijn', [TimelineController::class, 'index'])->name('timeline');
+    Route::get('/edities', [\App\Http\Controllers\EditionController::class, 'index'])->name('editions.index');
+    Route::get('/edities/{edition:slug}', [\App\Http\Controllers\EditionController::class, 'show'])->name('editions.show');
     Route::view('/pizza', 'pizza.index')->name('pizza');
     Route::view('/live', 'live.index')->name('live');
 

@@ -46,6 +46,12 @@ class Edition extends Model
         return $exists = $exists || \Illuminate\Support\Facades\Schema::hasTable('editions');
     }
 
+    /** The active edition's name for UI branding (eyebrows, titles). */
+    public static function currentName(): string
+    {
+        return static::current()?->name ?? 'MBLAN';
+    }
+
     /** Make this the active edition; there is always exactly one. */
     public function activate(): void
     {

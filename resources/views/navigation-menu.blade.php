@@ -32,6 +32,9 @@
                     <x-nav-link href="{{ route('pizza') }}" :active="request()->routeIs('pizza')" class="whitespace-nowrap">
                         {{ __('Eten') }}
                     </x-nav-link>
+                    <x-nav-link href="{{ route('editions.index') }}" :active="request()->routeIs('editions.*')" class="whitespace-nowrap">
+                        {{ __('Edities') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -136,6 +139,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link href="{{ route('pizza') }}" :active="request()->routeIs('pizza')">
                 {{ __('Eten') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('editions.index') }}" :active="request()->routeIs('editions.*')">
+                {{ __('Edities') }}
             </x-responsive-nav-link>
         </div>
 

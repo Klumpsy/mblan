@@ -1,7 +1,7 @@
 <div class="mx-auto max-w-2xl">
     <x-forge.card>
         <div class="mb-6">
-            <p class="font-pixel text-[9px] uppercase tracking-[0.2em] text-primary-400">MBLAN26</p>
+            <p class="font-pixel text-[9px] uppercase tracking-[0.2em] text-primary-400">{{ \App\Models\Edition::currentName() }}</p>
             <h3 class="mt-1 font-display text-2xl font-bold uppercase tracking-wide text-white">Pizza bestellen</h3>
             <p class="mt-1 text-xs uppercase tracking-widest text-forge-steel/60">Van De Pyramiden. Geen pizza-mens? Kies iets anders van het menu.</p>
         </div>
