@@ -1,0 +1,21 @@
+[
+    { "key": "addy3528", "name": "Addy3528", "move": "sine", "attack": "spread", "special": null, "hp": 10 },
+    { "key": "blueraven", "name": "Anne (BlueRaven)", "move": "swoop", "attack": "aimed", "special": null, "hp": 9 },
+    { "key": "klumpsy", "name": "Bart [Klumpsy]", "move": "sine", "attack": "aimed", "special": "summon", "hp": 12 },
+    { "key": "twentewarrior", "name": "Bas (TwenteWarrior)", "move": "dash", "attack": "aimed", "special": null, "hp": 11 },
+    { "key": "bramdabeer", "name": "BramDaBeer", "move": "sine", "attack": "bomb", "special": null, "hp": 12 },
+    { "key": "c-orneel", "name": "C.Orneel", "move": "sine", "attack": "aimed", "special": null, "hp": 8 },
+    { "key": "corny", "name": "Corneel (Corny)", "move": "zigzag", "attack": "rapid", "special": null, "hp": 9 },
+    { "key": "fryingdutchpan", "name": "FryingDutchPan", "move": "sine", "attack": "ricochet", "special": null, "hp": 11 },
+    { "key": "gido-akse", "name": "Gido Akse", "move": "sine", "attack": "heavy", "special": null, "hp": 12 },
+    { "key": "heerserniek", "name": "HeerserNiek", "move": "sine", "attack": "spread", "special": "shield", "hp": 10 },
+    { "key": "bijbal", "name": "Jeroen (Bijbal)", "move": "zigzag", "attack": "none", "special": "swarm", "hp": 10 },
+    { "key": "wickedvenom", "name": "Juan (WickedVenom)", "move": "sine", "attack": "venom", "special": null, "hp": 10 },
+    { "key": "kaasbal", "name": "Kaasbal", "move": "bounce", "attack": "rain", "special": null, "hp": 12 },
+    { "key": "martn", "name": "Martin (MartN)", "move": "sine", "attack": "laser", "special": null, "hp": 12 },
+    { "key": "rik", "name": "Rik", "move": "sine", "attack": "rapid", "special": null, "hp": 8 },
+    { "key": "artix", "name": "Sophie (Artix)", "move": "teleport", "attack": "spread", "special": null, "hp": 9 },
+    { "key": "10ft-t", "name": "Thomas (10ft_T)", "move": "pounce", "attack": "rapid", "special": null, "hp": 10 },
+    { "key": "yanusz", "name": "Yannick (Yanusz)", "move": "sine", "attack": "rain", "special": null, "hp": 11 },
+    { "key": "arti-vader", "name": "Darth Arti", "move": "sine", "attack": "laser", "special": "force", "hp": 16 }
+]

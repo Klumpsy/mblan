@@ -19,6 +19,7 @@
 
 @php
     [$brandBase, $brandAccent] = \App\Models\Edition::currentBrand();
+    $bossRegistry = json_decode(file_get_contents(resource_path('js/space-classic/bosses.json')), true);
 @endphp
 
 <body class="font-sans antialiased bg-forge-black text-forge-steel overflow-hidden overscroll-none">
@@ -31,6 +32,9 @@
                 invader_b1: '{{ asset('images/game/invader_b1.png') }}',
                 invader_b2: '{{ asset('images/game/invader_b2.png') }}',
                 ufo: '{{ asset('images/scenery/space/ufo.png') }}',
+                @foreach ($bossRegistry as $boss)
+                'boss_{{ $boss['key'] }}': '{{ asset('images/game/bosses/'.$boss['key'].'.png') }}',
+                @endforeach
             },
             sync: {
                 url: '{{ route('game.sync') }}',

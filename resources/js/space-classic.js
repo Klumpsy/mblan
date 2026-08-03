@@ -1,13 +1,15 @@
 /**
  * De editie-klassieker: "Arti in Space" — een Galaxian-achtige, oneindige
- * shooter. Arti en de boer delen een schip; golven aliens komen in formatie,
- * duiken aan en schieten terug. Hoe hoger je score, hoe sneller en feller
- * alles wordt. Bestuur met slepen/muis of pijltjes (A/D); schieten gaat
- * vanzelf. Game over zet de mblan_score cookie; na inloggen synct de app-
- * layout die naar /game/sync (ingelogde spelers syncen direct).
+ * shooter. Arti en de boer delen een schip; golven aliens vliegen in
+ * wisselende formaties binnen (hoe verder, hoe dichter, sneller en wilder)
+ * en elke derde golf brengt een willekeurige BOSS met eigen gedrag: een
+ * deelnemer van de LAN, of Darth Arti zelf. Namen staan onder de boss.
+ * Besturing: slepen/muis of pijltjes (A/D); schieten gaat vanzelf.
+ * Game over zet de mblan_score cookie; ingelogde spelers syncen direct.
  */
+import { entryAmplitude, formationSlots, isBossWave, pickBoss } from './space-classic/registry';
+
 export default (config = {}) => ({
-    // logical playfield; the canvas is scaled to fit the viewport
     W: 320,
     H: 480,
 
@@ -18,8 +20,8 @@ export default (config = {}) => ({
     running: false,
     over: false,
     open: false,
+    bossName: null,
 
-    // internal state (not reactive-critical, but Alpine proxying is fine here)
     _ctx: null,
     _raf: null,
     _last: 0,
@@ -31,6 +33,8 @@ export default (config = {}) => ({
     _enemies: [],
     _particles: [],
     _ufo: null,
+    _boss: null,
+    _laser: null,
     _fireAt: 0,
     _ufoAt: 0,
     _diveAt: 0,
@@ -51,9 +55,6 @@ export default (config = {}) => ({
 
     init() {
         this.hiscore = parseInt(localStorage.getItem('mblan_hiscore') || '0', 10) || 0;
-
-        // A fresh visit is a fresh attempt; cookies are only the one-way
-        // handoff of the final score to the sync on the next logged-in page.
         this.eraseCookie('mblan_score');
         this.eraseCookie('mblan_done');
 
@@ -117,10 +118,13 @@ export default (config = {}) => ({
         this.over = false;
         this.open = false;
         this.running = true;
+        this.bossName = null;
         this._bullets = [];
         this._enemyBullets = [];
         this._particles = [];
         this._ufo = null;
+        this._boss = null;
+        this._laser = null;
         this._targetX = null;
         this._player = { x: this.W / 2, y: this.H - 34, w: 24, h: 14, invuln: 2, dead: false };
         this.eraseCookie('mblan_score');
@@ -135,31 +139,49 @@ export default (config = {}) => ({
 
     spawnWave() {
         this.wave++;
-        const cols = 8;
-        const rows = Math.min(5, 3 + Math.floor(this.wave / 3));
-        const gapX = 30;
-        const gapY = 24;
-        const startX = (this.W - (cols - 1) * gapX) / 2;
+        const bossWave = isBossWave(this.wave);
+        const amp = entryAmplitude(this.wave);
 
-        this._enemies = [];
-        for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-                this._enemies.push({
-                    slotX: startX + c * gapX,
-                    slotY: 60 + r * gapY,
-                    x: startX + c * gapX,
-                    y: -30 - r * 20,
-                    w: 18, h: 12,
-                    type: r < 2 ? 'b' : 'a',
-                    mode: 'enter', // enter -> formation -> dive
-                    t: Math.random() * Math.PI * 2,
-                    diveX: 0,
-                });
-            }
-        }
+        this._enemies = formationSlots(this.wave, this.W, bossWave).map((slot, i) => ({
+            slotX: slot.x,
+            slotY: slot.y,
+            x: slot.x,
+            y: -20 - (i % 6) * 18,
+            w: 18, h: 12,
+            type: slot.type,
+            mode: 'enter',
+            t: Math.random() * Math.PI * 2,
+            enterAmp: amp,
+            diveX: 0,
+        }));
+
+        if (bossWave) this.spawnBoss();
+
         this._formation = { dir: 1, x: 0, y: 0, speed: 20 + 8 * this.difficulty() };
         this._diveAt = 2.5;
         this._ufoAt = 8 + Math.random() * 10;
+    },
+
+    spawnBoss(def = null) {
+        def = def || pickBoss(Math.random());
+        this.bossName = def.name;
+        this._boss = {
+            def,
+            x: this.W / 2,
+            y: -30,
+            baseY: 44,
+            w: 34, h: 22,
+            hp: Math.round(def.hp * (1 + this.wave * 0.08)),
+            maxHp: Math.round(def.hp * (1 + this.wave * 0.08)),
+            t: 0,
+            attackAt: 1.6,
+            specialAt: 3,
+            phase: 'enter',
+            dashX: null,
+            vx: 60, vy: 26,
+            flash: 0,
+            shielded: false,
+        };
     },
 
     step(t) {
@@ -194,7 +216,21 @@ export default (config = {}) => ({
 
         // --- bullets
         this._bullets = this._bullets.filter((b) => (b.y -= b.v * dt) > -10);
-        this._enemyBullets = this._enemyBullets.filter((b) => (b.y += b.v * dt) < this.H + 10);
+        for (const b of this._enemyBullets) {
+            b.y += (b.vy ?? b.v) * dt;
+            b.x += (b.vx || 0) * dt;
+            if (b.bounce && (b.x < 2 || b.x > this.W - 2)) b.vx *= -1;
+            if (b.life !== undefined) b.life -= dt;
+            if (b.explodeY && b.y >= b.explodeY) {
+                b.y = this.H + 99;
+                for (let i = 0; i < 6; i++) {
+                    const a = (i / 6) * Math.PI * 2;
+                    this._enemyBullets.push({ x: b.x, y: b.explodeY, vx: Math.cos(a) * 70, vy: Math.sin(a) * 70 + 40, size: 2 });
+                }
+                this.explode(b.x, b.explodeY, '#f09434');
+            }
+        }
+        this._enemyBullets = this._enemyBullets.filter((b) => b.y < this.H + 10 && b.y > -20 && (b.life === undefined || b.life > 0));
 
         // --- formation sway + slow descent
         const f = this._formation;
@@ -219,29 +255,36 @@ export default (config = {}) => ({
         for (const e of this._enemies) {
             e.anim = (e.anim || 0) + dt;
             if (e.mode === 'enter') {
+                e.t += dt;
                 e.y += 90 * dt;
-                e.x = e.slotX + f.x;
+                // curved fly-in: wilder op latere golven
+                const prog = Math.max(0, Math.min(1, e.y / Math.max(1, e.slotY + f.y)));
+                e.x = e.slotX + f.x + Math.sin(e.t * 4) * e.enterAmp * (1 - prog);
                 if (e.y >= e.slotY + f.y) e.mode = 'formation';
             } else if (e.mode === 'formation') {
                 e.x = e.slotX + f.x;
                 e.y = e.slotY + f.y;
-                // formation shooters
                 if (Math.random() < dt * 0.06 * d) {
-                    this._enemyBullets.push({ x: e.x, y: e.y + 8, v: 90 + 45 * d });
+                    this._enemyBullets.push({ x: e.x, y: e.y + 8, vy: 90 + 45 * d, size: 2 });
                 }
             } else if (e.mode === 'dive') {
                 e.t += dt;
                 e.y += (120 + 40 * d) * dt;
                 e.x = e.diveX + Math.sin(e.t * 3.2) * 46;
                 if (Math.random() < dt * 0.5) {
-                    this._enemyBullets.push({ x: e.x, y: e.y + 8, v: 110 + 50 * d });
+                    this._enemyBullets.push({ x: e.x, y: e.y + 8, vy: 110 + 50 * d, size: 2 });
                 }
                 if (e.y > this.H + 20) {
                     e.mode = 'enter';
+                    e.t = 0;
                     e.y = -20;
                 }
             }
         }
+
+        // --- boss
+        if (this._boss) this.updateBoss(dt, d);
+        if (this._laser) this.updateLaser(dt);
 
         // --- ufo bonus
         this._ufoAt -= dt;
@@ -255,7 +298,7 @@ export default (config = {}) => ({
             if (this._ufo.x < -30 || this._ufo.x > this.W + 30) this._ufo = null;
         }
 
-        // --- bullet vs enemy / ufo
+        // --- bullet vs enemy / ufo / boss
         for (const b of this._bullets) {
             for (const e of this._enemies) {
                 if (Math.abs(b.x - e.x) < e.w / 2 + 2 && Math.abs(b.y - e.y) < e.h / 2 + 3) {
@@ -270,13 +313,20 @@ export default (config = {}) => ({
                 this.explode(this._ufo.x, this._ufo.y, '#faD054');
                 this._ufo = null;
             }
+            const boss = this._boss;
+            if (boss && boss.phase !== 'enter'
+                && Math.abs(b.x - boss.x) < boss.w / 2 + 2 && Math.abs(b.y - boss.y) < boss.h / 2 + 3) {
+                b.y = -99;
+                this.hitBoss(boss);
+            }
         }
         this._enemies = this._enemies.filter((e) => !e.dead);
 
-        // --- enemy bullets / divers vs player
+        // --- enemy bullets / divers / boss vs player
         if (p.invuln <= 0 && !p.dead) {
             for (const b of this._enemyBullets) {
-                if (Math.abs(b.x - p.x) < p.w / 2 - 2 && Math.abs(b.y - p.y) < p.h / 2 + 3) {
+                const s = b.size || 2;
+                if (Math.abs(b.x - p.x) < p.w / 2 - 2 + s && Math.abs(b.y - p.y) < p.h / 2 + 1 + s) {
                     b.y = this.H + 99;
                     this.hitPlayer();
                     break;
@@ -289,6 +339,10 @@ export default (config = {}) => ({
                     break;
                 }
             }
+            const boss = this._boss;
+            if (boss && Math.abs(boss.x - p.x) < (boss.w + p.w) / 2 - 4 && Math.abs(boss.y - p.y) < (boss.h + p.h) / 2 - 2) {
+                this.hitPlayer();
+            }
         }
         this._enemies = this._enemies.filter((e) => !e.dead);
 
@@ -298,24 +352,203 @@ export default (config = {}) => ({
             this.hitPlayer();
         }
 
-        // --- wave cleared
-        if (this._enemies.length === 0) {
+        // --- wave cleared (boss must be down too)
+        if (this._enemies.length === 0 && !this._boss) {
             this.addScore(50);
             this.spawnWave();
         }
 
-        // --- particles
+        // --- particles + stars
         for (const pt of this._particles) {
             pt.x += pt.vx * dt;
             pt.y += pt.vy * dt;
             pt.life -= dt;
         }
         this._particles = this._particles.filter((pt) => pt.life > 0);
-
-        // --- stars
         for (const s of this._stars) {
             s.y += s.v * dt;
             if (s.y > this.H) { s.y = -2; s.x = Math.random() * this.W; }
+        }
+    },
+
+    updateBoss(dt, d) {
+        const boss = this._boss;
+        const def = boss.def;
+        const p = this._player;
+        boss.t += dt;
+        if (boss.flash > 0) boss.flash -= dt;
+
+        // --- entry, then movement per boss
+        if (boss.phase === 'enter') {
+            boss.y += 55 * dt;
+            if (boss.y >= boss.baseY) boss.phase = 'fight';
+            return;
+        }
+
+        const halfW = this.W / 2;
+        switch (def.move) {
+            case 'sine':
+                boss.x = halfW + Math.sin(boss.t * 0.8) * (halfW - 40);
+                boss.y = boss.baseY + Math.sin(boss.t * 1.7) * 6;
+                break;
+            case 'zigzag':
+                boss.x = halfW + (Math.abs(((boss.t * 90) % (4 * (halfW - 40))) - 2 * (halfW - 40)) - (halfW - 40));
+                boss.y = boss.baseY + Math.sin(boss.t * 5) * 10;
+                break;
+            case 'bounce':
+                boss.x += boss.vx * dt;
+                boss.y += boss.vy * dt;
+                if (boss.x < 24 || boss.x > this.W - 24) boss.vx *= -1;
+                if (boss.y < 30 || boss.y > this.H * 0.45) boss.vy *= -1;
+                break;
+            case 'teleport':
+                if (boss.t > 1.6) {
+                    this.explode(boss.x, boss.y, '#b074e0');
+                    boss.x = 30 + Math.random() * (this.W - 60);
+                    boss.y = 36 + Math.random() * 40;
+                    boss.t = 0;
+                }
+                break;
+            case 'dash':
+                boss.y = boss.baseY;
+                if (boss.dashX === null && boss.t > 2) {
+                    boss.dashX = p.x;
+                    boss.t = 0;
+                }
+                if (boss.dashX !== null) {
+                    const dx = boss.dashX - boss.x;
+                    boss.x += Math.sign(dx) * 240 * dt;
+                    if (Math.abs(dx) < 8) boss.dashX = null;
+                }
+                break;
+            case 'pounce':
+                if (boss.t < 1.4) {
+                    boss.y = boss.baseY + Math.sin(boss.t * 30) * 2; // trilt: telegraph
+                } else if (boss.t < 2.2) {
+                    boss.y += 300 * dt;
+                    boss.x += Math.sign(p.x - boss.x) * 120 * dt;
+                } else if (boss.y > boss.baseY) {
+                    boss.y -= 160 * dt;
+                } else {
+                    boss.t = 0;
+                }
+                break;
+            case 'swoop':
+                boss.x = halfW + Math.sin(boss.t * 0.9) * (halfW - 44);
+                boss.y = boss.baseY + Math.max(0, Math.sin(boss.t * 0.45) * (this.H * 0.55));
+                break;
+        }
+
+        // --- attacks
+        boss.attackAt -= dt;
+        if (boss.attackAt <= 0) {
+            this.bossAttack(boss, d);
+            boss.attackAt = Math.max(0.5, 1.7 - d * 0.22);
+        }
+
+        // --- specials
+        boss.specialAt -= dt;
+        if (def.special === 'shield') {
+            boss.shielded = Math.floor(boss.t / 2.5) % 2 === 1;
+        }
+        if (boss.specialAt <= 0) {
+            if (def.special === 'summon') {
+                for (let i = 0; i < 2; i++) {
+                    this._enemies.push({
+                        slotX: boss.x - 20 + i * 40, slotY: 110, x: boss.x, y: boss.y,
+                        w: 18, h: 12, type: 'a', mode: 'enter', t: 0, enterAmp: 20, diveX: 0,
+                    });
+                }
+            } else if (def.special === 'swarm') {
+                for (let i = 0; i < 3; i++) {
+                    this._enemies.push({
+                        slotX: boss.x, slotY: 110, x: boss.x - 12 + i * 12, y: boss.y + 8,
+                        w: 10, h: 8, type: 'b', mode: 'dive', t: i * 0.4, enterAmp: 10, diveX: boss.x,
+                    });
+                }
+            }
+            boss.specialAt = 4.5;
+        }
+
+        // --- force: Darth Arti trekt het schip naar zich toe
+        if (def.special === 'force') {
+            p.x += Math.sign(boss.x - p.x) * 34 * dt;
+        }
+    },
+
+    bossAttack(boss, d) {
+        const p = this._player;
+        const from = { x: boss.x, y: boss.y + boss.h / 2 };
+
+        switch (boss.def.attack) {
+            case 'spread':
+                for (let i = -2; i <= 2; i++) {
+                    this._enemyBullets.push({ x: from.x, y: from.y, vx: i * 34, vy: 100 + 35 * d, size: 2 });
+                }
+                break;
+            case 'aimed': {
+                const a = Math.atan2(p.y - from.y, p.x - from.x);
+                const v = 130 + 45 * d;
+                this._enemyBullets.push({ x: from.x, y: from.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, size: 2 });
+                break;
+            }
+            case 'rapid':
+                for (let i = 0; i < 3; i++) {
+                    this._enemyBullets.push({ x: from.x - 6 + i * 6, y: from.y + i * 6, vy: 150 + 40 * d, size: 2 });
+                }
+                break;
+            case 'heavy':
+                this._enemyBullets.push({ x: from.x, y: from.y, vx: Math.sin(boss.t) * 20, vy: 70 + 20 * d, size: 5 });
+                break;
+            case 'ricochet':
+                this._enemyBullets.push({ x: from.x, y: from.y, vx: (Math.random() < 0.5 ? -1 : 1) * (90 + 25 * d), vy: 85 + 25 * d, size: 3, bounce: true });
+                break;
+            case 'venom':
+                this._enemyBullets.push({ x: from.x, y: from.y, vx: (Math.random() - 0.5) * 30, vy: 35, size: 4, life: 7 });
+                break;
+            case 'bomb':
+                this._enemyBullets.push({ x: from.x, y: from.y, vy: 90, size: 4, explodeY: from.y + 120 + Math.random() * 100 });
+                break;
+            case 'rain':
+                for (let i = 0; i < 6; i++) {
+                    this._enemyBullets.push({ x: (this.W / 7) * (i + 0.5 + Math.random() * 0.5), y: boss.y, vy: 95 + 30 * d, size: 2 });
+                }
+                break;
+            case 'laser':
+                if (!this._laser) this._laser = { x: boss.x, t: 0, telegraph: 0.8, active: 0.55 };
+                break;
+            case 'none':
+                break;
+        }
+    },
+
+    updateLaser(dt) {
+        const l = this._laser;
+        l.t += dt;
+        const p = this._player;
+        if (l.t > l.telegraph && l.t < l.telegraph + l.active) {
+            if (p.invuln <= 0 && !p.dead && Math.abs(p.x - l.x) < 8 + p.w / 2 - 4) {
+                this.hitPlayer();
+            }
+        }
+        if (l.t >= l.telegraph + l.active) this._laser = null;
+    },
+
+    hitBoss(boss) {
+        if (boss.shielded) {
+            this.explode(boss.x, boss.y - boss.h / 2, '#6edcbe');
+            return;
+        }
+        boss.hp--;
+        boss.flash = 0.1;
+        if (boss.hp <= 0) {
+            this.addScore(250 + this.wave * 20);
+            for (let i = 0; i < 4; i++) {
+                this.explode(boss.x - 12 + Math.random() * 24, boss.y - 8 + Math.random() * 16, '#faD054');
+            }
+            this._boss = null;
+            this._laser = null;
+            this.bossName = null;
         }
     },
 
@@ -356,8 +589,6 @@ export default (config = {}) => ({
         this.over = true;
         this.running = false;
 
-        // Hand the score to the account: cookie for the post-login sync, and a
-        // direct sync when the player is already logged in.
         this.setCookie('mblan_score', this.score);
         this.setCookie('mblan_done', '1');
 
@@ -383,7 +614,6 @@ export default (config = {}) => ({
         ctx.fillStyle = '#05080c';
         ctx.fillRect(0, 0, this.W, this.H);
 
-        // starfield
         for (const s of this._stars) {
             ctx.globalAlpha = 0.35 + (s.s / 2) * 0.5;
             ctx.fillStyle = '#e6ecf0';
@@ -391,12 +621,10 @@ export default (config = {}) => ({
         }
         ctx.globalAlpha = 1;
 
-        // ufo
         if (this._ufo && this._sprites.ufo?.complete) {
             ctx.drawImage(this._sprites.ufo, this._ufo.x - 10, this._ufo.y - 6, 20, 12);
         }
 
-        // enemies (2-frame animation)
         for (const e of this._enemies) {
             const frame = Math.floor((e.anim || 0) * 3) % 2 + 1;
             const img = this._sprites['invader_' + e.type + frame];
@@ -405,13 +633,55 @@ export default (config = {}) => ({
             }
         }
 
+        // boss + naam + hp
+        const boss = this._boss;
+        if (boss) {
+            const img = this._sprites['boss_' + boss.def.key];
+            if (boss.shielded) {
+                ctx.strokeStyle = 'rgba(110,220,190,0.8)';
+                ctx.beginPath();
+                ctx.arc(boss.x, boss.y, boss.w / 2 + 6, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+            if (img?.complete) {
+                ctx.globalAlpha = boss.flash > 0 ? 0.45 : 1;
+                ctx.drawImage(img, boss.x - boss.w / 2, boss.y - boss.h / 2, boss.w, boss.h);
+                ctx.globalAlpha = 1;
+            }
+            // naam onder de boss
+            ctx.font = '6px "Press Start 2P", monospace';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#e6ecf0';
+            ctx.fillText(boss.def.name.toUpperCase(), boss.x, boss.y + boss.h / 2 + 10);
+            // hp-balk
+            const bw = 30;
+            ctx.fillStyle = 'rgba(230,236,240,0.25)';
+            ctx.fillRect(boss.x - bw / 2, boss.y - boss.h / 2 - 7, bw, 3);
+            ctx.fillStyle = '#e05a4a';
+            ctx.fillRect(boss.x - bw / 2, boss.y - boss.h / 2 - 7, bw * (boss.hp / boss.maxHp), 3);
+        }
+
+        // laser (telegraph dun, actief breed)
+        if (this._laser) {
+            const l = this._laser;
+            if (l.t < l.telegraph) {
+                ctx.fillStyle = 'rgba(224,90,74,0.35)';
+                ctx.fillRect(l.x - 1, 0, 2, this.H);
+            } else {
+                ctx.fillStyle = 'rgba(224,90,74,0.85)';
+                ctx.fillRect(l.x - 5, 0, 10, this.H);
+            }
+        }
+
         // bullets
         ctx.fillStyle = 'rgb(' + getComputedStyle(document.documentElement).getPropertyValue('--c-primary-400').trim().split(' ').join(',') + ')';
         for (const b of this._bullets) ctx.fillRect(b.x - 1, b.y - 4, 2, 6);
-        ctx.fillStyle = '#e05a4a';
-        for (const b of this._enemyBullets) ctx.fillRect(b.x - 1, b.y, 2, 6);
+        for (const b of this._enemyBullets) {
+            const s = b.size || 2;
+            ctx.fillStyle = b.life !== undefined ? 'rgba(126,217,87,0.8)' : '#e05a4a';
+            ctx.fillRect(b.x - s / 2, b.y, s, s + 2);
+        }
 
-        // player
         const p = this._player;
         if (p && !p.dead && this._sprites.ship?.complete) {
             if (p.invuln <= 0 || Math.floor(p.invuln * 10) % 2 === 0) {
@@ -419,7 +689,6 @@ export default (config = {}) => ({
             }
         }
 
-        // particles
         for (const pt of this._particles) {
             ctx.globalAlpha = Math.max(0, pt.life * 2);
             ctx.fillStyle = pt.color;
