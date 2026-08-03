@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Signup extends Model
 {
+    use Concerns\BelongsToEdition;
     use HasFactory;
 
     public const BBQ_COST = 17.50;
@@ -18,6 +19,7 @@ class Signup extends Model
     public const COSTS_PER_DAY = 14.00;
 
     protected $fillable = [
+        'edition_id',
         'stays_on_campsite',
         'joins_barbecue',
         'joins_pizza',

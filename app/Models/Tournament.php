@@ -12,9 +12,11 @@ use Illuminate\Support\Collection;
 
 class Tournament extends Model
 {
+    use Concerns\BelongsToEdition;
     use HasFactory;
 
     protected $fillable = [
+        'edition_id',
         'name',
         'description',
         'rules',

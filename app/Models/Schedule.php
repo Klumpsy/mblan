@@ -10,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Schedule extends Model
 {
+    use Concerns\BelongsToEdition;
     use HasFactory;
 
     protected $fillable = [
+        'edition_id',
         'name',
         'date',
     ];

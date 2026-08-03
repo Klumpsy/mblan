@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToEdition;
 use App\Models\Concerns\HasReactions;
 use App\Models\Concerns\OptimizesImages;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,11 +12,12 @@ use Illuminate\Support\Str;
 
 class News extends Model
 {
-    use HasFactory, HasReactions, OptimizesImages;
+    use BelongsToEdition, HasFactory, HasReactions, OptimizesImages;
 
     protected $table = 'news';
 
     protected $fillable = [
+        'edition_id',
         'title',
         'image',
         'author_id',

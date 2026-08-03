@@ -30,7 +30,20 @@ class Edition extends Model
     /** The single active edition the live site shows. */
     public static function current(): ?self
     {
+        // Older seed migrations create scoped models before this table exists
+        // on a fresh database; without a table there is no current edition.
+        if (! static::tableExists()) {
+            return null;
+        }
+
         return static::where('is_active', true)->first();
+    }
+
+    private static function tableExists(): bool
+    {
+        static $exists = false;
+
+        return $exists = $exists || \Illuminate\Support\Facades\Schema::hasTable('editions');
     }
 
     /** Make this the active edition; there is always exactly one. */
