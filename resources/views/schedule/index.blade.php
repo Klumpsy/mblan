@@ -4,6 +4,7 @@
         $dates = $grouped->keys()->values();
         $firstDate = $dates->first() ?? 'tba';
         $currentEdition = \App\Models\Edition::current();
+        $dioramaExtras = collect($currentEdition?->scenerySprites() ?? [])->shuffle()->take(2)->values();
     @endphp
 
     <div class="relative">
@@ -28,9 +29,9 @@
                 <div class="absolute bottom-0 left-24 h-1.5 w-12 rounded-[50%] bg-black/40 blur-[2px]"></div>
                 <div class="absolute bottom-0 right-8 h-1.5 w-7 rounded-[50%] bg-black/40 blur-[2px]"></div>
                 {{-- critters standing on the line --}}
-                <img src="{{ asset('images/farm/tile_0109.png') }}" alt="" class="pixel absolute bottom-1 left-0 w-11" style="animation: sprite-bob .6s steps(2,end) infinite;" />
-                <img src="{{ asset('images/farm/tile_0121.png') }}" alt="" class="pixel absolute bottom-1 left-20 w-14" style="animation: float 6s ease-in-out infinite;" />
-                <img src="{{ asset('images/farm/tile_0122.png') }}" alt="" class="pixel absolute bottom-1 right-6 w-8" style="animation: float 5s ease-in-out infinite;" />
+                <img src="{{ $currentEdition?->sceneryCharacter() ?? asset('images/farm/tile_0109.png') }}" alt="" class="pixel absolute bottom-1 left-0 w-11" style="animation: sprite-bob .6s steps(2,end) infinite;" />
+                <img src="{{ $dioramaExtras[0] ?? asset('images/farm/tile_0121.png') }}" alt="" class="pixel absolute bottom-1 left-20 w-14" style="animation: float 6s ease-in-out infinite;" />
+                <img src="{{ $dioramaExtras[1] ?? asset('images/farm/tile_0122.png') }}" alt="" class="pixel absolute bottom-1 right-6 w-8" style="animation: float 5s ease-in-out infinite;" />
             </div>
 
             @if ($schedules->isEmpty())

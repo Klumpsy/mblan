@@ -23,10 +23,11 @@
             <div x-show="tab === 'toernooien'" x-cloak>
                 {{-- ===== The Arti Game (hardcoded first tournament) ===== --}}
                 <div class="relative mb-14" x-data x-reveal>
-                    {{-- Arti + a chicken hang around this card --}}
-                    <img src="{{ asset('images/farm/arti.png') }}" alt="" aria-hidden="true"
+                    {{-- de mascotte en een decoratie-sprite hangen rond deze kaart --}}
+                    @php $cardEdition = \App\Models\Edition::current(); @endphp
+                    <img src="{{ $cardEdition?->sceneryMascot() ?? asset('images/farm/arti.png') }}" alt="" aria-hidden="true"
                         class="pixel pointer-events-none absolute -top-6 right-4 z-10 w-12" style="animation: float 5s ease-in-out infinite;" />
-                    <img src="{{ asset('images/farm/tile_0122.png') }}" alt="" aria-hidden="true"
+                    <img src="{{ collect($cardEdition?->scenerySprites() ?? [])->shuffle()->first() ?? asset('images/farm/tile_0122.png') }}" alt="" aria-hidden="true"
                         class="pixel pointer-events-none absolute -top-5 left-6 z-10 w-8" style="animation: float 6s ease-in-out infinite;" />
 
                     <x-forge.card class="overflow-hidden">
@@ -142,7 +143,7 @@
                         <div x-data x-reveal>
                             <x-forge.card class="h-full overflow-hidden">
                                 <div class="mb-4 flex items-center gap-3">
-                                    <img src="{{ asset('images/farm/'.$bracket['icon'].'.png') }}" alt="" aria-hidden="true" class="pixel h-8 w-8 shrink-0" />
+                                    <img src="{{ $bracket['icon_url'] }}" alt="" aria-hidden="true" class="pixel h-8 w-8 shrink-0" />
                                     <div>
                                         <h3 class="font-display text-lg font-bold uppercase tracking-wide text-white">{{ $bracket['title'] }}</h3>
                                         @if ($bracket['caption'])

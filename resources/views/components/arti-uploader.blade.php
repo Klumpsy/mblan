@@ -18,7 +18,7 @@
 >
     <div class="clip-corner metal-edge flex flex-col items-center gap-4 bg-forge-graphite/90 px-10 py-8 text-center">
         <img
-            src="{{ asset('images/farm/arti.png') }}"
+            src="{{ \App\Models\Edition::current()?->sceneryMascot() ?? asset('images/farm/arti.png') }}"
             alt="Arti"
             class="pixel h-16 w-16"
             style="animation: sprite-bob 0.3s steps(2, end) infinite;"

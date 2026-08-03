@@ -73,13 +73,14 @@
                  chase; dots pulse as Arti passes. Decorative only, and its Alpine
                  lives here (not on the <ol>) so a missing bundle can't break the
                  posts or their edit buttons. --}}
+            @php $chaseEdition = \App\Models\Edition::current(); @endphp
             <div x-data="timelineChase()" class="pointer-events-none absolute left-0 top-0 z-20" x-cloak aria-hidden="true">
                 <div class="absolute w-8 will-change-transform" :style="`top: ${farmerY}px; transform: translate(-50%, -50%);`">
-                    <img src="{{ asset('images/farm/tile_0109.png') }}" alt="" class="pixel w-full"
+                    <img src="{{ $chaseEdition?->sceneryCharacter() ?? asset('images/farm/tile_0109.png') }}" alt="" class="pixel w-full"
                         style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); animation: sprite-bob 0.3s steps(2, end) infinite;" />
                 </div>
                 <div class="absolute w-8 will-change-transform" :style="`top: ${artiY}px; transform: translate(-50%, -50%);`">
-                    <img src="{{ asset('images/farm/arti.png') }}" alt="" class="pixel w-full"
+                    <img src="{{ $chaseEdition?->sceneryMascot() ?? asset('images/farm/arti.png') }}" alt="" class="pixel w-full"
                         style="filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)); animation: sprite-bob 0.3s steps(2, end) infinite;" />
                 </div>
             </div>

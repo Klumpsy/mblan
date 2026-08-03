@@ -224,14 +224,15 @@
         </div>
         </div>
 
-        {{-- pasture flourish: Arti trots across toward the barn when the menu opens --}}
+        {{-- flourish: de mascotte draaft naar het landmark als het menu opent --}}
+        @php($menuEdition = \App\Models\Edition::current())
         <div class="pointer-events-none absolute inset-x-0 bottom-0 h-24 overflow-hidden" aria-hidden="true">
             <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-primary-900/45 via-primary-900/15 to-transparent"></div>
             <div class="absolute bottom-1 right-4 w-14 opacity-80">
-                <img class="pixel block w-full" src="{{ asset('images/farm/barn.png') }}" alt="">
+                <img class="pixel block w-full" src="{{ $menuEdition?->sceneryLandmark() ?? asset('images/farm/barn.png') }}" alt="">
             </div>
             <div class="menu-arti">
-                <img class="pixel" src="{{ asset('images/farm/arti.png') }}" alt="">
+                <img class="pixel" src="{{ $menuEdition?->sceneryMascot() ?? asset('images/farm/arti.png') }}" alt="">
             </div>
         </div>
     </div>

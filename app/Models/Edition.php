@@ -112,14 +112,37 @@ class Edition extends Model
      */
     public function sceneryCharacter(): ?string
     {
+        return $this->sceneryRole(0, 'character');
+    }
+
+    /** The mascot (Arti in 2026, the alien in space; upload: second sprite). */
+    public function sceneryMascot(): ?string
+    {
+        return $this->sceneryRole(1, 'mascot');
+    }
+
+    /** The landmark (the barn in 2026, a planet in space; upload: third sprite). */
+    public function sceneryLandmark(): ?string
+    {
+        return $this->sceneryRole(2, 'landmark');
+    }
+
+    /**
+     * Resolve a named sprite role: position N of the uploaded package (small
+     * packages fall back to the character), or the built-in set's named sprite.
+     */
+    private function sceneryRole(int $position, string $role): ?string
+    {
         if (! empty($this->scenery_sprites)) {
-            return asset('storage/'.array_values($this->scenery_sprites)[0]);
+            $sprites = array_values($this->scenery_sprites);
+
+            return asset('storage/'.($sprites[$position] ?? $sprites[0]));
         }
 
         $set = \App\Support\ScenerySets::get($this->scenery_set);
 
-        return isset($set['character'])
-            ? asset($set['path'].'/'.$set['character'].'.png')
+        return isset($set[$role])
+            ? asset($set['path'].'/'.$set[$role].'.png')
             : null;
     }
 

@@ -22,6 +22,8 @@ class ScenerySets
                 'label' => 'Boerderij (MBLAN26)',
                 'path' => 'images/farm',
                 'character' => 'tile_0108', // de boer is altijd van de partij
+                'mascot' => 'arti',
+                'landmark' => 'barn',
 
                 'pool' => [
                     'tile_0003', 'tile_0015', 'tile_0027', 'tile_0039', 'tile_0078', // trees + bushes
@@ -36,6 +38,8 @@ class ScenerySets
                 'label' => 'Ruimte (2027)',
                 'path' => 'images/scenery/space',
                 'character' => 'astronaut', // de boer, maar dan in de ruimte
+                'mascot' => 'alien',
+                'landmark' => 'planet_ring',
 
                 'pool' => [
                     'planet_ring', 'planet_swirl', 'moon',

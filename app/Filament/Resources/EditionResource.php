@@ -80,7 +80,7 @@ class EditionResource extends Resource
                 ->directory('editions/scenery')
                 ->visibility('public')
                 ->reorderable()
-                ->helperText('Losse PNG-sprites: pixel-art met transparante achtergrond, klein formaat (± 16–64 px, de site schaalt ze scherp op), max 512 KB per stuk. Upload er minimaal 6 voor variatie. Zodra er sprites zijn geüpload gebruikt deze editie dit pakket als achtergrond, op de site en op de recap-pagina; zonder pakket geldt de ingebouwde set hierboven. De eerste sprite is het karakter van de editie (zoals de boer in 2026) en is altijd zichtbaar — versleep om de volgorde te wijzigen.'),
+                ->helperText('Losse PNG-sprites: pixel-art met transparante achtergrond, klein formaat (± 16–64 px, de site schaalt ze scherp op), max 512 KB per stuk. Upload er minimaal 6 voor variatie. Zodra er sprites zijn geüpload gebruikt deze editie dit pakket overal: achtergronden, het speelschema, de tijdlijn-achtervolging, het menu en de recap-pagina. De volgorde bepaalt de rollen — versleep om te wijzigen: sprite 1 = karakter (boer/astronaut, altijd zichtbaar), sprite 2 = mascotte (Arti/alien, o.a. bij uploads en de tijdlijn), sprite 3 = landmark (schuur/planeet, in het menu), de rest is decoratie.'),
 
             FileUpload::make('logo_path')
                 ->label('Logo')

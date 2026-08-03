@@ -72,6 +72,50 @@ it('uses the first uploaded sprite as the always-visible character', function ()
         ->assertSee('storage/editions/scenery/held.png');
 });
 
+it('themes every decorative sprite on the site with the edition set', function () {
+    Edition::current()->update(['scenery_set' => 'space']);
+    $user = User::factory()->create();
+
+    // Schedule: diorama + scenery + nav flourish + upload overlay all space.
+    $this->actingAs($user)->get('/schedule')
+        ->assertOk()
+        ->assertSee('images/scenery/space/astronaut.png')
+        ->assertDontSee('images/farm/');
+
+    // Timeline: the chase runs with the edition character and mascot.
+    $this->actingAs($user)->get('/tijdlijn')
+        ->assertOk()
+        ->assertSee('images/scenery/space/astronaut.png')
+        ->assertSee('images/scenery/space/alien.png')
+        ->assertDontSee('images/farm/');
+
+    // Tournaments: mascot, deco and the leaderboard stat icons.
+    $this->actingAs($user)->get('/tournaments')
+        ->assertOk()
+        ->assertDontSee('images/farm/');
+});
+
+it('exposes mascot and landmark roles per set and from uploads', function () {
+    $edition = Edition::current();
+
+    expect($edition->sceneryMascot())->toContain('images/farm/arti.png')
+        ->and($edition->sceneryLandmark())->toContain('images/farm/barn.png');
+
+    $edition->update(['scenery_set' => 'space']);
+    expect($edition->fresh()->sceneryMascot())->toContain('space/alien.png')
+        ->and($edition->fresh()->sceneryLandmark())->toContain('space/planet_ring.png');
+
+    $edition->update(['scenery_sprites' => ['e/held.png', 'e/maat.png', 'e/gebouw.png']]);
+    $fresh = $edition->fresh();
+    expect($fresh->sceneryCharacter())->toContain('storage/e/held.png')
+        ->and($fresh->sceneryMascot())->toContain('storage/e/maat.png')
+        ->and($fresh->sceneryLandmark())->toContain('storage/e/gebouw.png');
+
+    // A one-sprite package falls back to the character for every role.
+    $edition->update(['scenery_sprites' => ['e/solo.png']]);
+    expect($edition->fresh()->sceneryMascot())->toContain('storage/e/solo.png');
+});
+
 it('ships every sprite in the space pool', function () {
     $set = ScenerySets::get('space');
 

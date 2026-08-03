@@ -39,7 +39,7 @@ class UserLeaderboards
             }
         }
 
-        return [
+        $brackets = [
             $this->bracket('beer', 'Meeste bier gedronken', 'biertjes', 'tile_0072', null, $beer),
             $this->bracket('engagement', 'Betrokkenheid', 'punten', 'tile_0083',
                 'Punten: foto x3, ontvangen reactie x2, gegeven reactie x1, achievement x5.', $engagement),
@@ -48,6 +48,20 @@ class UserLeaderboards
             $this->bracket('given', 'Gulste reageerder', 'reacties', 'tile_0122', 'Reacties die jij op andermans posts gaf.', $given),
             $this->bracket('achievements', 'Meeste achievements', 'behaald', 'tile_0096', null, $achievements),
         ];
+
+        // The icons follow the edition theme: the curated farm tiles for the
+        // farm set, otherwise a stable pick from the edition's sprite pool.
+        $edition = \App\Models\Edition::current();
+        $themed = $edition && ($edition->scenery_set !== 'farm' || ! empty($edition->scenery_sprites));
+        $pool = $themed ? $edition->scenerySprites() : [];
+
+        foreach ($brackets as $i => $bracket) {
+            $brackets[$i]['icon_url'] = $pool
+                ? $pool[$i % count($pool)]
+                : asset('images/farm/'.$bracket['icon'].'.png');
+        }
+
+        return $brackets;
     }
 
     /**
