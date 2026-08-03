@@ -77,6 +77,20 @@ it('shows the participant count on the recap', function () {
         ->assertViewHas('participantCount', 3);
 });
 
+it('shows a participants section with names and avatars on the recap', function () {
+    $anna = User::factory()->create(['name' => 'Anna Archief']);
+    $bram = User::factory()->create(['name' => 'Bram Bunder']);
+    $this->old->participants()->attach([$anna->id, $bram->id]);
+
+    $this->actingAs(User::factory()->create())->get('/edities/mblan25')
+        ->assertOk()
+        ->assertSee('Deelnemers')
+        ->assertSee('Anna Archief')
+        ->assertSee('Bram Bunder')
+        // No uploaded photo means the DiceBear pixel avatar.
+        ->assertSee('api.dicebear.com');
+});
+
 it('offers an editions-attended achievement metric', function () {
     $user = User::factory()->create();
     $user->editions()->attach([$this->old->id, Edition::current()->id]);

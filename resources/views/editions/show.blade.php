@@ -31,6 +31,20 @@
                 </div>
             @endif
 
+            {{-- Deelnemers: wie waren erbij --}}
+            @if ($participants->isNotEmpty())
+                <x-forge.heading eyebrow="Wie waren erbij" class="!mb-6">Deelnemers</x-forge.heading>
+                <div class="mb-12 flex flex-wrap gap-3">
+                    @foreach ($participants as $participant)
+                        <div class="clip-corner flex items-center gap-2.5 bg-forge-graphite/70 py-2 pl-2.5 pr-4">
+                            <img src="{{ $participant->profile_photo_url }}" alt="{{ $participant->name }}"
+                                class="h-8 w-8 rounded-full border border-primary-500/30 object-cover" />
+                            <span class="font-pixel text-[9px] uppercase tracking-wider text-forge-steel">{{ $participant->name }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
             {{-- Speelschema: wat speelden we wanneer --}}
             @if ($schedules->isNotEmpty())
                 <x-forge.heading eyebrow="Wat speelden we" class="!mb-6">Speelschema</x-forge.heading>

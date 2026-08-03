@@ -40,6 +40,7 @@ class EditionController extends Controller
         return view('editions.show', [
             'edition' => $edition,
             'participantCount' => $participantCount,
+            'participants' => $edition->participants()->orderBy('name')->get(),
             'schedules' => Schedule::forEdition($edition)
                 ->with([
                     'games' => fn ($q) => $q->orderByPivot('start_date'),
