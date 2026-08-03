@@ -131,7 +131,10 @@ class Feed extends Component
 
     public function render()
     {
+        $edition = \App\Models\Edition::current();
+
         $photos = Photo::with('user')
+            ->when($edition, fn ($q) => $q->forEdition($edition))
             ->latest()
             ->take($this->perPage + 1)
             ->get();

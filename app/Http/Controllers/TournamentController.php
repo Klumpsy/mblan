@@ -17,7 +17,9 @@ class TournamentController extends Controller
 
         $edition = Edition::current();
 
-        $tournaments = Tournament::with(['schedule', 'game'])->get();
+        $tournaments = Tournament::with(['schedule', 'game'])
+            ->when($edition, fn ($q) => $q->forEdition($edition))
+            ->get();
 
         // The Arti Game: the hardcoded first tournament.
         // Fewer catches ranks higher; ties are broken by the fastest completion time.
