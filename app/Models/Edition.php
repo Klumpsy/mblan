@@ -53,6 +53,19 @@ class Edition extends Model
         $this->update(['is_active' => true]);
     }
 
+    /**
+     * The --c-primary-* declarations for this edition's accent palette: the
+     * pinned palette when set, otherwise generated from the base color.
+     */
+    public function cssVariables(): string
+    {
+        $palette = $this->palette ?: \App\Support\EditionPalette::fromBaseColor($this->primary_color);
+
+        return collect($palette)
+            ->map(fn (string $rgb, string $shade) => "--c-primary-{$shade}: {$rgb};")
+            ->implode(' ');
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

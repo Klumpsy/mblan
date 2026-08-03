@@ -15,6 +15,9 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    {{-- Accent colors of the active edition (recap pages override per editie). --}}
+    <x-edition-theme />
+
     @livewireStyles
 </head>
 
