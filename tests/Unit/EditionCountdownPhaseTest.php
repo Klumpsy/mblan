@@ -3,6 +3,8 @@
 use App\Models\Edition;
 use Illuminate\Support\Carbon;
 
+afterEach(fn () => Carbon::setTestNow());
+
 it('reports none when no start date is set', function () {
     $edition = new Edition(['starts_at' => null, 'ends_at' => null]);
 
