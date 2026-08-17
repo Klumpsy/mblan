@@ -89,6 +89,31 @@ class Edition extends Model
     }
 
     /**
+     * Where the active edition sits in its lifecycle, for the landing
+     * countdown: 'none' (no start date), 'upcoming' (before the start),
+     * 'live' (during the LAN — the whole end day counts, or any time from
+     * the start when there is no end date), or 'over' (after the end day).
+     */
+    public function countdownPhase(): string
+    {
+        if (! $this->starts_at) {
+            return 'none';
+        }
+
+        $now = now();
+
+        if ($now->lt($this->starts_at)) {
+            return 'upcoming';
+        }
+
+        if (! $this->ends_at) {
+            return 'live';
+        }
+
+        return $now->lte($this->ends_at->copy()->endOfDay()) ? 'live' : 'over';
+    }
+
+    /**
      * The backdrop sprites for this edition as image URLs: the uploaded
      * sprite package when one is set, otherwise the built-in scenery set.
      *
