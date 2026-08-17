@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 // lives behind login.
 Route::view('/', 'index')->name('home');
 
+// De editie-klassieker (Arti in Space). Publiek, net als vroeger op de
+// landingspagina; game.sync blijft achter login.
+Route::view('/spel', 'spel')->name('spel');
+
 // Login met Discord (OAuth).
 Route::get('/auth/discord', [DiscordController::class, 'redirect'])->name('discord.redirect');
 Route::get('/auth/discord/callback', [DiscordController::class, 'callback'])->name('discord.callback');
