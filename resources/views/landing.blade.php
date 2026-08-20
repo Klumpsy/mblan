@@ -35,12 +35,12 @@
             {{-- wordmark / logo --}}
             @if ($edition?->logo_path)
                 <img src="{{ asset('storage/'.$edition->logo_path) }}" alt="{{ \App\Models\Edition::currentName() }}"
-                     class="pixel max-h-28 w-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]" />
+                     class="showcase-logo max-h-36 w-auto" />
             @else
-                <h1 class="flex items-baseline justify-center font-display font-bold leading-none tracking-tight">
-                    <span class="bg-gradient-to-b from-white via-[#e7edeb] to-[#7f8f89] bg-clip-text text-transparent text-[clamp(2.2rem,10vw,5rem)] drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">{{ $brandBase }}</span>
+                <h1 class="showcase-wordmark relative flex items-baseline justify-center font-display font-bold leading-none tracking-tight">
+                    <span class="relative bg-gradient-to-b from-white via-[#eaf2ef] to-[#8fa39b] bg-clip-text text-transparent text-[clamp(2.6rem,11vw,6rem)]">{{ $brandBase }}</span>
                     @if ($brandAccent !== '')
-                        <span class="bg-gradient-to-b from-primary-200 via-primary-400 to-primary-600 bg-clip-text text-transparent text-[clamp(2.2rem,10vw,5rem)]">{{ $brandAccent }}</span>
+                        <span class="relative bg-gradient-to-b from-primary-100 via-primary-300 to-primary-600 bg-clip-text text-transparent text-[clamp(2.6rem,11vw,6rem)]">{{ $brandAccent }}</span>
                     @endif
                 </h1>
             @endif
