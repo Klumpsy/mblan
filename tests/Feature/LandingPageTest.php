@@ -4,6 +4,8 @@ use function Pest\Laravel\get;
 use App\Models\Edition;
 use Illuminate\Support\Carbon;
 
+afterEach(fn () => Carbon::setTestNow());
+
 it('serves the Arti in Space game at /spel', function () {
     get('/spel')
         ->assertOk()
