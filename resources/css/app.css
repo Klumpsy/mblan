@@ -199,6 +199,97 @@
 .showcase-planet { animation: showcase-float 12s ease-in-out infinite; will-change: transform; }
 .showcase-sprite { animation: showcase-drift 14s ease-in-out infinite alternate; will-change: transform; }
 
+/* Drifting coloured nebula clouds for a livelier, more colourful deep-space feel */
+@keyframes showcase-nebula-drift {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(3%, -2%) scale(1.08); }
+}
+.showcase-nebula {
+    animation: showcase-nebula-drift 55s ease-in-out infinite;
+    will-change: transform;
+}
+
+/* Big soft twinkling coloured stars, slower than the fine starfield */
+.showcase-stars-lg { animation: showcase-twinkle 9s ease-in-out infinite; }
+
+/* Shooting stars: a quick diagonal streak, then a long idle gap */
+@keyframes showcase-shoot {
+    0%   { transform: translate(0, 0); opacity: 0; }
+    3%   { opacity: 1; }
+    11%  { transform: translate(-240px, 170px); opacity: 0; }
+    100% { transform: translate(-240px, 170px); opacity: 0; }
+}
+.shooting-star {
+    width: 3px; height: 3px; border-radius: 9999px;
+    background: #eafff2;
+    box-shadow: 0 0 6px 1px #cfefff;
+    animation: showcase-shoot 9s ease-in infinite;
+    will-change: transform, opacity;
+}
+.shooting-star::before {
+    content: ""; position: absolute; right: 2px; top: 1px;
+    width: 90px; height: 1px;
+    background: linear-gradient(to left, #eafff2, transparent);
+    transform: rotate(-35deg); transform-origin: right center;
+}
+
+/* Vignette: a rocket arcs across from bottom-left to top-right, then rests off-screen */
+@keyframes rocket-fly {
+    0%   { transform: translate(-16vw, 34vh) rotate(42deg); opacity: 0; }
+    7%   { opacity: 1; }
+    52%  { opacity: 1; }
+    60%  { transform: translate(116vw, -34vh) rotate(42deg); opacity: 0; }
+    100% { transform: translate(116vw, -34vh) rotate(42deg); opacity: 0; }
+}
+.vignette-rocket { animation: rocket-fly 17s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Vignette: a UFO cruises across trailing an abduction beam */
+@keyframes ufo-cross {
+    0%   { transform: translateX(-14vw); }
+    100% { transform: translateX(90vw); }
+}
+@keyframes ufo-bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(7px); }
+}
+.vignette-ufo { animation: ufo-cross 30s linear infinite; will-change: transform; }
+.vignette-ufo .ufo-body { animation: ufo-bob 3.2s ease-in-out infinite; }
+.ufo-beam {
+    position: absolute; left: 50%; top: 78%;
+    width: clamp(30px, 6vw, 64px); height: clamp(70px, 16vh, 150px);
+    transform: translateX(-50%);
+    clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
+    background: linear-gradient(to bottom,
+        color-mix(in srgb, var(--c-primary-400, #65E59A) 65%, transparent),
+        transparent 88%);
+    animation: beam-pulse 2.6s ease-in-out infinite;
+}
+@keyframes beam-pulse {
+    0%, 100% { opacity: 0.18; }
+    50%      { opacity: 0.5; }
+}
+
+/* Vignette: a comet streaks diagonally with a glowing tail */
+@keyframes comet-streak {
+    0%   { transform: translate(92vw, -12vh) rotate(210deg); opacity: 0; }
+    5%   { opacity: 1; }
+    20%  { opacity: 1; }
+    27%  { transform: translate(-22vw, 64vh) rotate(210deg); opacity: 0; }
+    100% { transform: translate(-22vw, 64vh) rotate(210deg); opacity: 0; }
+}
+.vignette-comet { animation: comet-streak 15s linear infinite; will-change: transform, opacity; }
+
+/* Vignette: an astronaut slowly tumbles across the scene */
+@keyframes astro-tumble {
+    0%   { transform: translate(-14vw, 10vh) rotate(0deg); }
+    100% { transform: translate(112vw, -8vh) rotate(360deg); }
+}
+.vignette-astronaut { animation: astro-tumble 46s linear infinite; will-change: transform; }
+
+/* A moon orbiting the dominant planet */
+@keyframes orbit-spin { to { transform: rotate(360deg); } }
+.showcase-orbit { animation: orbit-spin 34s linear infinite; will-change: transform; }
+
 /* click / tap target marker */
 .walk-target {
     position: absolute;
