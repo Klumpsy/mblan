@@ -290,6 +290,65 @@
 @keyframes orbit-spin { to { transform: rotate(360deg); } }
 .showcase-orbit { animation: orbit-spin 34s linear infinite; will-change: transform; }
 
+/* Second, deeper nebula layer drifting the other way for parallax depth */
+@keyframes showcase-nebula-drift-2 {
+    0%, 100% { transform: translate(0, 0) scale(1.05); }
+    50%      { transform: translate(-4%, 3%) scale(1); }
+}
+.showcase-nebula-2 { animation: showcase-nebula-drift-2 72s ease-in-out infinite; will-change: transform; }
+
+/* Big soft galaxy glow, slowly breathing */
+@keyframes galaxy-pulse {
+    0%, 100% { opacity: 0.45; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 0.75; transform: translate(-50%, -50%) scale(1.08); }
+}
+.showcase-galaxy { animation: galaxy-pulse 17s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Parallax star layers: drift transform + twinkle opacity, combined */
+@keyframes star-parallax-a { from { transform: translateY(0); } to { transform: translateY(-22px); } }
+@keyframes star-parallax-b { from { transform: translateY(0); } to { transform: translateY(-46px); } }
+.star-far  { animation: star-parallax-a 42s ease-in-out infinite alternate, showcase-twinkle 6s ease-in-out infinite; }
+.star-near { animation: star-parallax-b 30s ease-in-out infinite alternate, showcase-twinkle 9s ease-in-out infinite; }
+
+/* A distant star cluster slowly rotating */
+@keyframes cluster-spin { to { transform: rotate(360deg); } }
+.showcase-cluster { animation: cluster-spin 140s linear infinite; will-change: transform; }
+
+/* Floating dust motes */
+@keyframes dust-float {
+    0%   { transform: translate(0, 0); opacity: 0; }
+    12%  { opacity: 0.7; }
+    88%  { opacity: 0.7; }
+    100% { transform: translate(22px, -34px); opacity: 0; }
+}
+.dust { animation: dust-float 13s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Per-sprite life: gentle bob / slow spin / wobble / pulse. Applied to the
+   INNER img so an outer wrapper can still handle cross-screen travel. */
+@keyframes sprite-bob-soft { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes sprite-spin-slow { to { transform: rotate(360deg); } }
+@keyframes sprite-wobble { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@keyframes sprite-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.14); } }
+.anim-bob    { animation: sprite-bob-soft 3.4s ease-in-out infinite; }
+.anim-spin   { animation: sprite-spin-slow 20s linear infinite; }
+.anim-wobble { animation: sprite-wobble 4.2s ease-in-out infinite; }
+.anim-pulse  { animation: sprite-pulse 3s ease-in-out infinite; }
+
+/* Breathing glow behind the planet and other light sources */
+@keyframes glow-pulse {
+    0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 0.6;  transform: translate(-50%, -50%) scale(1.12); }
+}
+.showcase-glow { animation: glow-pulse 8s ease-in-out infinite; will-change: transform, opacity; }
+
+/* Premium wordmark: soft neon breathing + a slow diagonal shine sweep */
+@keyframes wordmark-breathe {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(101,229,154,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.85)); }
+    50%      { filter: drop-shadow(0 0 22px rgba(101,229,154,0.65)) drop-shadow(0 2px 6px rgba(0,0,0,0.85)); }
+}
+.showcase-wordmark { animation: wordmark-breathe 6s ease-in-out infinite; }
+.showcase-logo { filter: drop-shadow(0 0 24px rgba(101,229,154,0.35)) drop-shadow(0 4px 10px rgba(0,0,0,0.7)); image-rendering: auto; }
+
 /* click / tap target marker */
 .walk-target {
     position: absolute;
