@@ -4,6 +4,7 @@ import { imageUpload } from './image-upload';
 import { timelineChase } from './timeline-chase';
 import { timelineLightbox } from './timeline-lightbox';
 import spaceClassic from './space-classic';
+import { editionCountdown } from './edition-countdown';
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -60,9 +61,12 @@ document.addEventListener('alpine:init', () => {
         revealObserver.observe(el);
     });
 
-    // spaceClassic: de editie-klassieker op de landingspagina — een
+    // spaceClassic: de editie-klassieker op /spel (Arti in Space) — een
     // Galaxian-achtige oneindige shooter. Zie resources/js/space-classic.js.
     Alpine.data('spaceClassic', spaceClassic);
+
+    // editionCountdown: de aftelklok op de themische landingspagina.
+    Alpine.data('editionCountdown', editionCountdown);
 
     // x-tilt: subtle pointer-follow parallax on cards.
     Alpine.directive('tilt', (el) => {

@@ -15,9 +15,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Public splash: the editie-klassieker (space shooter). Everything else
-// lives behind login.
-Route::view('/', 'index')->name('home');
+// Publieke themische landingspagina van de actieve editie.
+Route::view('/', 'landing')->name('home');
+
+// De editie-klassieker (Arti in Space). Publiek, net als vroeger op de
+// landingspagina; game.sync blijft achter login.
+Route::view('/spel', 'spel')->name('spel');
 
 // Login met Discord (OAuth).
 Route::get('/auth/discord', [DiscordController::class, 'redirect'])->name('discord.redirect');
