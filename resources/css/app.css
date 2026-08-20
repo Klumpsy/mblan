@@ -182,6 +182,23 @@
     50%      { translate: 0 -9%; }
 }
 
+/* ===== Themed landing showcase ===== */
+@keyframes showcase-drift {
+    from { transform: translateX(-8%); }
+    to   { transform: translateX(8%); }
+}
+@keyframes showcase-float {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+@keyframes showcase-twinkle {
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 0.85; }
+}
+.showcase-stars { animation: showcase-twinkle 6s ease-in-out infinite; }
+.showcase-planet { animation: showcase-float 12s ease-in-out infinite; will-change: transform; }
+.showcase-sprite { animation: showcase-drift 14s ease-in-out infinite alternate; will-change: transform; }
+
 /* click / tap target marker */
 .walk-target {
     position: absolute;
