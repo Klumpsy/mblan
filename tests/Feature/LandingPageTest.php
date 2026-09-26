@@ -58,3 +58,24 @@ it('shows a recap link after the edition is over', function () {
 it('links to the relocated game at /spel', function () {
     get('/')->assertSee(route('spel'));
 });
+
+it('renders the uploaded edition logo blended over the canvas starfield', function () {
+    Edition::current()->update(['logo_path' => 'editions/test-logo.png']);
+
+    $html = get('/')->assertOk()->getContent();
+
+    expect($html)
+        ->toContain('<canvas data-space-stars')
+        ->toContain('data-parallax')
+        ->toMatch('/<img[^>]*src="[^"]*editions\/test-logo\.png"[^>]*class="[^"]*showcase-logo[^"]*"[^>]*data-knockout/');
+});
+
+it('keeps the wordmark fallback on the starfield when the edition has no logo', function () {
+    Edition::current()->update(['logo_path' => null]);
+
+    $html = get('/')->assertOk()->getContent();
+
+    expect($html)
+        ->toContain('<canvas data-space-stars')
+        ->toContain('showcase-wordmark');
+});

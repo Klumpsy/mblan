@@ -5,6 +5,8 @@ import { timelineChase } from './timeline-chase';
 import { timelineLightbox } from './timeline-lightbox';
 import spaceClassic from './space-classic';
 import { editionCountdown } from './edition-countdown';
+import { initSpaceStars, initParallax } from './space-stars';
+import { knockoutImage } from './logo-knockout';
 
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -92,8 +94,22 @@ document.addEventListener('alpine:init', () => {
  * Re-run after Livewire SPA navigations.
  */
 function boot() {
+    // The landing starfield still paints one static frame under reduced motion.
+    document.querySelectorAll('canvas[data-space-stars]').forEach((c) => {
+        if (c.dataset.booted) return;
+        c.dataset.booted = '1';
+        initSpaceStars(c, { reducedMotion: prefersReducedMotion });
+    });
+
+    document.querySelectorAll('img[data-knockout]').forEach((img) => {
+        if (img.dataset.booted) return;
+        img.dataset.booted = '1';
+        knockoutImage(img);
+    });
+
     if (prefersReducedMotion) return;
     document.querySelectorAll('canvas[data-embers]').forEach((c) => initEmbers(c));
+    initParallax(document);
 }
 
 document.addEventListener('DOMContentLoaded', boot);

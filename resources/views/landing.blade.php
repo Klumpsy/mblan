@@ -32,36 +32,45 @@
         {{-- ===== bottom-anchored content panel ===== --}}
         <div class="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-5 px-6 pb-10 pt-24 text-center sm:pb-14">
 
-            {{-- wordmark / logo --}}
-            @if ($edition?->logo_path)
-                <img src="{{ asset('storage/'.$edition->logo_path) }}" alt="{{ \App\Models\Edition::currentName() }}"
-                     class="showcase-logo max-h-36 w-auto" />
-            @else
-                <h1 class="showcase-wordmark relative flex items-baseline justify-center font-display font-bold leading-none tracking-tight">
-                    <span class="relative bg-gradient-to-b from-white via-[#eaf2ef] to-[#8fa39b] bg-clip-text text-transparent text-[clamp(2.6rem,11vw,6rem)]">{{ $brandBase }}</span>
-                    @if ($brandAccent !== '')
-                        <span class="relative bg-gradient-to-b from-primary-100 via-primary-300 to-primary-600 bg-clip-text text-transparent text-[clamp(2.6rem,11vw,6rem)]">{{ $brandAccent }}</span>
-                    @endif
-                </h1>
-            @endif
+            {{-- wordmark / logo. An uploaded logo is screen-blended so a dark
+                 square behind the artwork melts into the scene; a dark halo
+                 underneath keeps it crisp over bright nebula. --}}
+            <div class="parallax-layer showcase-enter" data-parallax="0.08" style="--enter-delay: 120ms;">
+                @if ($edition?->logo_path)
+                    <div class="showcase-logo-wrap relative flex items-center justify-center">
+                        <div class="showcase-logo-halo absolute" aria-hidden="true"></div>
+                        <img src="{{ asset('storage/'.$edition->logo_path) }}" alt="{{ \App\Models\Edition::currentName() }}"
+                             class="showcase-logo relative w-auto" data-knockout decoding="async" fetchpriority="high" />
+                    </div>
+                @else
+                    <h1 class="showcase-wordmark relative flex items-baseline justify-center font-display font-bold leading-none tracking-tight">
+                        <span class="relative bg-gradient-to-b from-white via-[#eaf2ef] to-[#8fa39b] bg-clip-text text-transparent text-[clamp(2.6rem,11vw,6rem)]">{{ $brandBase }}</span>
+                        @if ($brandAccent !== '')
+                            <span class="relative bg-gradient-to-b from-primary-100 via-primary-300 to-primary-600 bg-clip-text text-transparent text-[clamp(2.6rem,11vw,6rem)]">{{ $brandAccent }}</span>
+                        @endif
+                    </h1>
+                @endif
+            </div>
 
-            <p class="font-pixel text-[9px] uppercase tracking-[0.18em] text-white/85 sm:text-[11px]">{{ $tagline }}</p>
+            <p class="showcase-enter font-pixel text-[9px] uppercase tracking-[0.18em] text-white/85 sm:text-[11px]" style="--enter-delay: 420ms;">{{ $tagline }}</p>
 
             {{-- ===== full-lifecycle countdown ===== --}}
             <div class="min-h-[3.5rem]">
                 @if ($phase === 'upcoming')
                     <div x-data="editionCountdown({ target: '{{ $edition->starts_at->toIso8601String() }}' })"
                          class="flex items-stretch gap-2 font-pixel">
-                        @foreach ([['days','dg'], ['hours','u'], ['minutes','m'], ['seconds','s']] as [$unit, $label])
-                            <div class="min-w-[3rem] rounded border border-primary-500/30 bg-forge-black/60 px-2 py-2">
-                                <div class="text-lg font-bold leading-none text-primary-200"
-                                     x-text="'{{ $unit }}' === 'days' ? String(days) : String({{ $unit }}).padStart(2, '0')"></div>
+                        @foreach ([['days','dg'], ['hours','u'], ['minutes','m'], ['seconds','s']] as $i => [$unit, $label])
+                            <div class="countdown-cell showcase-enter min-w-[3rem] rounded border border-primary-500/30 bg-forge-black/60 px-2 py-2"
+                                 style="--enter-delay: {{ 560 + $i * 90 }}ms;">
+                                <div class="countdown-digit text-lg font-bold leading-none text-primary-200"
+                                     x-text="'{{ $unit }}' === 'days' ? String(days) : String({{ $unit }}).padStart(2, '0')"
+                                     x-effect="void {{ $unit }}; $el.classList.remove('is-ticking'); void $el.offsetWidth; $el.classList.add('is-ticking')"></div>
                                 <div class="mt-1 text-[7px] uppercase tracking-widest text-forge-steel/60">{{ $label }}</div>
                             </div>
                         @endforeach
                     </div>
                 @elseif ($phase === 'live')
-                    <div class="inline-flex items-center gap-2 rounded border border-primary-500/40 bg-primary-500/10 px-4 py-3 font-pixel text-sm uppercase tracking-[0.2em] text-primary-200">
+                    <div style="--enter-delay: 560ms;" class="showcase-enter inline-flex items-center gap-2 rounded border border-primary-500/40 bg-primary-500/10 px-4 py-3 font-pixel text-sm uppercase tracking-[0.2em] text-primary-200">
                         <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-primary-400"></span> NU BEZIG
                     </div>
                 @elseif ($phase === 'over')
@@ -75,13 +84,15 @@
             </div>
 
             {{-- ===== single CTA ===== --}}
-            @auth
-                <a href="{{ route('schedule') }}" class="btn-wood clip-corner text-sm">Doe mee</a>
-            @else
-                <button type="button" @click="open = true" class="btn-wood clip-corner text-sm">Doe mee</button>
-            @endauth
+            <div class="showcase-enter" style="--enter-delay: 900ms;">
+                @auth
+                    <a href="{{ route('schedule') }}" class="btn-wood btn-wood-glow clip-corner text-sm">Doe mee</a>
+                @else
+                    <button type="button" @click="open = true" class="btn-wood btn-wood-glow clip-corner text-sm">Doe mee</button>
+                @endauth
+            </div>
 
-            <a href="{{ route('spel') }}" class="font-pixel text-[7px] uppercase tracking-widest text-forge-steel/45 hover:text-primary-300">Speel Arti in Space</a>
+            <a href="{{ route('spel') }}" class="showcase-enter font-pixel text-[7px] uppercase tracking-widest text-forge-steel/45 transition-colors duration-300 hover:text-primary-300" style="--enter-delay: 1100ms;">Speel Arti in Space</a>
         </div>
 
         @include('landing._auth-modal')

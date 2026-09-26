@@ -182,86 +182,149 @@
     50%      { translate: 0 -9%; }
 }
 
-/* ===== Themed landing showcase ===== */
-@keyframes showcase-drift {
-    from { transform: translateX(-8%); }
-    to   { transform: translateX(8%); }
+/* ===========================================================================
+   Themed landing showcase ("Arti in Space").
+   Colours read from the edition palette (--c-primary-*) over a fixed deep-navy
+   base, so the whole scene re-tints per edition. Layers that follow the
+   pointer sit in a .parallax-layer wrapper (resources/js/space-stars.js writes
+   --px/--py); the wrapper only translates, so keyframes on the children never
+   fight it. Motion is eased everywhere; sprites fade in and out of vignettes
+   instead of popping.
+   =========================================================================== */
+:root {
+    --space-deep: #02050e;
+    --space-navy: #050b1c;
+    --space-blue: 56 92 224;   /* cold indigo that sits between any accent and the navy base */
 }
-@keyframes showcase-float {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(-14px); }
-}
-@keyframes showcase-twinkle {
-    0%, 100% { opacity: 0.55; }
-    50%      { opacity: 0.85; }
-}
-.showcase-stars { animation: showcase-twinkle 6s ease-in-out infinite; }
-.showcase-planet { animation: showcase-float 12s ease-in-out infinite; will-change: transform; }
-.showcase-sprite { animation: showcase-drift 14s ease-in-out infinite alternate; will-change: transform; }
 
-/* Drifting coloured nebula clouds for a livelier, more colourful deep-space feel */
-@keyframes showcase-nebula-drift {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50%      { transform: translate(3%, -2%) scale(1.08); }
+.parallax-layer {
+    position: absolute;
+    inset: 0;
+    transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
+    will-change: transform;
 }
+/* Full-bleed layers overscan a little so the shift never exposes an edge. */
+.parallax-layer-bleed { inset: -5%; }
+/* Inside the content panel the wrapper is a normal flow item, not a layer. */
+.showcase-enter.parallax-layer { position: relative; inset: auto; }
+
+.showcase-base {
+    background:
+        radial-gradient(130% 100% at 50% -10%, rgb(var(--c-primary-900) / 0.85) 0%, var(--space-navy) 46%, var(--space-deep) 100%);
+}
+
+/* Nebula clouds */
 .showcase-nebula {
+    background-image:
+        radial-gradient(ellipse 54% 46% at 20% 28%, rgb(var(--c-primary-500) / 0.42), rgb(var(--c-primary-500) / 0) 70%),
+        radial-gradient(ellipse 50% 40% at 84% 20%, rgb(var(--space-blue) / 0.48), rgb(var(--space-blue) / 0) 70%),
+        radial-gradient(ellipse 60% 48% at 74% 70%, rgb(var(--c-primary-300) / 0.30), rgb(var(--c-primary-300) / 0) 72%),
+        radial-gradient(ellipse 54% 42% at 10% 78%, rgb(var(--space-blue) / 0.36), rgb(var(--space-blue) / 0) 72%);
     animation: showcase-nebula-drift 55s ease-in-out infinite;
     will-change: transform;
 }
-
-/* Big soft twinkling coloured stars, slower than the fine starfield */
-.showcase-stars-lg { animation: showcase-twinkle 9s ease-in-out infinite; }
-
-/* Shooting stars: a quick diagonal streak, then a long idle gap */
-@keyframes showcase-shoot {
-    0%   { transform: translate(0, 0); opacity: 0; }
-    3%   { opacity: 1; }
-    11%  { transform: translate(-240px, 170px); opacity: 0; }
-    100% { transform: translate(-240px, 170px); opacity: 0; }
+.showcase-nebula-2 {
+    background-image:
+        radial-gradient(ellipse 46% 40% at 62% 40%, rgb(var(--c-primary-700) / 0.55), rgb(var(--c-primary-700) / 0) 72%),
+        radial-gradient(ellipse 42% 36% at 34% 60%, rgb(var(--space-blue) / 0.5), rgb(var(--space-blue) / 0) 72%),
+        radial-gradient(ellipse 50% 42% at 88% 62%, rgb(var(--c-primary-400) / 0.28), rgb(var(--c-primary-400) / 0) 74%);
+    animation: showcase-nebula-drift-2 72s ease-in-out infinite;
+    will-change: transform;
 }
-.shooting-star {
-    width: 3px; height: 3px; border-radius: 9999px;
-    background: #eafff2;
-    box-shadow: 0 0 6px 1px #cfefff;
-    animation: showcase-shoot 9s ease-in infinite;
+@keyframes showcase-nebula-drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50%      { transform: translate3d(3%, -2%, 0) scale(1.08); }
+}
+@keyframes showcase-nebula-drift-2 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); }
+    50%      { transform: translate3d(-4%, 3%, 0) scale(1); }
+}
+
+/* Big soft galaxy glow, slowly breathing */
+.showcase-galaxy {
+    width: 90vw; height: 90vw; max-width: 1100px; max-height: 1100px;
+    background: radial-gradient(circle, rgb(var(--c-primary-200) / 0.22) 0%, rgb(var(--c-primary-700) / 0.12) 35%, transparent 62%);
+    animation: galaxy-pulse 17s ease-in-out infinite;
     will-change: transform, opacity;
 }
-.shooting-star::before {
-    content: ""; position: absolute; right: 2px; top: 1px;
-    width: 90px; height: 1px;
-    background: linear-gradient(to left, #eafff2, transparent);
-    transform: rotate(-35deg); transform-origin: right center;
+@keyframes galaxy-pulse {
+    0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 0.8; transform: translate(-50%, -50%) scale(1.08); }
 }
 
-/* Vignette: a rocket arcs across from bottom-left to top-right, then rests off-screen */
-@keyframes rocket-fly {
-    0%   { transform: translate(-16vw, 34vh) rotate(42deg); opacity: 0; }
-    7%   { opacity: 1; }
-    52%  { opacity: 1; }
-    60%  { transform: translate(116vw, -34vh) rotate(42deg); opacity: 0; }
-    100% { transform: translate(116vw, -34vh) rotate(42deg); opacity: 0; }
+/* Dominant planet + breathing glow + orbiting moon */
+.showcase-planet {
+    animation: showcase-float 12s ease-in-out infinite;
+    will-change: transform;
+    filter: drop-shadow(0 0 18px rgb(var(--c-primary-400) / 0.35));
 }
-.vignette-rocket { animation: rocket-fly 17s ease-in-out infinite; will-change: transform, opacity; }
+@keyframes showcase-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -14px, 0); }
+}
+.showcase-glow {
+    background: radial-gradient(circle, rgb(var(--c-primary-500) / 0.40) 0%, rgb(var(--c-primary-500) / 0) 62%);
+    animation: glow-pulse 8s ease-in-out infinite;
+    will-change: transform, opacity;
+}
+@keyframes glow-pulse {
+    0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
+    50%      { opacity: 0.6;  transform: translate(-50%, -50%) scale(1.12); }
+}
+.showcase-orbit { animation: orbit-spin 34s linear infinite; will-change: transform; }
+@keyframes orbit-spin { to { transform: rotate(360deg); } }
 
-/* Vignette: a UFO cruises across trailing an abduction beam */
-@keyframes ufo-cross {
-    0%   { transform: translateX(-14vw); }
-    100% { transform: translateX(90vw); }
+/* Distant star cluster slowly rotating */
+.showcase-cluster {
+    animation: cluster-spin 140s linear infinite;
+    will-change: transform;
+    filter: drop-shadow(0 0 12px rgb(var(--c-primary-300) / 0.6));
 }
-@keyframes ufo-bob {
-    0%, 100% { transform: translateY(0); }
-    50%      { transform: translateY(7px); }
+@keyframes cluster-spin { to { transform: rotate(360deg); } }
+
+/* Stationary drifters */
+.showcase-sprite { animation: showcase-drift 14s ease-in-out infinite alternate; will-change: transform; }
+@keyframes showcase-drift {
+    from { transform: translate3d(-8%, 0, 0); }
+    to   { transform: translate3d(8%, 0, 0); }
 }
-.vignette-ufo { animation: ufo-cross 30s linear infinite; will-change: transform; }
-.vignette-ufo .ufo-body { animation: ufo-bob 3.2s ease-in-out infinite; }
+
+/* Vignette: rocket. The wrapper crosses the screen at a steady pace and fades
+   at both ends; the body climbs in an arc and leans into the climb. */
+.vignette-rocket { animation: rocket-x 24s linear infinite; will-change: transform, opacity; }
+.vignette-rocket-body { animation: rocket-y 24s cubic-bezier(0.45, 0, 0.3, 1) infinite; will-change: transform; }
+@keyframes rocket-x {
+    0%   { transform: translate3d(-16vw, 0, 0); opacity: 0; }
+    5%   { opacity: 1; }
+    55%  { opacity: 1; }
+    62%  { transform: translate3d(116vw, 0, 0); opacity: 0; }
+    100% { transform: translate3d(116vw, 0, 0); opacity: 0; }
+}
+@keyframes rocket-y {
+    0%   { transform: translate3d(0, 34vh, 0) rotate(36deg); }
+    62%  { transform: translate3d(0, -30vh, 0) rotate(48deg); }
+    100% { transform: translate3d(0, -30vh, 0) rotate(48deg); }
+}
+
+/* Vignette: UFO cruises across on a gentle wave, trailing its beam */
+.vignette-ufo { animation: ufo-x 36s linear infinite; will-change: transform, opacity; }
+.vignette-ufo-body { animation: ufo-wave 5.2s ease-in-out infinite; will-change: transform; }
+@keyframes ufo-x {
+    0%   { transform: translate3d(-14vw, 0, 0); opacity: 0; }
+    6%   { opacity: 1; }
+    94%  { opacity: 1; }
+    100% { transform: translate3d(104vw, 0, 0); opacity: 0; }
+}
+@keyframes ufo-wave {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(-3deg); }
+    50%      { transform: translate3d(0, 10px, 0) rotate(3deg); }
+}
 .ufo-beam {
     position: absolute; left: 50%; top: 78%;
     width: clamp(30px, 6vw, 64px); height: clamp(70px, 16vh, 150px);
     transform: translateX(-50%);
     clip-path: polygon(34% 0, 66% 0, 100% 100%, 0 100%);
-    background: linear-gradient(to bottom,
-        color-mix(in srgb, var(--c-primary-400, #65E59A) 65%, transparent),
-        transparent 88%);
+    background: linear-gradient(to bottom, rgb(var(--c-primary-400) / 0.65), transparent 88%);
     animation: beam-pulse 2.6s ease-in-out infinite;
 }
 @keyframes beam-pulse {
@@ -269,63 +332,43 @@
     50%      { opacity: 0.5; }
 }
 
-/* Vignette: a comet streaks diagonally with a glowing tail */
+/* Vignette: comet streaks diagonally, accelerating, with a soft entry and exit */
+.vignette-comet { animation: comet-streak 16s cubic-bezier(0.55, 0, 0.85, 0.4) infinite; will-change: transform, opacity; }
+.vignette-comet-body { transform: rotate(210deg); }
 @keyframes comet-streak {
-    0%   { transform: translate(92vw, -12vh) rotate(210deg); opacity: 0; }
-    5%   { opacity: 1; }
-    20%  { opacity: 1; }
-    27%  { transform: translate(-22vw, 64vh) rotate(210deg); opacity: 0; }
-    100% { transform: translate(-22vw, 64vh) rotate(210deg); opacity: 0; }
+    0%   { transform: translate3d(92vw, -12vh, 0); opacity: 0; }
+    4%   { opacity: 1; }
+    22%  { opacity: 1; }
+    27%  { transform: translate3d(-22vw, 64vh, 0); opacity: 0; }
+    100% { transform: translate3d(-22vw, 64vh, 0); opacity: 0; }
 }
-.vignette-comet { animation: comet-streak 15s linear infinite; will-change: transform, opacity; }
 
-/* Vignette: an astronaut slowly tumbles across the scene */
+/* Vignette: astronaut slowly tumbles across the scene */
+.vignette-astronaut { animation: astro-tumble 48s linear infinite; will-change: transform; }
 @keyframes astro-tumble {
-    0%   { transform: translate(-14vw, 10vh) rotate(0deg); }
-    100% { transform: translate(112vw, -8vh) rotate(360deg); }
+    0%   { transform: translate3d(-14vw, 10vh, 0) rotate(0deg); opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 1; }
+    100% { transform: translate3d(112vw, -8vh, 0) rotate(360deg); opacity: 0; }
 }
-.vignette-astronaut { animation: astro-tumble 46s linear infinite; will-change: transform; }
-
-/* A moon orbiting the dominant planet */
-@keyframes orbit-spin { to { transform: rotate(360deg); } }
-.showcase-orbit { animation: orbit-spin 34s linear infinite; will-change: transform; }
-
-/* Second, deeper nebula layer drifting the other way for parallax depth */
-@keyframes showcase-nebula-drift-2 {
-    0%, 100% { transform: translate(0, 0) scale(1.05); }
-    50%      { transform: translate(-4%, 3%) scale(1); }
-}
-.showcase-nebula-2 { animation: showcase-nebula-drift-2 72s ease-in-out infinite; will-change: transform; }
-
-/* Big soft galaxy glow, slowly breathing */
-@keyframes galaxy-pulse {
-    0%, 100% { opacity: 0.45; transform: translate(-50%, -50%) scale(1); }
-    50%      { opacity: 0.75; transform: translate(-50%, -50%) scale(1.08); }
-}
-.showcase-galaxy { animation: galaxy-pulse 17s ease-in-out infinite; will-change: transform, opacity; }
-
-/* Parallax star layers: drift transform + twinkle opacity, combined */
-@keyframes star-parallax-a { from { transform: translateY(0); } to { transform: translateY(-22px); } }
-@keyframes star-parallax-b { from { transform: translateY(0); } to { transform: translateY(-46px); } }
-.star-far  { animation: star-parallax-a 42s ease-in-out infinite alternate, showcase-twinkle 6s ease-in-out infinite; }
-.star-near { animation: star-parallax-b 30s ease-in-out infinite alternate, showcase-twinkle 9s ease-in-out infinite; }
-
-/* A distant star cluster slowly rotating */
-@keyframes cluster-spin { to { transform: rotate(360deg); } }
-.showcase-cluster { animation: cluster-spin 140s linear infinite; will-change: transform; }
 
 /* Floating dust motes */
+.dust {
+    background: rgb(var(--c-primary-200));
+    box-shadow: 0 0 6px rgb(var(--c-primary-300) / 0.8);
+    animation: dust-float 13s ease-in-out infinite;
+    will-change: transform, opacity;
+}
 @keyframes dust-float {
-    0%   { transform: translate(0, 0); opacity: 0; }
+    0%   { transform: translate3d(0, 0, 0); opacity: 0; }
     12%  { opacity: 0.7; }
     88%  { opacity: 0.7; }
-    100% { transform: translate(22px, -34px); opacity: 0; }
+    100% { transform: translate3d(22px, -34px, 0); opacity: 0; }
 }
-.dust { animation: dust-float 13s ease-in-out infinite; will-change: transform, opacity; }
 
 /* Per-sprite life: gentle bob / slow spin / wobble / pulse. Applied to the
    INNER img so an outer wrapper can still handle cross-screen travel. */
-@keyframes sprite-bob-soft { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+@keyframes sprite-bob-soft { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -9px, 0); } }
 @keyframes sprite-spin-slow { to { transform: rotate(360deg); } }
 @keyframes sprite-wobble { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
 @keyframes sprite-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.14); } }
@@ -334,20 +377,77 @@
 .anim-wobble { animation: sprite-wobble 4.2s ease-in-out infinite; }
 .anim-pulse  { animation: sprite-pulse 3s ease-in-out infinite; }
 
-/* Breathing glow behind the planet and other light sources */
-@keyframes glow-pulse {
-    0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
-    50%      { opacity: 0.6;  transform: translate(-50%, -50%) scale(1.12); }
-}
-.showcase-glow { animation: glow-pulse 8s ease-in-out infinite; will-change: transform, opacity; }
+/* Edge darkening + bottom scrim (navy, never brown) */
+.showcase-vignette { background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgb(2 5 14 / 0.6) 100%); }
+.showcase-scrim { background: linear-gradient(to top, rgb(2 5 14 / 0.95) 8%, rgb(2 5 14 / 0.55) 45%, transparent); }
 
-/* Premium wordmark: soft neon breathing + a slow diagonal shine sweep */
-@keyframes wordmark-breathe {
-    0%, 100% { filter: drop-shadow(0 0 10px rgba(101,229,154,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.85)); }
-    50%      { filter: drop-shadow(0 0 22px rgba(101,229,154,0.65)) drop-shadow(0 2px 6px rgba(0,0,0,0.85)); }
+/* Page-load choreography: each piece of the content panel settles in from a
+   little below, slightly blurred, staggered by --enter-delay. Backdrop layers
+   simply fade up. */
+.showcase-enter {
+    animation: showcase-enter 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--enter-delay, 0ms);
 }
+@keyframes showcase-enter {
+    from { opacity: 0; transform: translate3d(0, 18px, 0); filter: blur(6px); }
+    to   { opacity: 1; transform: translate3d(0, 0, 0); filter: blur(0); }
+}
+.showcase-enter-fade { animation: showcase-enter-fade 1.6s ease-out both; }
+@keyframes showcase-enter-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Edition logo: screen-blended so a dark logo background disappears into
+   space, floating on a breathing glow. The halo darkens the scene right
+   behind it so the artwork stays crisp over bright nebula. */
+.showcase-logo.is-knocked-out { mix-blend-mode: normal; }
+.showcase-logo-halo {
+    inset: -18%;
+    border-radius: 9999px;
+    background: radial-gradient(circle, rgb(2 5 14 / 0.9) 0%, rgb(2 5 14 / 0.55) 45%, transparent 70%);
+}
+.showcase-logo {
+    height: clamp(11rem, 28vh, 18rem);
+    /* Blend as a fallback until the JS knockout hands us real transparency. */
+    mix-blend-mode: screen;
+    image-rendering: auto;
+    animation:
+        logo-float 9s ease-in-out infinite,
+        logo-breathe 6s ease-in-out infinite;
+    will-change: transform, filter;
+}
+@keyframes logo-float {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50%      { transform: translate3d(0, -8px, 0); }
+}
+@keyframes logo-breathe {
+    0%, 100% { filter: drop-shadow(0 0 14px rgb(var(--c-primary-400) / 0.35)); }
+    50%      { filter: drop-shadow(0 0 30px rgb(var(--c-primary-400) / 0.7)); }
+}
+
+/* Wordmark fallback (no uploaded logo): soft neon breathing in the edition colour */
 .showcase-wordmark { animation: wordmark-breathe 6s ease-in-out infinite; }
-.showcase-logo { filter: drop-shadow(0 0 24px rgba(101,229,154,0.35)) drop-shadow(0 4px 10px rgba(0,0,0,0.7)); image-rendering: auto; }
+@keyframes wordmark-breathe {
+    0%, 100% { filter: drop-shadow(0 0 10px rgb(var(--c-primary-500) / 0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.85)); }
+    50%      { filter: drop-shadow(0 0 22px rgb(var(--c-primary-500) / 0.65)) drop-shadow(0 2px 6px rgba(0,0,0,0.85)); }
+}
+
+/* Countdown digits tick when they change */
+.countdown-digit.is-ticking { animation: digit-tick 0.32s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes digit-tick {
+    from { transform: translate3d(0, -0.3em, 0); opacity: 0.35; }
+    to   { transform: translate3d(0, 0, 0); opacity: 1; }
+}
+
+/* The wood CTA keeps its barn-brand look, with a faint edition-coloured rim
+   glow pulsing behind it so it belongs to the night scene. */
+.btn-wood-glow {
+    position: relative;
+    animation: btn-rim 4s ease-in-out infinite;
+}
+@keyframes btn-rim {
+    0%, 100% { box-shadow: inset 0 2px 0 #ecc98d, inset 0 -2px 0 #7c5a30, 0 3px 0 #40290f, 0 0 0 0 rgb(var(--c-primary-500) / 0), 0 0 22px rgb(var(--c-primary-500) / 0.18); }
+    50%      { box-shadow: inset 0 2px 0 #ecc98d, inset 0 -2px 0 #7c5a30, 0 3px 0 #40290f, 0 0 0 1px rgb(var(--c-primary-500) / 0.35), 0 0 34px rgb(var(--c-primary-500) / 0.45); }
+}
+.btn-wood-glow:active { animation: none; }
 
 /* click / tap target marker */
 .walk-target {
